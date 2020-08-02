@@ -68,7 +68,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Assert
             
             // clean up
-            context.Organisations.Remove(actual);
+            context.Organisations.Remove(organisation);
             await context.SaveChangesAsync();
             
             NotNull(actual);
