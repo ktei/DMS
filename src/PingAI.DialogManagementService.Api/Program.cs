@@ -27,7 +27,7 @@ namespace PingAI.DialogManagementService.Api
                             reloadOnChange: !env.IsProduction());
                     if (!env.IsProduction())
                     {
-                        builder.AddJsonFile("appsettings.Local.json", false, true);
+                        builder.AddJsonFile("appsettings.Local.json", true, true);
                     }
                         
                     builder.AddEnvironmentVariables();
