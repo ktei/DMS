@@ -24,8 +24,13 @@ namespace PingAI.DialogManagementService.Api
                     var env = context.HostingEnvironment;
                     builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: !env.IsProduction())
                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true,
-                            reloadOnChange: !env.IsProduction())
-                        .AddEnvironmentVariables();
+                            reloadOnChange: !env.IsProduction());
+                    if (!env.IsProduction())
+                    {
+                        builder.AddJsonFile("appsettings.Local.json", false, true);
+                    }
+                        
+                    builder.AddEnvironmentVariables();
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {
