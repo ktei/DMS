@@ -17,12 +17,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using PingAI.DialogManagementService.Api.Behaviours;
 using PingAI.DialogManagementService.Api.Filters;
 using PingAI.DialogManagementService.Api.Models;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
-using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
 
@@ -37,7 +38,6 @@ namespace PingAI.DialogManagementService.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers(options => options.Filters.Add<DomainExceptionFilter>())
@@ -56,7 +56,18 @@ namespace PingAI.DialogManagementService.Api
                 {
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                     fv.RegisterValidatorsFromAssemblyContaining<Startup>();
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffzzz";
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 });
+            
+            services.AddHealthChecks();
+            
             services.AddMediatR(typeof(UpdateProjectCommand));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
@@ -67,7 +78,6 @@ namespace PingAI.DialogManagementService.Api
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -79,10 +89,11 @@ namespace PingAI.DialogManagementService.Api
 
             app.UseRouting();
 
-            // app.UseAuthorization();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks($"/{Configuration["RoutePrefix"]}/health");
                 endpoints.MapControllers();
             });
         }
