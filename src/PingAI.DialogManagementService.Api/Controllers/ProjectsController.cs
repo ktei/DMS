@@ -25,9 +25,6 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public async Task<ActionResult<UpdateProjectResponse>> UpdateProject([FromRoute] Guid projectId,
             [FromBody] UpdateProjectRequest request, [FromServices] IAuthorizationService authorizationService)
         {
-            var result = await authorizationService.AuthorizeAsync(HttpContext.User, projectId,
-                Operations.Write);
-            var claims = HttpContext.User.Claims.ToList();
             var project = await _mediator.Send(new UpdateProjectCommand(projectId,
                 request.WidgetTitle, request.WidgetColor,
                 request.WidgetDescription, request.FallbackMessage,
