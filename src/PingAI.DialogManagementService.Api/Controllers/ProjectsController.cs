@@ -7,6 +7,7 @@ using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 
 namespace PingAI.DialogManagementService.Api.Controllers
 {
+    [ApiVersion("1")]
     public class ProjectsController : ApiControllerBase
     {
         private readonly IMediator _mediator;

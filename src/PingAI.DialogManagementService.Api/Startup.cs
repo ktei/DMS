@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -67,15 +68,51 @@ namespace PingAI.DialogManagementService.Api
                 });
             
             services.AddHealthChecks();
+            services.AddApiVersioning();
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Dialog Management API v1"
+                });
+                
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+                
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+                
+                options.DescribeAllParametersInCamelCase();
+            });
             
             services.AddMediatR(typeof(UpdateProjectCommand));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
-            services.AddTransient<IProjectRepository, ProjectRepository>();
-            
             services.AddDbContext<DialogManagementContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DialogManagement")));
+            
+            // TODO: DI these in a smarter way (Autofac for example)
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IProjectRepository, ProjectRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -90,6 +127,16 @@ namespace PingAI.DialogManagementService.Api
             app.UseRouting();
 
             app.UseAuthorization();
+            
+            app
+                .UseSwagger(opts => { opts.RouteTemplate = $"{Configuration["RoutePrefix"]}/swagger/{{documentName}}/swagger.json"; })
+                .UseSwaggerUI(x =>
+                {
+                    x.SwaggerEndpoint($"/{Configuration["RoutePrefix"]}/swagger/v1/swagger.json",
+                        $"Dialog Management API v1");
+                        
+                    x.RoutePrefix = $"{Configuration["RoutePrefix"]}/swagger";
+                });
 
             app.UseEndpoints(endpoints =>
             {
