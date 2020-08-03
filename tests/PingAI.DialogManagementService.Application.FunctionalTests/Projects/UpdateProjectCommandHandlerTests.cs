@@ -14,12 +14,12 @@ namespace PingAI.DialogManagementService.Application.FunctionalTests.Projects
     public class UpdateProjectCommandHandlerTests
     {
         private readonly DialogManagementContextFactory _dialogManagementContextFactory;
-        
+
         public UpdateProjectCommandHandlerTests()
         {
             _dialogManagementContextFactory = new DialogManagementContextFactory();
         }
-        
+
         [Fact]
         public async Task UpdateProject()
         {
@@ -32,30 +32,32 @@ namespace PingAI.DialogManagementService.Application.FunctionalTests.Projects
                 "test", null);
             var project = new Project(Guid.NewGuid(), "test project", organisation.Id,
                 "widget title", "#ffffff", "widget description",
-                "fallback message", "greeting message");
+                "fallback message", "greeting message", new string[] { });
             await context.AddAsync(organisation);
             await context.AddAsync(project);
             await context.SaveChangesAsync();
 
             // Act
             await sut.Handle(new UpdateProjectCommand(project.Id, "my title", "#eeeeee",
-                    "my description", "my fallback message", "my greeting message"),
+                    "my description", "my fallback message", "my greeting message",
+                    new []{"e1", "e2"}),
                 CancellationToken.None);
             var actual = await context.Projects.AsNoTracking().FirstAsync(x => x.Id == project.Id);
 
             // Assert
-            
+
             // clean up
             context.Remove(organisation);
             context.Remove(project);
             await context.SaveChangesAsync();
-            
+
             NotNull(actual);
             Equal("my title", actual.WidgetTitle);
             Equal("#eeeeee", actual.WidgetColor);
             Equal("my description", actual.WidgetDescription);
             Equal("my fallback message", actual.FallbackMessage);
             Equal("my greeting message", actual.GreetingMessage);
+            Equal(new[]{"e1", "e2"}, actual.Enquiries);
         }
     }
 }

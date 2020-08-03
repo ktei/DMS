@@ -26,6 +26,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("widgetDescription");
             builder.Property(o => o.WidgetTitle)
                 .HasColumnName("widgetTitle");
+            builder.Property(o => o.Enquiries)
+                .HasColumnName("enquiries");
 
             builder.Property(o => o.CreatedAt)
                 .HasColumnName("createdAt");

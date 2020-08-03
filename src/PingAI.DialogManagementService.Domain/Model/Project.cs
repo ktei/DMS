@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 
 namespace PingAI.DialogManagementService.Domain.Model
@@ -9,23 +10,24 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string Name { get; private set; }
         public Guid OrganisationId { get; private set; }
         public Organisation? Organisation { get; private set; } = null;
-        public string WidgetTitle { get; private set; }
+        public string? WidgetTitle { get; private set; }
 
-        private string _widgetColor;
-        public string WidgetColor
+        private string? _widgetColor;
+        public string? WidgetColor
         {
             get => (_widgetColor ?? string.Empty).TrimEnd();
             private set => _widgetColor = value;
         }
         
-        public string WidgetDescription { get; private set; }
-        public string FallbackMessage { get; private set; }
-        public string GreetingMessage { get; private set; }
+        public string? WidgetDescription { get; private set; }
+        public string? FallbackMessage { get; private set; }
+        public string? GreetingMessage { get; private set; }
+        public string[]? Enquiries { get; private set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public Project(Guid id, string name, Guid organisationId, string widgetTitle, string widgetColor,
-            string widgetDescription, string fallbackMessage, string greetingMessage)
+        public Project(Guid id, string name, Guid organisationId, string? widgetTitle, string widgetColor,
+            string? widgetDescription, string? fallbackMessage, string? greetingMessage, string[]? enquiries)
         {
             Id = id;
             Name = name;
@@ -35,21 +37,20 @@ namespace PingAI.DialogManagementService.Domain.Model
             WidgetDescription = widgetDescription;
             FallbackMessage = fallbackMessage;
             GreetingMessage = greetingMessage;
+            Enquiries = enquiries;
         }
 
         public void UpdateWidgetTitle(string widgetTitle)
         {
-            if (string.IsNullOrWhiteSpace(widgetTitle))
-                throw new DomainException($"{nameof(widgetTitle)} cannot be empty");
-            if (widgetTitle.Length > 255)
-                throw new DomainException($"{nameof(widgetTitle)}'s length cannot exceed 255");
+            if (!string.IsNullOrEmpty(widgetTitle) && widgetTitle.Length > 255)
+                throw new BadRequestException($"{nameof(widgetTitle)}'s length cannot exceed 255");
             WidgetTitle = widgetTitle;
         }
 
         public void UpdateWidgetColor(string widgetColor)
         {
             if (string.IsNullOrWhiteSpace(widgetColor))
-                throw new DomainException($"{nameof(widgetColor)} cannot be empty");
+                throw new BadRequestException($"{nameof(widgetColor)} cannot be empty");
             WidgetColor = widgetColor; 
         }
 
@@ -66,6 +67,13 @@ namespace PingAI.DialogManagementService.Domain.Model
         public void UpdateGreetingMessage(string greetingMessage)
         {
             GreetingMessage = greetingMessage;
+        }
+
+        public void UpdateEnquiries(string[] enquiries)
+        {
+            Enquiries = (enquiries ?? new string[]{})
+                .OrderBy(e => e)
+                .Distinct().ToArray();
         }
     }
 }

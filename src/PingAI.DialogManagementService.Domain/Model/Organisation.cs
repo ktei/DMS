@@ -9,7 +9,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Description { get; private set; }
-        public string[] Tags { get; private set; }
+        public string[]? Tags { get; private set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
@@ -21,7 +21,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             Id = id;
             Name = name;
             Description = description;
-            Tags = tags ?? new string[0];
+            Tags = tags;
         }
 
         public void AddProject(Project project) =>

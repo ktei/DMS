@@ -12,9 +12,10 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
         public string WidgetDescription { get; set; }
         public string FallbackMessage { get; set; }
         public string GreetingMessage { get; set; }
+        public string [] Enquiries { get; set; }
 
         public UpdateProjectCommand(Guid projectId, string widgetTitle, string widgetColor, string widgetDescription,
-            string fallbackMessage, string greetingMessage)
+            string fallbackMessage, string greetingMessage, string[] enquiries)
         {
             ProjectId = projectId;
             WidgetTitle = widgetTitle;
@@ -22,6 +23,7 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
             WidgetDescription = widgetDescription;
             FallbackMessage = fallbackMessage;
             GreetingMessage = greetingMessage;
+            Enquiries = enquiries;
         }
 
         public UpdateProjectCommand()

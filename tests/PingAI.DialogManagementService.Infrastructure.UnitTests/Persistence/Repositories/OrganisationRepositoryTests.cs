@@ -28,7 +28,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 "test", null);
             var project = new Project(Guid.NewGuid(), "test project", organisation.Id,
                 "widget title", "#ffffff", "widget description",
-                "fallback message", "greeting message");
+                "fallback message", "greeting message", new string[]{});
             organisation.AddProject(project);
             
             // Act
