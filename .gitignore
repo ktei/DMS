@@ -362,3 +362,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 appsettings.Loal.json
+.idea/
