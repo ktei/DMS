@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -16,14 +19,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using PingAI.DialogManagementService.Api.Authorization.Handlers;
+using PingAI.DialogManagementService.Api.Authorization.Requirements;
+using PingAI.DialogManagementService.Api.Authorization.Services;
 using PingAI.DialogManagementService.Api.Behaviours;
 using PingAI.DialogManagementService.Api.Filters;
 using PingAI.DialogManagementService.Api.Models;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
+using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
@@ -69,6 +77,27 @@ namespace PingAI.DialogManagementService.Api
             
             services.AddHealthChecks();
             services.AddApiVersioning();
+            
+            // Authentication setup
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = Configuration["OAuth:Authority"];
+                options.Audience = Configuration["OAuth:Audience"];
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = Configuration["Oauth:TokenIssuer"],
+                    NameClaimType = ClaimTypes.NameIdentifier,
+                    RequireExpirationTime = true
+                };
+            });
+            
+            services.AddScoped<IAuthorizationHandler, ProjectAuthorizationHandler>();
+            services.AddHttpContextAccessor();
+            services.AddTransient<IAuthService, AuthService>();
 
             services.AddSwaggerGen(options =>
             {
@@ -113,6 +142,8 @@ namespace PingAI.DialogManagementService.Api
             // TODO: DI these in a smarter way (Autofac for example)
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IProjectRepository, ProjectRepository>();
+            services.AddTransient<IOrganisationRepository, OrganisationRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -126,6 +157,7 @@ namespace PingAI.DialogManagementService.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
             
             app

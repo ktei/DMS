@@ -48,6 +48,37 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             Equal(1, actualOrganisation.Projects.Count);
             Equal(project.Id, actualOrganisation.Projects[0].Id);
         }
+
+        [Fact]
+        public async Task GetOrganisationsByIds()
+        {
+            // Arrange
+            await using var context = _dialogManagementContextFactory.CreateDbContext(new string[]{});
+            var sut = new OrganisationRepository(context);
+            var organisation = new Organisation(Guid.NewGuid(), Guid.NewGuid().ToString(),
+                "test", null);
+            var project = new Project(Guid.NewGuid(), "test project", organisation.Id,
+                "widget title", "#ffffff", "widget description",
+                "fallback message", "greeting message", new string[]{});
+            organisation.AddProject(project);
+            
+            // Act
+            await context.AddAsync(organisation);
+            await context.SaveChangesAsync();
+            
+            // Assert
+            var actualOrganisation = await sut.GetOrganisationsByIds(new[]{organisation.Id});
+            
+            // clean up
+            context.Projects.Remove(project);
+            context.Organisations.Remove(organisation);
+            await context.SaveChangesAsync();
+            
+            NotNull(actualOrganisation);
+            Single(actualOrganisation!);
+            Equal(1, actualOrganisation[0].Projects.Count);
+            Equal(project.Id, actualOrganisation[0].Projects[0].Id); 
+        }
         
 
         [Fact]

@@ -2,12 +2,15 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
 using Xunit;
 using static Xunit.Assert;
+using static Moq.It;
 
 namespace PingAI.DialogManagementService.Application.FunctionalTests.Projects
 {
@@ -27,7 +30,10 @@ namespace PingAI.DialogManagementService.Application.FunctionalTests.Projects
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var projectRepository = new ProjectRepository(context);
             var unitOfWork = new UnitOfWork(context);
-            var sut = new UpdateProjectCommandHandler(projectRepository, unitOfWork);
+            var authServiceMock = new Mock<IAuthService>();
+            authServiceMock.Setup(m => m.UserCanWriteProject(IsAny<Project>()))
+                .ReturnsAsync(true);
+            var sut = new UpdateProjectCommandHandler(projectRepository, unitOfWork, authServiceMock.Object);
             var organisation = new Organisation(Guid.NewGuid(), Guid.NewGuid().ToString(),
                 "test", null);
             var project = new Project(Guid.NewGuid(), "test project", organisation.Id,

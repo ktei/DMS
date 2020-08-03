@@ -29,7 +29,7 @@ namespace PingAI.DialogManagementService.Api
                     {
                         builder.AddJsonFile("appsettings.Local.json", true, true);
                     }
-                        
+                    
                     builder.AddEnvironmentVariables();
                 })
                 .ConfigureLogging((hostingContext, logging) =>
