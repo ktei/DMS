@@ -1,0 +1,32 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - BUILD_TIMESTAMP="$(date +%s)"
+      - REPOSITORY_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ENV-dms"
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG="$COMMIT_HASH-$ENV-$BUILD_TIMESTAMP"
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build . --tag "$REPOSITORY_URI:latest" --tag "$REPOSITORY_URI:$IMAGE_TAG"
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push "$REPOSITORY_URI:latest"
+      - docker push "$REPOSITORY_URI:$IMAGE_TAG"
+      - echo Writing image definitions file...
+      - printf '[{"name":"'$ENV-dms'","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+
+artifacts:
+  files: imagedefinitions.json

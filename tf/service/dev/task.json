@@ -1,0 +1,41 @@
+[
+  {
+    "name": "dev-dms",
+    "image": "397977497739.dkr.ecr.ap-southeast-2.amazonaws.com/dev-dms:latest",
+    "cpu": 128,
+    "memory": 256,
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "portMappings": [
+      {
+        "containerPort": 5000
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "dev-dms",
+        "awslogs-region": "ap-southeast-2",
+        "awslogs-stream-prefix": "streaming"
+      }
+    },
+    "environment": [
+      {
+        "name": "ASPNETCORE_ENVIRONMENT",
+        "value": "Development"
+      },
+      {
+        "name": "Logging__LogLevel__System",
+        "value": "Error"
+      },
+      {
+        "name": "Logging__LogLevel__Microsoft",
+        "value": "Error"
+      },
+      {
+        "name": "ConnectionStrings__DialogManagement",
+        "value": "Host=dev-application.c5cnqpcra9zq.ap-southeast-2.rds.amazonaws.com;Database=chatbot;Username=masteruser;Password=gTr74LXtUnJ9Z6Cm"
+      }
+    ]
+  }
+]
