@@ -25,7 +25,7 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
         public async Task<Project> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
         {
             var project = await _projectRepository.GetProjectById(request.ProjectId);
-            if (project == null) throw new BadRequestException($"Project {request.ProjectId} does not exist");
+            if (project == null) throw new ForbiddenException($"Project {request.ProjectId} cannot be accessed.");
             var canWrite = await _authService.UserCanWriteProject(project);
             if (!canWrite)
                 throw new ForbiddenException($"Sorry, you have no permission to write to project {request.ProjectId}");

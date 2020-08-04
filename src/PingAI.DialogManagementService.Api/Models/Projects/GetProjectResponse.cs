@@ -2,14 +2,14 @@ using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Projects
 {
-    public class UpdateProjectResponse : ProjectDto
+    public class GetProjectResponse : ProjectDto
     {
-        public UpdateProjectResponse(Project project) : base(project)
+        public GetProjectResponse(Project project) : base(project)
         {
             
         }
 
-        public UpdateProjectResponse()
+        public GetProjectResponse()
         {
             
         }

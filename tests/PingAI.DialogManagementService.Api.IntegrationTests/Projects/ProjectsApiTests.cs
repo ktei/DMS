@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -17,6 +18,16 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
         {
             _factory = factory;
             _client = _factory.CreateAuthenticatedClient();
+        }
+
+        [Fact]
+        public async Task GetProject()
+        {
+            var projectId = Guid.Parse("3932f12d-ed9e-441a-8a13-8c4ca88b2e4c");
+            var response = await _client.GetFromJsonAsync<GetProjectResponse>(
+                $"/dms/api/v1/projects/{projectId}");
+            NotNull(response);
+            Equal(projectId.ToString(), response.ProjectId);
         }
 
         [Fact]

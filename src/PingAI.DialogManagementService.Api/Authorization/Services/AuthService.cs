@@ -18,6 +18,14 @@ namespace PingAI.DialogManagementService.Api.Authorization.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task<bool> UserCanReadProject(Project project)
+        {
+            var authResult =
+                await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, project,
+                    Operations.Read);
+            return authResult.Succeeded;
+        }
+
         public async Task<bool> UserCanWriteProject(Project project)
         {
             var authResult =

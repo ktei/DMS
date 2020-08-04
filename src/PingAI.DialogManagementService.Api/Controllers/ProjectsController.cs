@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Projects;
+using PingAI.DialogManagementService.Application.Projects.GetProject;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 
 namespace PingAI.DialogManagementService.Api.Controllers
@@ -17,6 +18,13 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public ProjectsController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+        
+        [HttpGet("{projectId}")]
+        public async Task<ActionResult<GetProjectResponse>> GetProject([FromRoute] Guid projectId)
+        {
+            var project = await _mediator.Send(new GetProjectQuery(projectId));
+            return new GetProjectResponse(project);
         }
 
         [HttpPut("{projectId}")]
