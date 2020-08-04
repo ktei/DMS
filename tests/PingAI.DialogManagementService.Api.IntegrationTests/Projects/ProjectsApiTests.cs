@@ -23,29 +23,37 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
         [Fact]
         public async Task GetProject()
         {
-            var projectId = Guid.Parse("3932f12d-ed9e-441a-8a13-8c4ca88b2e4c");
-            var response = await _client.GetFromJsonAsync<GetProjectResponse>(
-                $"/dms/api/v1/projects/{projectId}");
-            NotNull(response);
-            Equal(projectId.ToString(), response.ProjectId);
+            await _factory.WithTestingFixture(async fixture =>
+            {
+                var projectId = fixture.Project.Id;
+                var response = await _client.GetFromJsonAsync<GetProjectResponse>(
+                    $"/dms/api/v1/projects/{projectId}");
+                NotNull(response);
+                Equal(projectId.ToString(), response.ProjectId);
+            });
         }
 
         [Fact]
         public async Task UpdateProject()
         {
-            var httpResponse = await _client.PutAsJsonAsync(
-                "/dms/api/v1/projects/3932f12d-ed9e-441a-8a13-8c4ca88b2e4c",
-                new UpdateProjectRequest
-                {
-                    WidgetTitle = "title",
-                    WidgetColor = "#ffffff",
-                    WidgetDescription = "description",
-                    GreetingMessage = "greeting",
-                    FallbackMessage = "fallback",
-                    Enquiries = new[] {"email"}
-                });
-            var response = await httpResponse.Content.ReadFromJsonAsync<UpdateProjectResponse>();
-            NotNull(response);
+            await _factory.WithTestingFixture(async fixture =>
+            {
+                var httpResponse = await _client.PutAsJsonAsync(
+                    $"/dms/api/v1/projects/{fixture.Project.Id}",
+                    new UpdateProjectRequest
+                    {
+                        WidgetTitle = "title",
+                        WidgetColor = "#ffffff",
+                        WidgetDescription = "description",
+                        GreetingMessage = "greeting",
+                        FallbackMessage = "fallback",
+                        Enquiries = new[] {"email"}
+                    });
+                httpResponse.IsOk();
+                var response = await httpResponse.Content.ReadFromJsonAsync<UpdateProjectResponse>();
+                NotNull(response);
+                Equal(fixture.Project.Id.ToString(), response.ProjectId);
+            });
         }
     }
 }

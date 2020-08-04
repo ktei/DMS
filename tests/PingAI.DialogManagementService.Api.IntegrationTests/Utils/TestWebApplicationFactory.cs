@@ -9,6 +9,10 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
 {
     public class TestWebApplicationFactory : WebApplicationFactory<Startup>
     {
+        public TestWebApplicationFactory()
+        {
+            
+        }
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureServices(services =>
