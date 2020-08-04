@@ -1,0 +1,33 @@
+using System;
+
+namespace PingAI.DialogManagementService.Domain.Model
+{
+    public class Intent : IHaveTimestamps
+    {
+        public Guid Id { get; private set; }
+        public string Name { get; private set; }
+        public Guid ProjectId { get; private set; }
+        public Project? Project { get; private set; }
+        private string _iconName = string.Empty;
+        private string _color = string.Empty;
+        public IntentType Type { get; private set; }
+        
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+        public Intent(Guid id, string name, Guid projectId,
+            IntentType type)
+        {
+            Id = id;
+            Name = name;
+            ProjectId = projectId;
+            Type = type;
+        }
+    }
+
+    public enum IntentType
+    {
+        STANDARD,
+        GENERIC
+    }
+}

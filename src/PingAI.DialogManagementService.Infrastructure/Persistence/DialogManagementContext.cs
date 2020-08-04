@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using Npgsql.NameTranslation;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Configurations;
 
@@ -10,6 +12,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 {
     public class DialogManagementContext : DbContext
     {
+        static DialogManagementContext()
+        {
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type",
+                new NpgsqlNullNameTranslator());
+        }
+        
         public DialogManagementContext(DbContextOptions<DialogManagementContext> options)
             : base(options)
         {
@@ -26,6 +34,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<Project> Projects { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<OrganisationUser> OrganisationUsers { get; set; }
+        public DbSet<Intent> Intents { get; set; }
         
         public override int SaveChanges()
         {

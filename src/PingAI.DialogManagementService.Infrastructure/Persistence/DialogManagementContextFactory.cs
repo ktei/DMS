@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Npgsql;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence
 {
@@ -12,5 +13,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
                 "Host=localhost;Database=postgres;Username=postgres;Password=admin");
             return new DialogManagementContext(optionsBuilder.Options);
         }
+
+
+
     }
 }

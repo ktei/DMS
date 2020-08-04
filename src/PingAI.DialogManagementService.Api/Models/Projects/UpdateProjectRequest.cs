@@ -1,7 +1,5 @@
 using System.Text.RegularExpressions;
 using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
-using PingAI.DialogManagementService.Api.Validations;
 
 namespace PingAI.DialogManagementService.Api.Models.Projects
 {

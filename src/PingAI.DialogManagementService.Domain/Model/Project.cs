@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 
@@ -23,6 +25,10 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string? FallbackMessage { get; private set; }
         public string? GreetingMessage { get; private set; }
         public string[]? Enquiries { get; private set; }
+        
+        private readonly List<Intent> _intents = new List<Intent>();
+        public IReadOnlyList<Intent> Intents => _intents.ToImmutableList();
+        
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 

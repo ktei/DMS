@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PingAI.DialogManagementService.Api.Authorization.Requirements;
 using PingAI.DialogManagementService.Api.Models.Projects;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 
@@ -23,7 +21,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
 
         [HttpPut("{projectId}")]
         public async Task<ActionResult<UpdateProjectResponse>> UpdateProject([FromRoute] Guid projectId,
-            [FromBody] UpdateProjectRequest request, [FromServices] IAuthorizationService authorizationService)
+            [FromBody] UpdateProjectRequest request)
         {
             var project = await _mediator.Send(new UpdateProjectCommand(projectId,
                 request.WidgetTitle, request.WidgetColor,
