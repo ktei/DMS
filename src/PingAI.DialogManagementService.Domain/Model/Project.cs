@@ -28,6 +28,12 @@ namespace PingAI.DialogManagementService.Domain.Model
         
         private readonly List<Intent> _intents = new List<Intent>();
         public IReadOnlyList<Intent> Intents => _intents.ToImmutableList();
+
+        private readonly List<EntityType> _entityTypes = new List<EntityType>();
+        public IReadOnlyList<EntityType> EntityTypes => _entityTypes.ToImmutableList();
+
+        private readonly List<EntityName> _entityNames = new List<EntityName>();
+        public IReadOnlyList<EntityName> EntityNames => _entityNames.ToImmutableList();
         
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

@@ -38,6 +38,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<User> Users { get; set; }
         public DbSet<OrganisationUser> OrganisationUsers { get; set; }
         public DbSet<Intent> Intents { get; set; }
+        public DbSet<PhrasePart> PhraseParts { get; set; }
+        public DbSet<EntityType> EntityTypes { get; set; }
+        public DbSet<EntityValue> EntityValues { get; set; }
+        public DbSet<EntityName> EntityNames { get; set; }
         
         public override int SaveChanges()
         {

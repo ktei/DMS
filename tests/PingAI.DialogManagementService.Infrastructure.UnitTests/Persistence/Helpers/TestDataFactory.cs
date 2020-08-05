@@ -10,6 +10,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
         private readonly DialogManagementContext _context;
         public Organisation Organisation { get; private set; }
         public Project Project { get; private set; }
+        public EntityType EntityType { get; private set; }
+        public EntityName EntityName { get; private set; }
 
         public TestDataFactory(DialogManagementContext context)
         {

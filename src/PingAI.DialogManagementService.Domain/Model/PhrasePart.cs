@@ -6,6 +6,7 @@ namespace PingAI.DialogManagementService.Domain.Model
     {
         public Guid Id { get; private set; }
         public Guid IntentId { get; private set; }
+        public Intent? Intent { get; private set; }
         public Guid PhraseId { get; private set; }
         public int? Position { get; private set; }
         public string? Text { get; private set; }

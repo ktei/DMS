@@ -145,6 +145,7 @@ namespace PingAI.DialogManagementService.Api
             services.AddTransient<IOrganisationRepository, OrganisationRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IIntentRepository, IntentRepository>();
+            services.AddTransient<IEntityTypeRepository, EntityTypeRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

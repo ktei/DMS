@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -23,9 +24,21 @@ namespace PingAI.DialogManagementService.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<CreateIntentResponse>> CreateIntent([FromBody] CreateIntentRequest request)
         {
-            var intent = await _mediator.Send(new CreateIntentCommand(request.Name,
-                Guid.Parse(request.ProjectId), Enum.Parse<IntentType>(request.Type, true)));
+            var intentId = Guid.NewGuid();
+            var phraseParts = request.PhraseParts?.Select(p => MapCreatePhrasePartDto(intentId, p));
+            var intent = await _mediator.Send(
+                new CreateIntentCommand(intentId, request.Name, Guid.Parse(request.ProjectId),
+                Enum.Parse<IntentType>(request.Type, true), phraseParts));
+                
             return new CreateIntentResponse(intent);
+        }
+
+        private static PhrasePart MapCreatePhrasePartDto(Guid intentId, CreatePhrasePartDto p)
+        {
+            return new PhrasePart(Guid.NewGuid(), intentId, Guid.Parse(p.PhraseId),
+                p.Position, p.Text, p.Value, Enum.Parse<PhrasePartType>(p.Type),
+                p.EntityNameId == null ? default(Guid?) : Guid.Parse(p.EntityNameId),
+                p.EntityTypeId == null ? default(Guid?) : Guid.Parse(p.EntityTypeId));
         }
     }
 }

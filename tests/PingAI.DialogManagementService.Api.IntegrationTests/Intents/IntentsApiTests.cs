@@ -32,7 +32,16 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 {
                     Name = "test intent",
                     ProjectId = _testingFixture.Project.Id.ToString(),
-                    Type = IntentType.STANDARD.ToString()
+                    Type = IntentType.STANDARD.ToString(),
+                    // PhraseParts = new[]
+                    // {
+                    //     new CreatePhrasePartDto
+                    //     {
+                    //         Text = "Hello, World!",
+                    //         PhraseId = Guid.NewGuid().ToString(),
+                    //         
+                    //     }
+                    // }
                 });
             await httpResponse.IsOk();
             var response = await httpResponse.Content.ReadFromJsonAsync<CreateIntentResponse>();

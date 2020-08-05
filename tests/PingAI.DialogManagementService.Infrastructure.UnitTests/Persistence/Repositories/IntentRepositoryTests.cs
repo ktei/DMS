@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
@@ -52,14 +53,35 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var project = _testDataFactory.Project;
             var intent = new Intent(Guid.NewGuid(), "welcome",
                 project.Id, IntentType.STANDARD);
-
+            var sut = new IntentRepository(context);
 
             // Act
-            
-            // Assert
-            // False(true);
-            
+            var phraseId1 = Guid.NewGuid();
+            var phraseId2 = Guid.NewGuid();
+            intent.UpdatePhrases(new PhrasePart[]
+            {
+                new PhrasePart(Guid.NewGuid(), intent.Id, phraseId1, 0, "Hello, World!",
+                    null, PhrasePartType.TEXT, null, null),
+                
+                // new PhrasePart(Guid.NewGuid(), intent.Id, phraseId2, 0, "Hello, my name is ",
+                //     null, PhrasePartType.TEXT, null, null),
+                // new PhrasePart(Guid.NewGuid(), intent.Id, phraseId2, 1, "Rui",
+                //     null, PhrasePartType.ENTITY, null, null),
+
+            });
+            await sut.AddIntent(intent);
+            await context.SaveChangesAsync();
+            var actual = await context.Intents.SingleAsync(x => x.Id == intent.Id);
+
             // clean up
+            context.RemoveRange(intent.PhraseParts);
+            context.Remove(intent);
+            await context.SaveChangesAsync();
+
+            // Assert
+            Equal(intent.Id, actual.Id);
+            Single(actual.PhraseParts);
+            Equal(phraseId1, actual.PhraseParts[0].PhraseId);
         }
 
         public Task InitializeAsync() => _testDataFactory.Setup();
