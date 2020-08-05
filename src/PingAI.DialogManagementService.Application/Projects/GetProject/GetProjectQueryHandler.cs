@@ -11,17 +11,17 @@ namespace PingAI.DialogManagementService.Application.Projects.GetProject
     public class GetProjectQueryHandler : IRequestHandler<GetProjectQuery, Project>
     {
         private readonly IProjectRepository _projectRepository;
-        private readonly IAuthService _authService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public GetProjectQueryHandler(IProjectRepository projectRepository, IAuthService authService)
+        public GetProjectQueryHandler(IProjectRepository projectRepository, IAuthorizationService authorizationService)
         {
             _projectRepository = projectRepository;
-            _authService = authService;
+            _authorizationService = authorizationService;
         }
 
         public async Task<Project> Handle(GetProjectQuery request, CancellationToken cancellationToken)
         {
-            var canRead = await _authService.UserCanReadProject(request.ProjectId);
+            var canRead = await _authorizationService.UserCanReadProject(request.ProjectId);
             if (!canRead)
                 throw new ForbiddenException($"Project {request.ProjectId} cannot be accessed");
             

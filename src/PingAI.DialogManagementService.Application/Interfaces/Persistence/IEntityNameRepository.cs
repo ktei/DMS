@@ -5,10 +5,9 @@ using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
 {
-    public interface IIntentRepository
+    public interface IEntityNameRepository
     {
-        Task<List<Intent>> GetIntentsByProjectId(Guid projectId);
-        Task<Intent?> GetIntent(Guid intentId);
-        Task<Intent> AddIntent(Intent intent);
+        Task<List<EntityName>> GetEntityNamesByProjectId(Guid projectId);
+        Task<EntityName> AddEntityName(EntityName entityName);
     }
 }

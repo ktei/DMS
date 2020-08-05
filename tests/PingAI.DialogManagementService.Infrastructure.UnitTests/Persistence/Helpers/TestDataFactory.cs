@@ -26,15 +26,15 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
                 "test widget title", "#ffffff",
                 "test widget description", "test fallback message", 
                 "test greeting message", new string[] { });
-            await _context.AddAsync(Organisation);
-            await _context.AddAsync(Project);
+            EntityName = new EntityName(Guid.NewGuid(), "hometown", Project.Id, true);
+            EntityType = new EntityType(Guid.NewGuid(), "city", Project.Id, "city name", null);
+            await _context.AddRangeAsync(Organisation, Project, EntityName, EntityType);
             await _context.SaveChangesAsync();
         }
 
         public async Task Cleanup()
         {
-            _context.Remove(Project);
-            _context.Remove(Organisation);
+            _context.RemoveRange(Project, Organisation, EntityName, EntityType);
             await _context.SaveChangesAsync();
         }
     }

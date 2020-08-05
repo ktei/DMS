@@ -39,6 +39,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("createdAt");
             builder.Property(o => o.UpdatedAt)
                 .HasColumnName("updatedAt");
+
+            builder.HasOne(o => o.EntityName);
+            builder.HasOne(o => o.EntityType);
         }
     }
 }

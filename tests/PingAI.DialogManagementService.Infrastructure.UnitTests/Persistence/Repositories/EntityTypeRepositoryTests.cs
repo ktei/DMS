@@ -42,8 +42,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             context.Remove(entityType);
             await context.SaveChangesAsync();
 
-            Single(actual);
-            Equal(entityType.Id, actual[0].Id);
+            Equal(2, actual.Count);
+            Contains(actual, x => x.Id == entityType.Id);
         }
 
         [Fact]

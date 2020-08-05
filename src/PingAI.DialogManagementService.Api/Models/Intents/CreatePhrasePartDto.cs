@@ -12,7 +12,7 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
         public string? Text { get; set; }
         public string? Value { get; set; }
         public string Type { get; set; }
-        public string? EntityNameId { get; set; }
+        public string? EntityName { get; set; }
         public string? EntityTypeId { get; set; }
     }
 
@@ -40,7 +40,7 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
                 .When(x => 
                     string.Compare(x.Type, PhrasePartType.ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
                 .WithMessage("{PropertyName} must not be null given ENTITY type");
-            RuleFor(x => x.EntityNameId)
+            RuleFor(x => x.EntityName)
                 .NotNull()
                 .When(x => 
                     string.Compare(x.Type, PhrasePartType.ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
@@ -57,7 +57,7 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
                 .When(x =>
                     string.Compare(x.Type, PhrasePartType.CONSTANT_ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
                 .WithMessage("{PropertyName} must not be empty given CONSTANT_ENTITY type");
-            RuleFor(x => x.EntityNameId)
+            RuleFor(x => x.EntityName)
                 .NotNull()
                 .When(x => 
                     string.Compare(x.Type, PhrasePartType.CONSTANT_ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)

@@ -13,7 +13,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string? Value { get; private set; }
         public PhrasePartType Type { get; private set; }
         public Guid? EntityNameId { get; private set; }
+        public EntityName? EntityName { get; private set; }
         public Guid? EntityTypeId { get; private set; }
+        public EntityType? EntityType { get; private set; }
         
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
@@ -34,7 +36,19 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public void UpdateIntentId(Guid intentId) => IntentId = intentId;
 
-        public void UpdatePosition(int position) => Position = position;
+        public void UpdatePosition(int position)
+        {
+            if (Type != PhrasePartType.CONSTANT_ENTITY)
+            {
+                Position = position;
+            }
+        }
+        
+        public void UpdateEntityName(EntityName entityName)
+        {
+            EntityName = entityName;
+            EntityNameId = entityName.Id;
+        }
     }
 
     public enum PhrasePartType

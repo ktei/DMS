@@ -12,19 +12,19 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IAuthService _authService;
+        private readonly IAuthorizationService _authorizationService;
 
         public UpdateProjectCommandHandler(IProjectRepository projectRepository, IUnitOfWork unitOfWork,
-            IAuthService authService)
+            IAuthorizationService authorizationService)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
-            _authService = authService;
+            _authorizationService = authorizationService;
         }
 
         public async Task<Project> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
         {
-            var canWrite = await _authService.UserCanWriteProject(request.ProjectId);
+            var canWrite = await _authorizationService.UserCanWriteProject(request.ProjectId);
             if (!canWrite)
                 throw new ForbiddenException($"Sorry, you have no permission to write to project {request.ProjectId}");
             var project = await _projectRepository.GetProjectById(request.ProjectId);

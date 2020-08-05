@@ -46,6 +46,12 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         }
 
         [Fact]
+        public async Task GetIntent()
+        {
+            // TODO
+        }
+
+        [Fact]
         public async Task AddIntentWithPhraseParts()
         {
             // Arrange
@@ -58,20 +64,29 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Act
             var phraseId1 = Guid.NewGuid();
             var phraseId2 = Guid.NewGuid();
-            intent.UpdatePhrases(new PhrasePart[]
+            var phraseId3 = Guid.NewGuid();
+            intent.UpdatePhrases(new[]
             {
                 new PhrasePart(Guid.NewGuid(), intent.Id, phraseId1, 0, "Hello, World!",
                     null, PhrasePartType.TEXT, null, null),
                 
-                // new PhrasePart(Guid.NewGuid(), intent.Id, phraseId2, 0, "Hello, my name is ",
-                //     null, PhrasePartType.TEXT, null, null),
-                // new PhrasePart(Guid.NewGuid(), intent.Id, phraseId2, 1, "Rui",
-                //     null, PhrasePartType.ENTITY, null, null),
-
+                new PhrasePart(Guid.NewGuid(), intent.Id, phraseId2, 0, "The city is ",
+                    null, PhrasePartType.TEXT, null, null),
+                new PhrasePart(Guid.NewGuid(), intent.Id, phraseId2, 1, "Melbourne",
+                    null, PhrasePartType.ENTITY, _testDataFactory.EntityName.Id,
+                    _testDataFactory.EntityType.Id),
+                
+                new PhrasePart(Guid.NewGuid(), intent.Id, phraseId3, 0, "My city is Kyoto",
+                    null, PhrasePartType.TEXT, null, null),
+                new PhrasePart(Guid.NewGuid(), intent.Id, phraseId3, null, null,
+                    "Kyoto", PhrasePartType.CONSTANT_ENTITY, _testDataFactory.EntityName.Id,
+                    _testDataFactory.EntityType.Id)
             });
             await sut.AddIntent(intent);
             await context.SaveChangesAsync();
-            var actual = await context.Intents.SingleAsync(x => x.Id == intent.Id);
+            var actual = await context.Intents
+                .Include(x => x.PhraseParts)
+                .SingleAsync(x => x.Id == intent.Id);
 
             // clean up
             context.RemoveRange(intent.PhraseParts);
@@ -80,8 +95,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
 
             // Assert
             Equal(intent.Id, actual.Id);
-            Single(actual.PhraseParts);
-            Equal(phraseId1, actual.PhraseParts[0].PhraseId);
+            Equal(5, actual.PhraseParts.Count);
         }
 
         public Task InitializeAsync() => _testDataFactory.Setup();

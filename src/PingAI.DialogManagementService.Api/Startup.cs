@@ -35,6 +35,7 @@ using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
+using IAuthorizationService = PingAI.DialogManagementService.Application.Interfaces.Services.IAuthorizationService;
 
 namespace PingAI.DialogManagementService.Api
 {
@@ -97,7 +98,7 @@ namespace PingAI.DialogManagementService.Api
             
             services.AddScoped<IAuthorizationHandler, ProjectAuthorizationHandler>();
             services.AddHttpContextAccessor();
-            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IAuthorizationService, AuthorizationService>();
 
             services.AddSwaggerGen(options =>
             {
@@ -146,6 +147,7 @@ namespace PingAI.DialogManagementService.Api
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IIntentRepository, IntentRepository>();
             services.AddTransient<IEntityTypeRepository, EntityTypeRepository>();
+            services.AddTransient<IEntityNameRepository, EntityNameRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
