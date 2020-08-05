@@ -28,7 +28,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
         [Fact]
         public async Task CreateIntent()
         {
-            var phraseId = Guid.NewGuid().ToString();
+            var phraseId1 = Guid.NewGuid().ToString();
+            var phraseId2 = Guid.NewGuid().ToString();
             var httpResponse = await _client.PostAsJsonAsync(
                 "/dms/api/v1/intents", new CreateIntentRequest
                 {
@@ -40,7 +41,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                         new CreatePhrasePartDto
                         {
                             Text = "My favourite city is Kyoto",
-                            PhraseId = phraseId,
+                            PhraseId = phraseId1,
                             Type = PhrasePartType.TEXT.ToString(),
                         },
                         new CreatePhrasePartDto
@@ -49,27 +50,48 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                             EntityTypeId = _testingFixture.EntityType.Id.ToString(),
                             Value = "Kyoto",
                             Type = PhrasePartType.CONSTANT_ENTITY.ToString(),
-                            PhraseId = phraseId
+                            PhraseId = phraseId1
+                        },
+                        new CreatePhrasePartDto
+                        {
+                            Text = "My hometown is ",
+                            PhraseId = phraseId2,
+                            Type = PhrasePartType.TEXT.ToString(),
+                        },
+                        new CreatePhrasePartDto
+                        {
+                            Text = "Qingdao",
+                            EntityName = "hometown",
+                            EntityTypeId = _testingFixture.EntityType.Id.ToString(),
+                            Type = PhrasePartType.ENTITY.ToString(),
+                            PhraseId = phraseId2
                         }
                     }
                 });
             await httpResponse.IsOk();
             var response = await httpResponse.Content.ReadFromJsonAsync<CreateIntentResponse>();
+            EntityName? entityNameHometown = null;
 
             // clean up
             await _factory.WithDbContext(async context =>
             {
+                entityNameHometown = context.EntityNames.First(e => e.Name == "hometown");
                 context.RemoveRange(context.Intents
                     .Include(i => i.PhraseParts)
                     .Single(i => i.Id == Guid.Parse(response.IntentId)).PhraseParts);
                 context.Intents.Remove(context.Intents.Single(i => i.Id == Guid.Parse(response.IntentId)));
+                if (entityNameHometown != null)
+                {
+                    context.Remove(entityNameHometown);
+                }
                 await context.SaveChangesAsync();
             });
 
+            NotNull(entityNameHometown);
             NotNull(response);
             Equal(_testingFixture.Project.Id.ToString(), response.ProjectId);
             Equal("test intent", response.Name);
-            Equal(2, response.PhraseParts.Length);
+            Equal(4, response.PhraseParts.Length);
         }
 
         public async Task InitializeAsync()
