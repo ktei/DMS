@@ -48,8 +48,12 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         public async Task AddIntentWithPhraseParts()
         {
             // Arrange
+            await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
+            var project = _testDataFactory.Project;
+            var intent = new Intent(Guid.NewGuid(), "welcome",
+                project.Id, IntentType.STANDARD);
 
-            
+
             // Act
             
             // Assert

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -13,7 +14,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         private string _iconName = string.Empty;
         private string _color = string.Empty;
         public IntentType Type { get; private set; }
-        
+
         private readonly List<PhrasePart> _phraseParts = new List<PhrasePart>();
         public IReadOnlyList<PhrasePart> PhraseParts => _phraseParts.ToImmutableList();
 
@@ -28,6 +29,19 @@ namespace PingAI.DialogManagementService.Domain.Model
             Name = name;
             ProjectId = projectId;
             Type = type;
+        }
+
+        public void UpdatePhrases(IEnumerable<PhrasePart> phraseParts)
+        {
+            _phraseParts.Clear();
+            var partsToAdd = phraseParts.ToArray();
+            for (var i = 0; i < partsToAdd.Length; i++)
+            {
+                var p = partsToAdd[i];
+                p.UpdatePosition(i);
+                p.UpdateIntentId(Id);
+            }
+            _phraseParts.AddRange(partsToAdd);
         }
     }
 
