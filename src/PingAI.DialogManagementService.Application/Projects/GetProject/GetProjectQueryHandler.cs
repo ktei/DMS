@@ -21,15 +21,15 @@ namespace PingAI.DialogManagementService.Application.Projects.GetProject
 
         public async Task<Project> Handle(GetProjectQuery request, CancellationToken cancellationToken)
         {
+            var canRead = await _authService.UserCanReadProject(request.ProjectId);
+            if (!canRead)
+                throw new ForbiddenException($"Project {request.ProjectId} cannot be accessed");
+            
             var project = await _projectRepository.GetProjectById(request.ProjectId);
             if (project == null)
             {
                 throw new ForbiddenException($"Project {request.ProjectId} cannot be accessed");
             }
-
-            var canRead = await _authService.UserCanReadProject(project);
-            if (!canRead)
-                throw new ForbiddenException($"Project {request.ProjectId} cannot be accessed");
 
             return project;
         }

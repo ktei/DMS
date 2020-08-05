@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,18 +19,18 @@ namespace PingAI.DialogManagementService.Api.Authorization.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<bool> UserCanReadProject(Project project)
+        public async Task<bool> UserCanReadProject(Guid projectId)
         {
             var authResult =
-                await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, project,
+                await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, projectId,
                     Operations.Read);
             return authResult.Succeeded;
         }
 
-        public async Task<bool> UserCanWriteProject(Project project)
+        public async Task<bool> UserCanWriteProject(Guid projectId)
         {
             var authResult =
-                await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, project,
+                await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, projectId,
                     Operations.Write);
             return authResult.Succeeded;
         }

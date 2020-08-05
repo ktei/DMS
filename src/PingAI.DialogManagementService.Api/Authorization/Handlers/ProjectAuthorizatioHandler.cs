@@ -4,12 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
-using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Authorization.Handlers
 {
     public class ProjectAuthorizationHandler :
-        AuthorizationHandler<OperationAuthorizationRequirement, Project>
+        AuthorizationHandler<OperationAuthorizationRequirement, Guid>
     {
         private readonly IUserRepository _userRepository;
         private readonly IOrganisationRepository _organisationRepository;
@@ -30,7 +29,7 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
         
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
             OperationAuthorizationRequirement requirement,
-            Project resource)
+            Guid resource)
         {
             var user = await _userRepository.GetUserByAut0Id(context.User.Identity.Name);
             if (user == null)
@@ -54,7 +53,7 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
                 .SelectMany(o => o.Projects)
                 .Select(p => p.Id);
 
-            if (projectIds.Contains(resource.Id))
+            if (projectIds.Contains(resource))
             {
                 context.Succeed(requirement);
                 return;

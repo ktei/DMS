@@ -24,11 +24,11 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
 
         public async Task<Project> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
         {
-            var project = await _projectRepository.GetProjectById(request.ProjectId);
-            if (project == null) throw new ForbiddenException($"Project {request.ProjectId} cannot be accessed.");
-            var canWrite = await _authService.UserCanWriteProject(project);
+            var canWrite = await _authService.UserCanWriteProject(request.ProjectId);
             if (!canWrite)
                 throw new ForbiddenException($"Sorry, you have no permission to write to project {request.ProjectId}");
+            var project = await _projectRepository.GetProjectById(request.ProjectId);
+            if (project == null) throw new ForbiddenException($"Project {request.ProjectId} cannot be accessed.");
             project.UpdateWidgetTitle(request.WidgetTitle);
             project.UpdateWidgetColor(request.WidgetColor);
             project.UpdateWidgetDescription(request.WidgetDescription);

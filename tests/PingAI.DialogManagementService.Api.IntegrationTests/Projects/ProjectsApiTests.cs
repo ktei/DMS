@@ -9,10 +9,12 @@ using static Xunit.Assert;
 
 namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
 {
-    public class ProjectsApiTests : IClassFixture<TestWebApplicationFactory>
+    public class ProjectsApiTests : IClassFixture<TestWebApplicationFactory>, IAsyncLifetime
     {
         private readonly HttpClient _client;
         private readonly TestWebApplicationFactory _factory;
+        private TestingFixture _testingFixture;
+        private Func<Task> _tearDownTestingFixture;
 
         public ProjectsApiTests(TestWebApplicationFactory factory)
         {
@@ -23,37 +25,44 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
         [Fact]
         public async Task GetProject()
         {
-            await _factory.WithTestingFixture(async fixture =>
-            {
-                var projectId = fixture.Project.Id;
-                var response = await _client.GetFromJsonAsync<GetProjectResponse>(
-                    $"/dms/api/v1/projects/{projectId}");
-                NotNull(response);
-                Equal(projectId.ToString(), response.ProjectId);
-            });
+            var fixture = _testingFixture;
+            var projectId = fixture.Project.Id;
+            var response = await _client.GetFromJsonAsync<GetProjectResponse>(
+                $"/dms/api/v1/projects/{projectId}");
+            NotNull(response);
+            Equal(projectId.ToString(), response.ProjectId);
+
         }
 
         [Fact]
         public async Task UpdateProject()
         {
-            await _factory.WithTestingFixture(async fixture =>
-            {
-                var httpResponse = await _client.PutAsJsonAsync(
-                    $"/dms/api/v1/projects/{fixture.Project.Id}",
-                    new UpdateProjectRequest
-                    {
-                        WidgetTitle = "title",
-                        WidgetColor = "#ffffff",
-                        WidgetDescription = "description",
-                        GreetingMessage = "greeting",
-                        FallbackMessage = "fallback",
-                        Enquiries = new[] {"email"}
-                    });
-                httpResponse.IsOk();
-                var response = await httpResponse.Content.ReadFromJsonAsync<UpdateProjectResponse>();
-                NotNull(response);
-                Equal(fixture.Project.Id.ToString(), response.ProjectId);
-            });
+            var fixture = _testingFixture;
+            var httpResponse = await _client.PutAsJsonAsync(
+                $"/dms/api/v1/projects/{fixture.Project.Id}",
+                new UpdateProjectRequest
+                {
+                    WidgetTitle = "title",
+                    WidgetColor = "#ffffff",
+                    WidgetDescription = "description",
+                    GreetingMessage = "greeting",
+                    FallbackMessage = "fallback",
+                    Enquiries = new[] {"email"}
+                });
+            await httpResponse.IsOk();
+            var response = await httpResponse.Content.ReadFromJsonAsync<UpdateProjectResponse>();
+            NotNull(response);
+            Equal(fixture.Project.Id.ToString(), response.ProjectId);
+        }
+
+        public async Task InitializeAsync()
+        {
+            (_testingFixture, _tearDownTestingFixture) = await _factory.SetupTestingFixture();
+        }
+
+        public async Task DisposeAsync()
+        {
+            await _tearDownTestingFixture.Invoke();
         }
     }
 }

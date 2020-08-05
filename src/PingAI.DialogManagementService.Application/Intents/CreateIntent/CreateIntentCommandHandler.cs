@@ -27,10 +27,7 @@ namespace PingAI.DialogManagementService.Application.Intents.CreateIntent
 
         public async Task<Intent> Handle(CreateIntentCommand request, CancellationToken cancellationToken)
         {
-            var project = await _projectRepository.GetProjectById(request.ProjectId);
-            if (project == null)
-                throw new ForbiddenException("No permission to create intents under current project");
-            var canWrite = await _authService.UserCanWriteProject(project);
+            var canWrite = await _authService.UserCanWriteProject(request.ProjectId);
             if (!canWrite)
                 throw new ForbiddenException("No permission to create intents under current project");
             

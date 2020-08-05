@@ -16,6 +16,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         {
             NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type",
                 new NpgsqlNullNameTranslator());
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type",
+                new NpgsqlNullNameTranslator());
+
         }
         
         public DialogManagementContext(DbContextOptions<DialogManagementContext> options)

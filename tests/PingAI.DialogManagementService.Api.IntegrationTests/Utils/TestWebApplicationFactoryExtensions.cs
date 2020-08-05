@@ -32,15 +32,16 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                     AllowAutoRedirect = false
                 });
 
-        public static async Task WithTestingFixture(this TestWebApplicationFactory factory, Func<TestingFixture, Task> useFixture)
+        public static async Task<(TestingFixture TestingFixture, Func<Task> TearDownTestingFixture)>
+            SetupTestingFixture(this TestWebApplicationFactory factory)
         {
-            using var scope = factory.Services.CreateScope();
+            var scope = factory.Services.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<DialogManagementContext>();
             var organisation =
                 new Organisation(Guid.NewGuid(), "test organisation", "test description", null);
             var project = new Project(Guid.NewGuid(), "test project", organisation.Id,
                 "test widget title", "#ffffff",
-                "test widget description", "test fallback message", 
+                "test widget description", "test fallback message",
                 "test greeting message", new string[] { });
             var organisationUser = new OrganisationUser(Guid.NewGuid(), organisation.Id,
                 Guid.Parse("3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f"));
@@ -48,18 +49,21 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
             await context.AddAsync(organisationUser);
             await context.AddAsync(project);
             await context.SaveChangesAsync();
-
-            await useFixture(new TestingFixture
+            var testingFixture = new TestingFixture
             {
                 Organisation = organisation,
                 Project = project,
-                UserId = Guid.Parse("3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f")
-            });
+                UserId = organisationUser.UserId
+            };
 
-            context.Remove(project);
-            context.Remove(organisationUser);
-            context.Remove(organisation);
-            await context.SaveChangesAsync();
+            return (testingFixture, async () =>
+            {
+                context.Remove(project);
+                context.Remove(organisationUser);
+                context.Remove(organisation);
+                await context.SaveChangesAsync();
+                scope.Dispose();
+            });
         }
 
         public static Task WithDbContext(this TestWebApplicationFactory factory,

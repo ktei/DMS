@@ -9,13 +9,15 @@ using static Xunit.Assert;
 
 namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Repositories
 {
-    public class IntentRepositoryTests
+    public class IntentRepositoryTests : IAsyncLifetime
     {
         private readonly DialogManagementContextFactory _dialogManagementContextFactory;
+        private readonly TestDataFactory _testDataFactory;
         
         public IntentRepositoryTests()
         {
             _dialogManagementContextFactory = new DialogManagementContextFactory();
+            _testDataFactory = new TestDataFactory(_dialogManagementContextFactory.CreateDbContext(new string[] { }));
         }
 
         [Fact]
@@ -23,9 +25,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         {
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
-            var testDataFactory = new TestDataFactory(context);
-            await testDataFactory.Setup();
-            var project = testDataFactory.Project;
+            var project = _testDataFactory.Project;
             var intent1 = new Intent(Guid.NewGuid(), "generic", project.Id, IntentType.GENERIC);
             var intent2 = new Intent(Guid.NewGuid(), "standard", project.Id, IntentType.STANDARD);
             await context.AddRangeAsync(intent1, intent2);
@@ -39,9 +39,27 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             
             // clean up
             context.Intents.RemoveRange(intent1, intent2);
-            await testDataFactory.Cleanup();
+            await context.SaveChangesAsync();
             
             Equal(2, actual.Count);
         }
+
+        [Fact]
+        public async Task AddIntentWithPhraseParts()
+        {
+            // Arrange
+
+            
+            // Act
+            
+            // Assert
+            // False(true);
+            
+            // clean up
+        }
+
+        public Task InitializeAsync() => _testDataFactory.Setup();
+
+        public Task DisposeAsync() => _testDataFactory.Cleanup();
     }
 }

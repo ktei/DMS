@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -11,6 +13,10 @@ namespace PingAI.DialogManagementService.Domain.Model
         private string _iconName = string.Empty;
         private string _color = string.Empty;
         public IntentType Type { get; private set; }
+        
+        private readonly List<PhrasePart> _phraseParts = new List<PhrasePart>();
+        public IReadOnlyList<PhrasePart> PhraseParts => _phraseParts.ToImmutableList();
+
         
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

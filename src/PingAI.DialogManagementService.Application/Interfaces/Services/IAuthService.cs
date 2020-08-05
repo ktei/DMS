@@ -1,11 +1,11 @@
+using System;
 using System.Threading.Tasks;
-using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Application.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<bool> UserCanReadProject(Project project);
-        Task<bool> UserCanWriteProject(Project project);
+        Task<bool> UserCanReadProject(Guid projectId);
+        Task<bool> UserCanWriteProject(Guid projectId);
     }
 }
