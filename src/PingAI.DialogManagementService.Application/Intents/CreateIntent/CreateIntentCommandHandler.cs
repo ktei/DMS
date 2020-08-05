@@ -71,6 +71,7 @@ namespace PingAI.DialogManagementService.Application.Intents.CreateIntent
                 await _entityNameRepository.AddEntityName(newEntityName);
             }
             
+            intent.UpdatePhrases(request.PhraseParts);
             intent = await _intentRepository.AddIntent(intent);
             
             await _unitOfWork.SaveChanges();

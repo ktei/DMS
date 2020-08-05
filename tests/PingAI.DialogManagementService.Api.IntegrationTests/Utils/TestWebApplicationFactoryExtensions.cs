@@ -45,22 +45,24 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                 "test greeting message", new string[] { });
             var organisationUser = new OrganisationUser(Guid.NewGuid(), organisation.Id,
                 Guid.Parse("3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f"));
-            await context.AddAsync(organisation);
-            await context.AddAsync(organisationUser);
-            await context.AddAsync(project);
+            var entityType = new EntityType(Guid.NewGuid(), "city", project.Id, "city name", null);
+            var entityName = new EntityName(Guid.NewGuid(), "favouriteCity", project.Id, true);
+            await context.AddRangeAsync(organisation, organisationUser,
+                project, entityType, entityName);
             await context.SaveChangesAsync();
             var testingFixture = new TestingFixture
             {
                 Organisation = organisation,
                 Project = project,
-                UserId = organisationUser.UserId
+                UserId = organisationUser.UserId,
+                EntityType = entityType, 
+                EntityName = entityName
             };
 
             return (testingFixture, async () =>
             {
-                context.Remove(project);
-                context.Remove(organisationUser);
-                context.Remove(organisation);
+                context.RemoveRange(project, organisationUser,
+                    organisation, entityType, entityName);
                 await context.SaveChangesAsync();
                 scope.Dispose();
             });
