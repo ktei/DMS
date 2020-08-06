@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
@@ -9,6 +8,7 @@ using PingAI.DialogManagementService.Api.Models.Intents;
 using PingAI.DialogManagementService.Application.Intents.CreateIntent;
 using PingAI.DialogManagementService.Application.Intents.GetIntent;
 using PingAI.DialogManagementService.Application.Intents.ListIntents;
+using PingAI.DialogManagementService.Application.Intents.UpdateIntent;
 using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Controllers
@@ -25,12 +25,12 @@ namespace PingAI.DialogManagementService.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<IntentListItemDto>>> ListIntents([FromQuery] Guid? projectId)
+        public async Task<ActionResult<ListIntentsResponse>> ListIntents([FromQuery] Guid? projectId)
         {
             var query = new ListIntentsQuery(projectId);
             
             var results = await _mediator.Send(query);
-            return results.Select(x => new IntentListItemDto(x)).ToList();
+            return new ListIntentsResponse(results.Select(x => new IntentListItemDto(x)));
         }
 
         [HttpGet("{intentId}")]
@@ -39,6 +39,17 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var query = new GetIntentQuery(intentId);
             var intent = await _mediator.Send(query);
             return new IntentDto(intent);
+        }
+
+        [HttpPut("{intentId}")]
+        public async Task<ActionResult<UpdateIntentResponse>> UpdateIntent([FromRoute] Guid intentId,
+            [FromBody] UpdateIntentRequest request)
+        {
+            var phraseParts = request.PhraseParts?.Select(p => 
+                MapCreatePhrasePartDto(Guid.Empty, intentId, p));
+            var intent = await _mediator.Send(new UpdateIntentCommand(intentId, request.Name, phraseParts));
+            
+            return new UpdateIntentResponse(intent);
         }
 
         [HttpPost]

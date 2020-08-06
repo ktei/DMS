@@ -15,12 +15,14 @@ namespace PingAI.DialogManagementService.Domain.Model
         private string _color = string.Empty;
         public IntentType Type { get; private set; }
 
-        private readonly List<PhrasePart> _phraseParts = new List<PhrasePart>();
+        private List<PhrasePart> _phraseParts = new List<PhrasePart>();
         public IReadOnlyList<PhrasePart> PhraseParts => _phraseParts.ToImmutableList();
 
         
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        private const int MaxNameLength = 255;
 
         public Intent(Guid id, string name, Guid projectId,
             IntentType type)
@@ -31,15 +33,30 @@ namespace PingAI.DialogManagementService.Domain.Model
             Type = type;
         }
 
+        public void UpdateName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException(nameof(name));
+            }
+
+            if (name.Length > MaxNameLength)
+            {
+                throw new ArgumentException($"{nameof(name)}'s max length is 255");
+            }
+
+            Name = name;
+        }
+
         public void UpdatePhrases(IEnumerable<PhrasePart> phraseParts)
         {
             _phraseParts.Clear();
             var partsToAdd = phraseParts.ToArray();
             for (var i = 0; i < partsToAdd.Length; i++)
             {
-                var p = partsToAdd[i];
-                p.UpdatePosition(i);
-                p.UpdateIntentId(Id);
+                var part = partsToAdd[i];
+                part.UpdatePosition(i);
+                part.UpdateIntentId(Id);
             }
             _phraseParts.AddRange(partsToAdd);
         }

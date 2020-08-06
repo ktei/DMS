@@ -76,8 +76,11 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
         [Fact]
         public async Task CreateIntent()
         {
+            // Arrange
             var phraseId1 = Guid.NewGuid().ToString();
             var phraseId2 = Guid.NewGuid().ToString();
+            
+            // Act
             var httpResponse = await _client.PostAsJsonAsync(
                 "/dms/api/v1/intents", new CreateIntentRequest
                 {
@@ -134,12 +137,98 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 }
                 await context.SaveChangesAsync();
             });
-
+            
+            // Assert
             NotNull(entityNameHometown);
             NotNull(response);
             Equal(_testingFixture.Project.Id.ToString(), response.ProjectId);
             Equal("test intent", response.Name);
             Equal(4, response.PhraseParts.Length);
+        }
+
+        [Fact]
+        public async Task UpdateIntent()
+        {
+            // Arrange
+            var intent = new Intent(Guid.NewGuid(), "HelloWorld", _testingFixture.Project.Id,
+                IntentType.STANDARD);
+            var phraseId = Guid.NewGuid();
+            var phrasePart1 = new PhrasePart(Guid.NewGuid(), intent.Id,
+                phraseId, 0, "hello world", null, PhrasePartType.TEXT,
+                null, null);
+            var phrasePart2 = new PhrasePart(Guid.NewGuid(), intent.Id,
+                phraseId, 0, null,"Beijing", PhrasePartType.CONSTANT_ENTITY,
+                _testingFixture.EntityName.Id, _testingFixture.EntityType.Id);
+            intent.UpdatePhrases(new PhrasePart[]
+            {
+                phrasePart1,
+                phrasePart2
+            });
+            
+            await _factory.WithDbContext(async context =>
+            {
+                await context.AddAsync(intent);
+                await context.SaveChangesAsync();
+            });
+
+            // Act
+            var phraseId2 = Guid.NewGuid();
+            var httpResponse = await _client.PutAsJsonAsync(
+                $"/dms/api/v1/intents/{intent.Id}",
+                new UpdateIntentRequest
+                {
+                    Name = "helloWorld",
+                    PhraseParts = new[]
+                    {
+                        new CreatePhrasePartDto
+                        {
+                            Text = "Hello World!",
+                            PhraseId = phraseId.ToString(),
+                            Type = PhrasePartType.TEXT.ToString()
+                        },
+                        new CreatePhrasePartDto
+                        {
+                            Value = "Shanghai",
+                            PhraseId = phraseId.ToString(),
+                            Type = PhrasePartType.CONSTANT_ENTITY.ToString(),
+                            EntityName = _testingFixture.EntityName.Name,
+                            EntityTypeId = _testingFixture.EntityType.Id.ToString()
+                        },
+                        new CreatePhrasePartDto
+                        {
+                            Text = "My flight departs from ",
+                            PhraseId = phraseId2.ToString(),
+                            Type = PhrasePartType.TEXT.ToString()
+                        },
+                        new CreatePhrasePartDto
+                        {
+                            Text = "Melbourne",
+                            PhraseId = phraseId2.ToString(),
+                            Type = PhrasePartType.ENTITY.ToString(),
+                            EntityName = "departureCity",
+                            EntityTypeId = _testingFixture.EntityType.Id.ToString()
+                        }
+                    }
+                });
+
+            await _factory.WithDbContext(async context =>
+            {
+                // clean up
+                context.RemoveRange(context.PhraseParts.Where(p => p.IntentId == intent.Id));
+                context.RemoveRange(context.Intents.First(x => x.Id == intent.Id));
+                await context.SaveChangesAsync();
+
+                // Assert
+                await httpResponse.IsOk();
+                var response = await httpResponse.Content.ReadFromJsonAsync<UpdateIntentResponse>();
+                Equal(4, response.PhraseParts.Length);
+                Equal(intent.Id.ToString(), response.IntentId);
+                Equal("helloWorld", response.Name);
+                Contains(response.PhraseParts, p => 
+                    p.EntityName == _testingFixture.EntityName.Name && p.Value == "Shanghai");
+                Contains(response.PhraseParts, p => 
+                    p.EntityName == "departureCity" && p.Text == "Melbourne");
+            });
         }
 
         public async Task InitializeAsync()
