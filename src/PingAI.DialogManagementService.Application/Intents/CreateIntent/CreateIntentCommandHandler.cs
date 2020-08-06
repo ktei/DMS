@@ -8,6 +8,7 @@ using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
+using static PingAI.DialogManagementService.Domain.ErrorHandling.ErrorDescriptions;
 
 namespace PingAI.DialogManagementService.Application.Intents.CreateIntent
 {
@@ -34,7 +35,7 @@ namespace PingAI.DialogManagementService.Application.Intents.CreateIntent
         {
             var canWrite = await _authorizationService.UserCanWriteProject(request.ProjectId);
             if (!canWrite)
-                throw new ForbiddenException("No permission to create intents under current project");
+                throw new ForbiddenException(ProjectWriteDenied);
             
             var intent = new Intent(Guid.NewGuid(), request.Name, request.ProjectId, request.IntentType);
             var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
@@ -62,7 +63,7 @@ namespace PingAI.DialogManagementService.Application.Intents.CreateIntent
 
                 if (phrasePart.EntityTypeId.HasValue && !entityTypeIds.Contains(phrasePart.EntityTypeId.Value))
                 {
-                    throw new BadRequestException($"EntityType {phrasePart.EntityTypeId} does not exist");
+                    throw new BadRequestException(ErrorDescriptions.EntityTypeNotFound);
                 }
             }
 

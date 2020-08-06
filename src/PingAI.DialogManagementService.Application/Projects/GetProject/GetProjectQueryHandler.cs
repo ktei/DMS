@@ -5,6 +5,7 @@ using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
+using static PingAI.DialogManagementService.Domain.ErrorHandling.ErrorDescriptions;
 
 namespace PingAI.DialogManagementService.Application.Projects.GetProject
 {
@@ -23,12 +24,12 @@ namespace PingAI.DialogManagementService.Application.Projects.GetProject
         {
             var canRead = await _authorizationService.UserCanReadProject(request.ProjectId);
             if (!canRead)
-                throw new ForbiddenException($"Project {request.ProjectId} cannot be accessed");
+                throw new ForbiddenException(ProjectReadDenied);
             
             var project = await _projectRepository.GetProjectById(request.ProjectId);
             if (project == null)
             {
-                throw new ForbiddenException($"Project {request.ProjectId} cannot be accessed");
+                throw new ForbiddenException(ProjectReadDenied);
             }
 
             return project;

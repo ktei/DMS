@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -23,6 +24,53 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
         {
             _factory = factory;
             _client = _factory.CreateAuthenticatedClient();
+        }
+
+        [Fact]
+        public async Task ListIntents()
+        {
+            // Arrange
+            await _factory.WithDbContext(async context =>
+            {
+                var intent1 = new Intent(Guid.NewGuid(), "i1", _testingFixture.Project.Id, IntentType.STANDARD);
+                var intent2 = new Intent(Guid.NewGuid(), "t2", _testingFixture.Project.Id, IntentType.STANDARD);
+                await context.AddRangeAsync(intent1, intent2);
+                await context.SaveChangesAsync();
+                var actual = await _client.GetFromJsonAsync<List<IntentListItemDto>>(
+                    $"/dms/api/v1/intents?projectId={_testingFixture.Project.Id}");
+                
+                // clean up
+                context.RemoveRange(intent1, intent2);
+                await context.SaveChangesAsync();
+                
+                Equal(2, actual.Count);
+            });
+        }
+
+        [Fact]
+        public async Task GetIntent()
+        {
+            // Arrange
+            await _factory.WithDbContext(async context =>
+            {
+                var intent = new Intent(Guid.NewGuid(), "i1", _testingFixture.Project.Id, IntentType.STANDARD);
+                var phrasePart = new PhrasePart(Guid.NewGuid(), intent.Id,
+                    Guid.NewGuid(), 0, "Hello, World!", null, PhrasePartType.TEXT,
+                    _testingFixture.EntityName.Id, _testingFixture.EntityType.Id);
+                await context.AddRangeAsync(intent, phrasePart);
+                await context.SaveChangesAsync();
+                var actual = await _client.GetFromJsonAsync<IntentDto>(
+                    $"/dms/api/v1/intents/{intent.Id}");
+                
+                // clean up
+                context.RemoveRange(intent, phrasePart);
+                await context.SaveChangesAsync();
+                
+                Equal(intent.Id.ToString(), actual.IntentId);
+                Single(actual.PhraseParts);
+                Equal(_testingFixture.EntityName.Name, actual.PhraseParts[0].EntityName);
+                Equal(_testingFixture.EntityType.Id.ToString(), actual.PhraseParts[0].EntityTypeId);
+            }); 
         }
 
         [Fact]

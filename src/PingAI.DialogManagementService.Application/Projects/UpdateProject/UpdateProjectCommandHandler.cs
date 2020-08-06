@@ -5,6 +5,7 @@ using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
+using static PingAI.DialogManagementService.Domain.ErrorHandling.ErrorDescriptions;
 
 namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
 {
@@ -26,9 +27,14 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
         {
             var canWrite = await _authorizationService.UserCanWriteProject(request.ProjectId);
             if (!canWrite)
-                throw new ForbiddenException($"Sorry, you have no permission to write to project {request.ProjectId}");
+                throw new ForbiddenException(ProjectWriteDenied);
             var project = await _projectRepository.GetProjectById(request.ProjectId);
-            if (project == null) throw new ForbiddenException($"Project {request.ProjectId} cannot be accessed.");
+            if (project == null)
+            {
+                // TODO: this should never happen
+                // consider adding logs here
+                throw new ForbiddenException(ProjectReadDenied);
+            }
             project.UpdateWidgetTitle(request.WidgetTitle);
             project.UpdateWidgetColor(request.WidgetColor);
             project.UpdateWidgetDescription(request.WidgetDescription);

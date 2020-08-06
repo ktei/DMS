@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
@@ -6,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Intents;
 using PingAI.DialogManagementService.Application.Intents.CreateIntent;
+using PingAI.DialogManagementService.Application.Intents.GetIntent;
+using PingAI.DialogManagementService.Application.Intents.ListIntents;
 using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Controllers
@@ -19,6 +22,23 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public IntentsController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<IntentListItemDto>>> ListIntents([FromQuery] Guid? projectId)
+        {
+            var query = new ListIntentsQuery(projectId);
+            
+            var results = await _mediator.Send(query);
+            return results.Select(x => new IntentListItemDto(x)).ToList();
+        }
+
+        [HttpGet("{intentId}")]
+        public async Task<ActionResult<IntentDto>> GetIntent([FromRoute] Guid intentId)
+        {
+            var query = new GetIntentQuery(intentId);
+            var intent = await _mediator.Send(query);
+            return new IntentDto(intent);
         }
 
         [HttpPost]

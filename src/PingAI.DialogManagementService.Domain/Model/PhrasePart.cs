@@ -46,6 +46,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         
         public void UpdateEntityName(EntityName entityName)
         {
+            _ = entityName ?? throw new ArgumentNullException(nameof(entityName));
             EntityName = entityName;
             EntityNameId = entityName.Id;
         }

@@ -18,7 +18,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         }
 
         public Task<List<Intent>> GetIntentsByProjectId(Guid projectId) =>
-            _context.Intents.Where(x => x.ProjectId == projectId).ToListAsync();
+            _context.Intents.Where(x => x.ProjectId == projectId)
+                .OrderBy(x => x.Name)
+                .ToListAsync();
 
         public Task<Intent?> GetIntent(Guid intentId)
         {
