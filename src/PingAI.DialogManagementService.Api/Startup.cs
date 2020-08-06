@@ -1,37 +1,28 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using PingAI.DialogManagementService.Api.Authorization.Handlers;
-using PingAI.DialogManagementService.Api.Authorization.Requirements;
 using PingAI.DialogManagementService.Api.Authorization.Services;
 using PingAI.DialogManagementService.Api.Behaviours;
 using PingAI.DialogManagementService.Api.Filters;
 using PingAI.DialogManagementService.Api.Models;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
-using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
@@ -159,9 +150,22 @@ namespace PingAI.DialogManagementService.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (!env.IsProduction())
             {
                 app.UseDeveloperExceptionPage();
+                
+                app
+                    .UseSwagger(opts =>
+                    {
+                        opts.RouteTemplate = $"{Configuration["RoutePrefix"]}/swagger/{{documentName}}/swagger.json";
+                    })
+                    .UseSwaggerUI(x =>
+                    {
+                        x.SwaggerEndpoint($"/{Configuration["RoutePrefix"]}/swagger/v1/swagger.json",
+                            $"Dialog Management API v1");
+                        
+                        x.RoutePrefix = $"{Configuration["RoutePrefix"]}/swagger";
+                    });
             }
 
             // app.UseHttpsRedirection();
@@ -171,16 +175,6 @@ namespace PingAI.DialogManagementService.Api
             app.UseAuthentication();
             app.UseAuthorization();
             
-            app
-                .UseSwagger(opts => { opts.RouteTemplate = $"{Configuration["RoutePrefix"]}/swagger/{{documentName}}/swagger.json"; })
-                .UseSwaggerUI(x =>
-                {
-                    x.SwaggerEndpoint($"/{Configuration["RoutePrefix"]}/swagger/v1/swagger.json",
-                        $"Dialog Management API v1");
-                        
-                    x.RoutePrefix = $"{Configuration["RoutePrefix"]}/swagger";
-                });
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks($"/{Configuration["RoutePrefix"]}/health");
