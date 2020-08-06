@@ -32,9 +32,11 @@ using PingAI.DialogManagementService.Api.Filters;
 using PingAI.DialogManagementService.Api.Models;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
+using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
+using PingAI.DialogManagementService.Infrastructure.Services.Nlu;
 using IAuthorizationService = PingAI.DialogManagementService.Application.Interfaces.Services.IAuthorizationService;
 
 namespace PingAI.DialogManagementService.Api
@@ -148,6 +150,11 @@ namespace PingAI.DialogManagementService.Api
             services.AddTransient<IIntentRepository, IntentRepository>();
             services.AddTransient<IEntityTypeRepository, EntityTypeRepository>();
             services.AddTransient<IEntityNameRepository, EntityNameRepository>();
+
+            services.AddHttpClient<INluService, NluService>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration["NluApiHost"]);
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

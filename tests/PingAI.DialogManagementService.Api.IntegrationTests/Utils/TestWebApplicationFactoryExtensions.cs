@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
@@ -38,18 +39,28 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
             var scope = factory.Services.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<DialogManagementContext>();
             var organisation =
-                new Organisation(Guid.NewGuid(), "test organisation", "test description", null);
-            var project = new Project(Guid.NewGuid(), "test project", organisation.Id,
-                "test widget title", "#ffffff",
-                "test widget description", "test fallback message",
-                "test greeting message", new string[] { });
+                await context.Organisations.FindAsync(Guid.Parse("6b95c285-363c-4b2a-a322-54fe3cad9698"));
+            var project = await context.Projects.FindAsync(Guid.Parse("3932f12d-ed9e-441a-8a13-8c4ca88b2e4c"));
             var organisationUser = new OrganisationUser(Guid.NewGuid(), organisation.Id,
                 Guid.Parse("3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f"));
-            var entityType = new EntityType(Guid.NewGuid(), "city", project.Id, "city name", null);
-            var entityName = new EntityName(Guid.NewGuid(), "favouriteCity", project.Id, true);
-            await context.AddRangeAsync(organisation, organisationUser,
-                project, entityType, entityName);
-            await context.SaveChangesAsync();
+            var entityType = await context.EntityTypes.FirstOrDefaultAsync(e => e.Name == "city");
+            var entityName = await context.EntityNames.FirstOrDefaultAsync(e => e.Name == "favouriteCity");
+            entityType ??= (await context.AddAsync(new EntityType(Guid.NewGuid(), 
+                    "city", project.Id, "city name", null))).Entity;
+            entityName ??= (await context.AddAsync(new EntityName(Guid.NewGuid(), 
+                    "favouriteCity", project.Id, true))).Entity;
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch
+            {
+                // TODO: this is a bad way to fix concurrency issue
+                // We only want to add these entityName, entityType
+                // once, but tests run concurrently so we may encounter
+                // issues such as entityName with same name already exists
+            }
+
             var testingFixture = new TestingFixture
             {
                 Organisation = organisation,
@@ -61,16 +72,15 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
 
             return (testingFixture, async () =>
             {
-                context.RemoveRange(project, organisationUser,
-                    organisation, entityType, entityName);
-                await context.SaveChangesAsync();
+                // we don't h ave anything to dispose of yet
                 scope.Dispose();
             });
         }
 
         public static Task WithDbContext(this TestWebApplicationFactory factory,
             Func<DialogManagementContext, Task> useDbContext)
-            => factory.WithServiceProvider(sp => useDbContext(sp.GetRequiredService<DialogManagementContext>()));
+            => factory.WithServiceProvider(sp => 
+                useDbContext(sp.GetRequiredService<DialogManagementContext>()));
 
         public static async Task WithServiceProvider(this TestWebApplicationFactory factory,
             Func<IServiceProvider, Task> useServiceProvider)
