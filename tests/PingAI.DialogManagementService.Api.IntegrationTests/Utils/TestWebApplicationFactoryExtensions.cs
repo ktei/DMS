@@ -33,6 +33,9 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                     AllowAutoRedirect = false
                 });
 
+        private static readonly Guid EntityNameId = Guid.NewGuid();
+        private static readonly Guid EntityTypeId = Guid.NewGuid();
+        
         public static async Task<(TestingFixture TestingFixture, Func<Task> TearDownTestingFixture)>
             SetupTestingFixture(this TestWebApplicationFactory factory)
         {
@@ -43,12 +46,12 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
             var project = await context.Projects.FindAsync(Guid.Parse("3932f12d-ed9e-441a-8a13-8c4ca88b2e4c"));
             var organisationUser = new OrganisationUser(Guid.NewGuid(), organisation.Id,
                 Guid.Parse("3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f"));
-            var entityType = await context.EntityTypes.FirstOrDefaultAsync(e => e.Name == "city");
-            var entityName = await context.EntityNames.FirstOrDefaultAsync(e => e.Name == "favouriteCity");
-            entityType ??= (await context.AddAsync(new EntityType(Guid.NewGuid(), 
-                    "city", project.Id, "city name", null))).Entity;
-            entityName ??= (await context.AddAsync(new EntityName(Guid.NewGuid(), 
-                    "favouriteCity", project.Id, true))).Entity;
+            var entityType = await context.EntityTypes.FirstOrDefaultAsync(e => e.Name == "TEST_city");
+            var entityName = await context.EntityNames.FirstOrDefaultAsync(e => e.Name == "TEST_favouriteCity");
+            entityType ??= (await context.AddAsync(new EntityType(EntityTypeId, 
+                    "TEST_city", project.Id, "city name", null))).Entity;
+            entityName ??= (await context.AddAsync(new EntityName(EntityNameId,
+                    "TEST_favouriteCity", project.Id, true))).Entity;
             try
             {
                 await context.SaveChangesAsync();

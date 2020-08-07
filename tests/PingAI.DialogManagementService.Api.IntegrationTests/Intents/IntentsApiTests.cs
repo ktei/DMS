@@ -205,7 +205,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                             Text = "Melbourne",
                             PhraseId = phraseId2.ToString(),
                             Type = PhrasePartType.ENTITY.ToString(),
-                            EntityName = "departureCity",
+                            EntityName = "TEST_departureCity",
                             EntityTypeId = _testingFixture.EntityType.Id.ToString()
                         }
                     }
@@ -227,7 +227,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 Contains(response.PhraseParts, p => 
                     p.EntityName == _testingFixture.EntityName.Name && p.Value == "Shanghai");
                 Contains(response.PhraseParts, p => 
-                    p.EntityName == "departureCity" && p.Text == "Melbourne");
+                    p.EntityName == "TEST_departureCity" && p.Text == "Melbourne");
             });
         }
 
