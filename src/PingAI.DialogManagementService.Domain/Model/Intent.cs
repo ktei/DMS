@@ -60,6 +60,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             }
             _phraseParts.AddRange(partsToAdd);
         }
+
+        public override string ToString() => Name;
     }
 
     public enum IntentType

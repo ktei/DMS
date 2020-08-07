@@ -18,7 +18,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
                 new NpgsqlNullNameTranslator());
             NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type",
                 new NpgsqlNullNameTranslator());
-
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type",
+                new NpgsqlNullNameTranslator());
         }
         
         public DialogManagementContext(DbContextOptions<DialogManagementContext> options)
@@ -42,6 +43,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<EntityType> EntityTypes { get; set; }
         public DbSet<EntityValue> EntityValues { get; set; }
         public DbSet<EntityName> EntityNames { get; set; }
+        public DbSet<Response> Responses { get; set; }
         
         public override int SaveChanges()
         {

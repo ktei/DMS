@@ -22,5 +22,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         }
 
         public void UpdateEntityTypeId(Guid entityTypeId) => EntityTypeId = entityTypeId;
+
+        public override string ToString() => Value;
     }
 }

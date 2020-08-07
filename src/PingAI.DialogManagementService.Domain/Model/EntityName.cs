@@ -20,5 +20,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             ProjectId = projectId;
             CanBeReferenced = canBeReferenced;
         }
+
+        public override string ToString() => Name;
     }
 }

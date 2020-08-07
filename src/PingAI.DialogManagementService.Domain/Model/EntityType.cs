@@ -38,5 +38,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             }
             _values.AddRange(valuesToAdd);
         }
+
+        public override string ToString() => Name;
     }
 }

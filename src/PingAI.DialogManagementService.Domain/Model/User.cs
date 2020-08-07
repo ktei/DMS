@@ -22,5 +22,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             Name = name;
             Auth0Id = auth0Id;
         }
+
+        public override string ToString() => Name;
     }
 }

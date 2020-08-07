@@ -40,6 +40,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .WithOne(e => e.Project);
             builder.HasMany(o => o.EntityNames)
                 .WithOne(e => e.Project);
+            builder.HasMany(o => o.Responses)
+                .WithOne(o => o.Project);
         }
     }
 }

@@ -50,6 +50,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             EntityName = entityName;
             EntityNameId = entityName.Id;
         }
+
+        public override string ToString() => Text ?? Value ?? string.Empty;
     }
 
     public enum PhrasePartType

@@ -34,6 +34,9 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         private readonly List<EntityName> _entityNames = new List<EntityName>();
         public IReadOnlyList<EntityName> EntityNames => _entityNames.ToImmutableList();
+
+        private readonly List<Response> _responses = new List<Response>();
+        public IReadOnlyList<Response> Responses => _responses.ToImmutableList();
         
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
@@ -87,5 +90,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                 .OrderBy(e => e)
                 .Distinct().ToArray();
         }
+
+        public override string ToString() => Name;
     }
 }
