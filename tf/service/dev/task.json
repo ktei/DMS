@@ -35,6 +35,10 @@
       {
         "name": "ConnectionStrings__DialogManagement",
         "value": "Host=dev-application.c5cnqpcra9zq.ap-southeast-2.rds.amazonaws.com;Database=chatbot;Username=masteruser;Password=gTr74LXtUnJ9Z6Cm"
+      },
+      {
+        "name": "NluApiHost",
+        "value": "https://service-dev.iiiknow.com"
       }
     ]
   }

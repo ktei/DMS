@@ -10,13 +10,13 @@ namespace PingAI.DialogManagementService.Application.Intents.UpdateIntent
     {
         public Guid IntentId { get; set; }
         public string Name { get; set; }
-        public List<PhrasePart> PhraseParts { get; set; }
+        public List<PhrasePart>? PhraseParts { get; set; }
 
         public UpdateIntentCommand(Guid intentId, string name, IEnumerable<PhrasePart>? phraseParts)
         {
             IntentId = intentId;
             Name = name;
-            PhraseParts = phraseParts?.ToList() ?? new List<PhrasePart>();
+            PhraseParts = phraseParts?.ToList();
         }
 
         public UpdateIntentCommand()
