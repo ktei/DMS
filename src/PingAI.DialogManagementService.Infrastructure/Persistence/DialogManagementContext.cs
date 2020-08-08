@@ -44,6 +44,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<EntityValue> EntityValues { get; set; }
         public DbSet<EntityName> EntityNames { get; set; }
         public DbSet<Response> Responses { get; set; }
+        public DbSet<Query> Queries { get; set; }
+        public DbSet<QueryIntent> QueryIntents { get; set; }
+        public DbSet<QueryResponse> QueryResponses { get; set; }
         
         public override int SaveChanges()
         {

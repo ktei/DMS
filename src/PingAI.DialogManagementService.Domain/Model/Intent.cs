@@ -17,6 +17,9 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         private List<PhrasePart> _phraseParts = new List<PhrasePart>();
         public IReadOnlyList<PhrasePart> PhraseParts => _phraseParts.ToImmutableList();
+        
+        private readonly List<QueryIntent> _queryIntents = new List<QueryIntent>();
+        public IReadOnlyList<QueryIntent> QueryIntents => _queryIntents.ToImmutableList();
 
         
         public DateTime CreatedAt { get; set; }

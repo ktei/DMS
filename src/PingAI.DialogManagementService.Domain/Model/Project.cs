@@ -37,6 +37,9 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         private readonly List<Response> _responses = new List<Response>();
         public IReadOnlyList<Response> Responses => _responses.ToImmutableList();
+
+        private readonly List<Query> _queries = new List<Query>();
+        public IReadOnlyList<Query> Queries => _queries.ToImmutableList();
         
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

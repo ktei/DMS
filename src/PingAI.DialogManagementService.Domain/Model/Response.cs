@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
@@ -15,6 +16,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Project? Project { get; private set; }
         public ResponseType Type { get; private set; }
         public int Order { get; private set; }
+        
+        private readonly List<QueryResponse> _queryResponses = new List<QueryResponse>();
+        public IReadOnlyList<QueryResponse> QueryResponses => _queryResponses.ToImmutableList();
         
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
