@@ -27,7 +27,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         {
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[]{});
-            var entityType = new EntityType(Guid.NewGuid(), "test", _testDataFactory.Project.Id,
+            var entityType = new EntityType("test", _testDataFactory.Project.Id,
                 "description", new []{"t1", "t2"});
             await context.AddAsync(entityType);
             await context.SaveChangesAsync();
@@ -51,9 +51,9 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         {
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[]{});
-            var entityType = new EntityType(Guid.NewGuid(), "test", _testDataFactory.Project.Id,
+            var entityType = new EntityType("test", _testDataFactory.Project.Id,
                 "description", new []{"t1", "t2"});
-            entityType.UpdateValues(new[] {new EntityValue(Guid.NewGuid(), "Sydney", entityType.Id, new[] {"SYD"})});
+            entityType.UpdateValues(new[] {new EntityValue("Sydney", entityType.Id, new[] {"SYD"})});
             var sut = new EntityTypeRepository(context);
             await sut.AddEntityType(entityType);
             await context.SaveChangesAsync();

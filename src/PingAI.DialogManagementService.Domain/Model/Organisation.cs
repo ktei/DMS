@@ -19,9 +19,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<OrganisationUser> _organisationUsers = new List<OrganisationUser>();
         public IReadOnlyList<OrganisationUser> OrganisationUsers => _organisationUsers.ToImmutableList();
         
-        public Organisation(Guid id, string name, string description, string[]? tags)
+        public Organisation(string name, string description, string[]? tags)
         {
-            Id = id;
             Name = name;
             Description = description;
             Tags = tags;

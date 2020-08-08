@@ -28,9 +28,9 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var project = _testDataFactory.Project;
             var sut = new QueryRepository(context);
-            var intent = new Intent(Guid.NewGuid(), "TEST_welcome", project.Id, IntentType.STANDARD);
+            var intent = new Intent("TEST_welcome", project.Id, IntentType.STANDARD);
             object[] phraseParts = {
-                new PhrasePart(Guid.NewGuid(), intent.Id,
+                new PhrasePart(intent.Id,
                     Guid.NewGuid(), 0, "Welcome", null, 
                     PhrasePartType.TEXT, null, null),
             };
@@ -39,7 +39,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await context.SaveChangesAsync();
             
             // Act
-            var query = new Query(Guid.NewGuid(), "TEST_query", project.Id, new Expression[0],
+            var query = new Query("TEST_query", project.Id, new Expression[0],
                 "TEST_query_description", new []{"t1"}, 0);
             query.AddIntent(intent);
             query = await sut.AddQuery(query);
@@ -69,7 +69,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var project = _testDataFactory.Project;
             var sut = new QueryRepository(context);
-            var response = new Response(Guid.NewGuid(), new[]
+            var response = new Response(new[]
             {
                 new ResolutionPart("Hello, ", null, ResolutionPartType.TEXT),
                 new ResolutionPart("World!", null, ResolutionPartType.TEXT)
@@ -78,7 +78,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await context.SaveChangesAsync();
             
             // Act
-            var query = new Query(Guid.NewGuid(), "TEST_query", project.Id, new Expression[0],
+            var query = new Query("TEST_query", project.Id, new Expression[0],
                 "TEST_query_description", new []{"t1"}, 0);
             query.AddResponse(response);
             query = await sut.AddQuery(query);

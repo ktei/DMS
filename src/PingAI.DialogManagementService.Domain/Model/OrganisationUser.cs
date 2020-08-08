@@ -13,9 +13,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         
-        public OrganisationUser(Guid id, Guid organisationId, Guid userId)
+        public OrganisationUser(Guid organisationId, Guid userId)
         {
-            Id = id;
             OrganisationId = organisationId;
             UserId = userId;
         }

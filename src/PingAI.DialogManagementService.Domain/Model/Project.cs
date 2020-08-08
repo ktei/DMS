@@ -44,10 +44,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public Project(Guid id, string name, Guid organisationId, string? widgetTitle, string widgetColor,
+        public Project(string name, Guid organisationId, string? widgetTitle, string widgetColor,
             string? widgetDescription, string? fallbackMessage, string? greetingMessage, string[]? enquiries)
         {
-            Id = id;
             Name = name;
             OrganisationId = organisationId;
             WidgetTitle = widgetTitle;

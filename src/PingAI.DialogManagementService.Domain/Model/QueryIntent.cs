@@ -10,9 +10,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Guid IntentId { get; private set; }
         public Intent? Intent { get; private set; }
 
-        public QueryIntent(Guid id, Guid queryId, Guid intentId)
+        public QueryIntent(Guid queryId, Guid intentId)
         {
-            Id = id;
             QueryId = queryId;
             IntentId = intentId;
         }

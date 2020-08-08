@@ -20,10 +20,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public PhrasePart(Guid id, Guid intentId, Guid phraseId, int? position, string? text, string? value,
+        public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
             PhrasePartType type, Guid? entityNameId, Guid? entityTypeId)
         {
-            Id = id;
             IntentId = intentId;
             PhraseId = phraseId;
             Position = position;

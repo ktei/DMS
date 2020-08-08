@@ -37,14 +37,5 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             var result = await _context.AddAsync(intent ?? throw new ArgumentNullException(nameof(intent)));
             return result.Entity;
         }
-
-        public void UpdatePhraseParts(Intent intent, IEnumerable<PhrasePart> phraseParts)
-        {
-            intent.UpdatePhrases(phraseParts);
-            foreach (var p in intent.PhraseParts)
-            {
-                _context.Entry(p).State = EntityState.Added;
-            }
-        }
     }
 }

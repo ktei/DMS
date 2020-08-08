@@ -27,10 +27,9 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         private const int MaxNameLength = 255;
 
-        public Intent(Guid id, string name, Guid projectId,
+        public Intent(string name, Guid projectId,
             IntentType type)
         {
-            Id = id;
             Name = name;
             ProjectId = projectId;
             Type = type;

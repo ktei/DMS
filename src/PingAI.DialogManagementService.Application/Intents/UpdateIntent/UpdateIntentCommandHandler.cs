@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -62,7 +61,7 @@ namespace PingAI.DialogManagementService.Application.Intents.UpdateIntent
                         }
                         else
                         {
-                            var newEntityName = new EntityName(Guid.NewGuid(), phrasePart.EntityName.Name,
+                            var newEntityName = new EntityName(phrasePart.EntityName.Name,
                                 intent.ProjectId, true);
                             phrasePart.UpdateEntityName(newEntityName);
                             entityNamesToCreate.Add(newEntityName);
@@ -79,8 +78,8 @@ namespace PingAI.DialogManagementService.Application.Intents.UpdateIntent
                 {
                     await _entityNameRepository.AddEntityName(newEntityName);
                 }
-
-                _intentRepository.UpdatePhraseParts(intent, request.PhraseParts);
+                
+                intent.UpdatePhrases(request.PhraseParts);
             }
 
             await _unitOfWork.SaveChanges();

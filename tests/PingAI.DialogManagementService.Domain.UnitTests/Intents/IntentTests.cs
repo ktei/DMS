@@ -11,16 +11,16 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Intents
         public void UpdatePhraseParts()
         {
             // Arrange
-            var sut = new Intent(Guid.NewGuid(), "test", Guid.NewGuid(), IntentType.STANDARD);
+            var sut = new Intent("test", Guid.NewGuid(), IntentType.STANDARD);
             sut.UpdatePhrases(new[]
             {
-                new PhrasePart(Guid.NewGuid(), Guid.NewGuid(),
+                new PhrasePart(Guid.NewGuid(),
                     Guid.NewGuid(), 0, "test", 
                     null, PhrasePartType.TEXT, null, null),
             });
             
             // Act
-            sut.UpdatePhrases(new[] { new PhrasePart(Guid.NewGuid(),
+            sut.UpdatePhrases(new[] { new PhrasePart(
                 sut.Id, Guid.NewGuid(), 0, "Hello, World!", null, PhrasePartType.TEXT,
                 null, null)});
             var actual = sut.PhraseParts;

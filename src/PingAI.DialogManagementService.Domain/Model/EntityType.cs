@@ -19,9 +19,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         
         public DateTime CreatedAt { get; set; } public DateTime UpdatedAt { get; set; }
 
-        public EntityType(Guid id, string name, Guid projectId, string description, string[]? tags)
+        public EntityType(string name, Guid projectId, string description, string[]? tags)
         {
-            Id = id;
             Name = name;
             ProjectId = projectId;
             Description = description;

@@ -15,7 +15,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(Guid.NewGuid(), new ResolutionPart[0],
+            var sut = new Response(new ResolutionPart[0],
                 projectId, ResponseType.RTE, 0);
             
             // Act
@@ -32,11 +32,11 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(Guid.NewGuid(), new ResolutionPart[0],
+            var sut = new Response(new ResolutionPart[0],
                 projectId, ResponseType.RTE, 0);
             var entityNames = new Dictionary<string, EntityName>
             {
-                { "foo", new EntityName(Guid.NewGuid(), "foo", projectId, true) },
+                { "foo", new EntityName( "foo", projectId, true) },
             };
             
             // Act
@@ -53,12 +53,12 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(Guid.NewGuid(), new ResolutionPart[0],
+            var sut = new Response(new ResolutionPart[0],
                 projectId, ResponseType.RTE, 0);
             var entityNames = new Dictionary<string, EntityName>
             {
-                { "foo", new EntityName(Guid.NewGuid(), "foo", projectId, true) },
-                { "bar", new EntityName(Guid.NewGuid(), "bar", projectId, true)}
+                { "foo", new EntityName("foo", projectId, true) },
+                { "bar", new EntityName("bar", projectId, true)}
             };
             
             // Act
@@ -79,11 +79,11 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(Guid.NewGuid(), new ResolutionPart[0],
+            var sut = new Response(new ResolutionPart[0],
                 projectId, ResponseType.RTE, 0);
             var entityNames = new Dictionary<string, EntityName>
             {
-                { "foo", new EntityName(Guid.NewGuid(), "foo", projectId, true) },
+                { "foo", new EntityName("foo", projectId, true) },
             };
             
             // Act

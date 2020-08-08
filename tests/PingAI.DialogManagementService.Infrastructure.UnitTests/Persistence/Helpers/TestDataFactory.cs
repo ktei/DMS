@@ -21,14 +21,15 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
         public async Task Setup()
         {
             Organisation =
-                new Organisation(Guid.NewGuid(), "test", "test description", null);
-            Project = new Project(Guid.NewGuid(), "test", Organisation.Id,
+                new Organisation("test", "test description", null);
+            Project = new Project("test", Organisation.Id,
                 "test widget title", "#ffffff",
                 "test widget description", "test fallback message", 
                 "test greeting message", new string[] { });
-            EntityName = new EntityName(Guid.NewGuid(), "hometown", Project.Id, true);
-            EntityType = new EntityType(Guid.NewGuid(), "city", Project.Id, "city name", null);
-            await _context.AddRangeAsync(Organisation, Project, EntityName, EntityType);
+            await _context.AddRangeAsync(Organisation, Project);
+            EntityName = new EntityName("hometown", Project.Id, true);
+            EntityType = new EntityType("city", Project.Id, "city name", null);
+            await _context.AddRangeAsync(EntityName, EntityType);
             await _context.SaveChangesAsync();
         }
 

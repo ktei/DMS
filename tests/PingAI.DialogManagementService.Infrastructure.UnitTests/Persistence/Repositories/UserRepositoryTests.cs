@@ -27,8 +27,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[]{});
             var sut = new UserRepository(context);
             var organisation = _testDataFactory.Organisation;
-            var user = new User(Guid.NewGuid(), "myuser", Guid.NewGuid().ToString());
-            var orgUser = new OrganisationUser(Guid.NewGuid(), organisation.Id, user.Id);
+            var user = new User("myuser", Guid.NewGuid().ToString());
+            var orgUser = new OrganisationUser(organisation.Id, user.Id);
             await context.AddAsync(user);
             await context.AddAsync(orgUser);
             await context.SaveChangesAsync();

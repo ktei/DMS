@@ -13,9 +13,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public EntityValue(Guid id, string value, Guid entityTypeId, string[]? synonyms)
+        public EntityValue(string value, Guid entityTypeId, string[]? synonyms)
         {
-            Id = id;
             Value = value;
             EntityTypeId = entityTypeId;
             Synonyms = synonyms;

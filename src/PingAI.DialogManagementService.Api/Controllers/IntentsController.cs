@@ -67,13 +67,13 @@ namespace PingAI.DialogManagementService.Api.Controllers
 
         private static PhrasePart MapCreatePhrasePartDto(Guid projectId, Guid intentId, CreatePhrasePartDto p)
         {
-            var phrasePart = new PhrasePart(Guid.NewGuid(), intentId, Guid.Parse(p.PhraseId),
+            var phrasePart = new PhrasePart(intentId, Guid.Parse(p.PhraseId),
                 p.Position, p.Text, p.Value, Enum.Parse<PhrasePartType>(p.Type),
                 null,
                 p.EntityTypeId == null ? default(Guid?) : Guid.Parse(p.EntityTypeId));
             if (p.EntityName != null)
             {
-                phrasePart.UpdateEntityName(new EntityName(Guid.NewGuid(), p.EntityName, projectId, true));
+                phrasePart.UpdateEntityName(new EntityName(p.EntityName, projectId, true));
             }
 
             return phrasePart;

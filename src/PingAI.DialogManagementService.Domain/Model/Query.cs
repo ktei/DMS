@@ -24,10 +24,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public Query(Guid id, string name, Guid projectId, Expression[] expressions,
+        public Query(string name, Guid projectId, Expression[] expressions,
             string description, string[]? tags, int displayOrder)
         {
-            Id = id;
             Name = name;
             ProjectId = projectId;
             Expressions = expressions;
@@ -39,13 +38,13 @@ namespace PingAI.DialogManagementService.Domain.Model
         public void AddResponse(Response response)
         {
             _ = response ?? throw new ArgumentNullException(nameof(response));
-            _queryResponses.Add(new QueryResponse(Guid.NewGuid(), Id, response.Id));
+            _queryResponses.Add(new QueryResponse(Id, response.Id));
         }
 
         public void AddIntent(Intent intent)
         {
             _ = intent ?? throw new ArgumentNullException(nameof(intent));
-            _queryIntents.Add(new QueryIntent(Guid.NewGuid(), Id, intent.Id));
+            _queryIntents.Add(new QueryIntent(Id, intent.Id));
         }
 
         public override string ToString() => Name;

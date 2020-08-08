@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
@@ -28,7 +27,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var project = _testDataFactory.Project;
             var sut = new ResponseRepository(context);
-            var response = new Response(Guid.NewGuid(), new ResolutionPart[]
+            var response = new Response(new[]
             {
                 new ResolutionPart("Hello, ", null, ResolutionPartType.TEXT),
                 new ResolutionPart("World!", null, ResolutionPartType.TEXT)

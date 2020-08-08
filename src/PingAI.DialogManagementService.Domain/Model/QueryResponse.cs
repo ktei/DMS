@@ -13,9 +13,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public QueryResponse(Guid id, Guid queryId, Guid responseId)
+        public QueryResponse(Guid queryId, Guid responseId)
         {
-            Id = id;
             QueryId = queryId;
             ResponseId = responseId;
         }

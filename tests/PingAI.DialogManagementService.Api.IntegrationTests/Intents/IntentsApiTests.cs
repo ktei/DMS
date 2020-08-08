@@ -32,8 +32,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             // Arrange
             await _factory.WithDbContext(async context =>
             {
-                var intent1 = new Intent(Guid.NewGuid(), "i1", _testingFixture.Project.Id, IntentType.STANDARD);
-                var intent2 = new Intent(Guid.NewGuid(), "t2", _testingFixture.Project.Id, IntentType.STANDARD);
+                var intent1 = new Intent( "i1", _testingFixture.Project.Id, IntentType.STANDARD);
+                var intent2 = new Intent( "t2", _testingFixture.Project.Id, IntentType.STANDARD);
                 await context.AddRangeAsync(intent1, intent2);
                 await context.SaveChangesAsync();
                 var actual = await _client.GetFromJsonAsync<List<IntentListItemDto>>(
@@ -53,11 +53,12 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             // Arrange
             await _factory.WithDbContext(async context =>
             {
-                var intent = new Intent(Guid.NewGuid(), "i1", _testingFixture.Project.Id, IntentType.STANDARD);
-                var phrasePart = new PhrasePart(Guid.NewGuid(), intent.Id,
+                var intent = new Intent("i1", _testingFixture.Project.Id, IntentType.STANDARD);
+                var phrasePart = new PhrasePart(intent.Id,
                     Guid.NewGuid(), 0, "Hello, World!", null, PhrasePartType.TEXT,
                     _testingFixture.EntityName.Id, _testingFixture.EntityType.Id);
-                await context.AddRangeAsync(intent, phrasePart);
+                intent.UpdatePhrases(new []{phrasePart});
+                await context.AddRangeAsync(intent);
                 await context.SaveChangesAsync();
                 var actual = await _client.GetFromJsonAsync<IntentDto>(
                     $"/dms/api/v1/intents/{intent.Id}");
@@ -150,13 +151,13 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
         public async Task UpdateIntent()
         {
             // Arrange
-            var intent = new Intent(Guid.NewGuid(), "HelloWorld", _testingFixture.Project.Id,
+            var intent = new Intent("HelloWorld", _testingFixture.Project.Id,
                 IntentType.STANDARD);
             var phraseId = Guid.NewGuid();
-            var phrasePart1 = new PhrasePart(Guid.NewGuid(), intent.Id,
+            var phrasePart1 = new PhrasePart(intent.Id,
                 phraseId, 0, "hello world", null, PhrasePartType.TEXT,
                 null, null);
-            var phrasePart2 = new PhrasePart(Guid.NewGuid(), intent.Id,
+            var phrasePart2 = new PhrasePart(intent.Id,
                 phraseId, 0, null,"Beijing", PhrasePartType.CONSTANT_ENTITY,
                 _testingFixture.EntityName.Id, _testingFixture.EntityType.Id);
             intent.UpdatePhrases(new PhrasePart[]
@@ -214,8 +215,11 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             await _factory.WithDbContext(async context =>
             {
                 // clean up
-                context.RemoveRange(context.PhraseParts.Where(p => p.IntentId == intent.Id));
-                context.RemoveRange(context.Intents.First(x => x.Id == intent.Id));
+                intent = await context.Intents
+                    .Include(x => x.PhraseParts)
+                    .FirstAsync(x => x.Id == intent.Id);
+                context.RemoveRange(intent.PhraseParts);
+                context.Remove(intent);
                 await context.SaveChangesAsync();
 
                 // Assert

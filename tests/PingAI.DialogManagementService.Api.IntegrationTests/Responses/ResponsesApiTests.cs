@@ -41,7 +41,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Responses
             // clean up
             await _factory.WithDbContext(async context =>
             {
-                var r = await context.Responses.FirstOrDefaultAsync(r => r.Id == Guid.Parse(response.ResponseId));
+                var r = await context.Responses.FirstOrDefaultAsync(
+                    resp => resp.Id == Guid.Parse(response.ResponseId));
                 context.Responses.Remove(r);
                 await context.SaveChangesAsync();
             });

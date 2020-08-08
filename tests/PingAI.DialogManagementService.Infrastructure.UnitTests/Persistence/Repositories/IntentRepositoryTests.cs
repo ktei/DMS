@@ -27,8 +27,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var project = _testDataFactory.Project;
-            var intent1 = new Intent(Guid.NewGuid(), "generic", project.Id, IntentType.GENERIC);
-            var intent2 = new Intent(Guid.NewGuid(), "standard", project.Id, IntentType.STANDARD);
+            var intent1 = new Intent("generic", project.Id, IntentType.GENERIC);
+            var intent2 = new Intent("standard", project.Id, IntentType.STANDARD);
             await context.AddRangeAsync(intent1, intent2);
             await context.SaveChangesAsync();
             var sut = new IntentRepository(context);
@@ -57,7 +57,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var project = _testDataFactory.Project;
-            var intent = new Intent(Guid.NewGuid(), "welcome",
+            var intent = new Intent("welcome",
                 project.Id, IntentType.STANDARD);
             var sut = new IntentRepository(context);
 
@@ -67,18 +67,18 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var phraseId3 = Guid.NewGuid();
             intent.UpdatePhrases(new[]
             {
-                new PhrasePart(Guid.NewGuid(), intent.Id, phraseId1, 0, "Hello, World!",
+                new PhrasePart(intent.Id, phraseId1, 0, "Hello, World!",
                     null, PhrasePartType.TEXT, null, null),
                 
-                new PhrasePart(Guid.NewGuid(), intent.Id, phraseId2, 0, "The city is ",
+                new PhrasePart(intent.Id, phraseId2, 0, "The city is ",
                     null, PhrasePartType.TEXT, null, null),
-                new PhrasePart(Guid.NewGuid(), intent.Id, phraseId2, 1, "Melbourne",
+                new PhrasePart(intent.Id, phraseId2, 1, "Melbourne",
                     null, PhrasePartType.ENTITY, _testDataFactory.EntityName.Id,
                     _testDataFactory.EntityType.Id),
                 
-                new PhrasePart(Guid.NewGuid(), intent.Id, phraseId3, 0, "My city is Kyoto",
+                new PhrasePart(intent.Id, phraseId3, 0, "My city is Kyoto",
                     null, PhrasePartType.TEXT, null, null),
-                new PhrasePart(Guid.NewGuid(), intent.Id, phraseId3, null, null,
+                new PhrasePart(intent.Id, phraseId3, null, null,
                     "Kyoto", PhrasePartType.CONSTANT_ENTITY, _testDataFactory.EntityName.Id,
                     _testDataFactory.EntityType.Id)
             });

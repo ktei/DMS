@@ -24,9 +24,9 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[]{});
             var sut = new OrganisationRepository(context);
-            var organisation = new Organisation(Guid.NewGuid(), Guid.NewGuid().ToString(),
+            var organisation = new Organisation(Guid.NewGuid().ToString(),
                 "test", null);
-            var project = new Project(Guid.NewGuid(), "test project", organisation.Id,
+            var project = new Project("test project", organisation.Id,
                 "widget title", "#ffffff", "widget description",
                 "fallback message", "greeting message", new string[]{});
             organisation.AddProject(project);
@@ -55,9 +55,9 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[]{});
             var sut = new OrganisationRepository(context);
-            var organisation = new Organisation(Guid.NewGuid(), Guid.NewGuid().ToString(),
+            var organisation = new Organisation(Guid.NewGuid().ToString(),
                 "test", null);
-            var project = new Project(Guid.NewGuid(), "test project", organisation.Id,
+            var project = new Project("test project", organisation.Id,
                 "widget title", "#ffffff", "widget description",
                 "fallback message", "greeting message", new string[]{});
             organisation.AddProject(project);
@@ -87,7 +87,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[]{});
             var sut = new OrganisationRepository(context);
-            var organisation = new Organisation(Guid.NewGuid(), Guid.NewGuid().ToString(),
+            var organisation = new Organisation(Guid.NewGuid().ToString(),
                 "test", new[] {"tag1", "tag2"});
 
             // Act

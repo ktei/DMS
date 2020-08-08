@@ -41,7 +41,7 @@ namespace PingAI.DialogManagementService.Application.Intents.CreateIntent
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
             
-            var intent = new Intent(Guid.NewGuid(), request.Name, request.ProjectId, request.IntentType);
+            var intent = new Intent(request.Name, request.ProjectId, request.IntentType);
             var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
             var entityTypes = await _entityTypeRepository.GetEntityTypesByProjectId(request.ProjectId);
             var entityTypeIds = entityTypes.Select(e => e.Id).ToArray();
@@ -58,7 +58,7 @@ namespace PingAI.DialogManagementService.Application.Intents.CreateIntent
                     }
                     else
                     {
-                        var newEntityName = new EntityName(Guid.NewGuid(), phrasePart.EntityName.Name,
+                        var newEntityName = new EntityName(phrasePart.EntityName.Name,
                             request.ProjectId, true);
                         phrasePart.UpdateEntityName(newEntityName);
                         entityNamesToCreate.Add(newEntityName);

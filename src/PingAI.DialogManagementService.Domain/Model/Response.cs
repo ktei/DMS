@@ -24,10 +24,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         public DateTime UpdatedAt { get; set; }
         
 
-        public Response(Guid id, ResolutionPart[] resolution, Guid projectId, ResponseType type,
+        public Response(ResolutionPart[] resolution, Guid projectId, ResponseType type,
             int order)
         {
-            Id = id;
             Resolution = (resolution ?? new ResolutionPart[0]).ToArray();
             ProjectId = projectId;
             Type = type;
