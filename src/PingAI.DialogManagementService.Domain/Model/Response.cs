@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using PingAI.DialogManagementService.Domain.ErrorHandling;
+using static PingAI.DialogManagementService.Domain.Model.ResolutionPart;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -25,6 +28,52 @@ namespace PingAI.DialogManagementService.Domain.Model
             ProjectId = projectId;
             Type = type;
             Order = order;
+        }
+        
+        /// <summary>
+        /// Sets response's type as RTE and parses the raw text
+        /// into an array of <see cref="ResolutionPart"/>
+        /// </summary>
+        /// <param name="rte">RTE text that will be parsed to array of <see cref="ResolutionPart"/></param>
+        /// <param name="entityNames">A map of all entity names of current project, the key being the name</param>
+        public void SetRte(string rte, IDictionary<string, EntityName> entityNames)
+        {
+            var resolution = new List<ResolutionPart>();
+            var re = new Regex(@"\$\{([A-Za-z-_0-9]+)\}");
+            var pos = 0;
+            Match m;
+            do
+            {
+                m = re.Match(rte, pos);
+                if (!m.Success) break;
+                
+                if (m.Index > pos)
+                {
+                    // add plain text before current param
+                    resolution.Add(TextPart(rte.Substring(pos, m.Index - pos)));
+                }
+                
+                // add current param
+                if (entityNames.TryGetValue(m.Groups[1].Value, out var entityName))
+                {
+                    resolution.Add(EntityNamePart(entityName.Id));
+                }
+                else
+                {
+                    throw new BadRequestException(
+                        string.Format(ErrorDescriptions.EntityNameNotFound, m.Groups[1].Value));
+                }
+                
+                // move the cursor to the end of the current param
+                pos = m.Index + m.Groups[0].Length;
+            } while (m!.Success);
+            
+            // add the rest of the plain text
+            if (rte.Length > pos) {
+                resolution.Add(TextPart(rte.Substring(pos)));
+            }
+
+            Resolution = resolution.ToArray();
         }
     }
     

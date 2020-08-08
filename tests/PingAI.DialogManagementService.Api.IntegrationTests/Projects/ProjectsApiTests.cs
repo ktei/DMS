@@ -31,7 +31,6 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
                 $"/dms/api/v1/projects/{projectId}");
             NotNull(response);
             Equal(projectId.ToString(), response.ProjectId);
-
         }
 
         [Fact]
