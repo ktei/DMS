@@ -32,6 +32,11 @@ namespace PingAI.DialogManagementService.Domain.Model
             _phraseParts = new List<PhrasePart>();
             _queryIntents = new List<QueryIntent>();
         }
+        
+        public Intent(string name,
+            IntentType type) : this(name, Guid.Empty, type)
+        {
+        }
 
         public void UpdateName(string name)
         {

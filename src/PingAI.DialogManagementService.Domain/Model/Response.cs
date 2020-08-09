@@ -29,6 +29,16 @@ namespace PingAI.DialogManagementService.Domain.Model
             Order = order;
         }
         
+        public Response(Guid projectId, ResponseType type,
+            int order) : this(new ResolutionPart[0], projectId, type, order)
+        {
+        }
+
+        public Response(ResponseType type, int order) : this(new ResolutionPart[0], Guid.Empty, type, order)
+        {
+
+        }
+
         /// <summary>
         /// Sets response's type as RTE and parses the raw text
         /// into an array of <see cref="ResolutionPart"/>

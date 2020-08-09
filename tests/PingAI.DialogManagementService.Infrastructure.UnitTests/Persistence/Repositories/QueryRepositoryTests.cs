@@ -73,7 +73,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 new ResolutionPart("Hello, ", null, ResolutionPartType.RTE),
                 new ResolutionPart("World!", null, ResolutionPartType.RTE)
             }, project.Id, ResponseType.RTE, 0);
-            await context.AddRangeAsync(response);
+            await context.AddAsync(response);
             await context.SaveChangesAsync();
             
             // Act

@@ -44,10 +44,26 @@ namespace PingAI.DialogManagementService.Domain.Model
             _queryResponses.Add(new QueryResponse(Id, response));
         }
 
+        public void ClearResponses()
+        {
+            if (_queryResponses == null)
+                throw new InvalidOperationException($"Load {nameof(QueryResponses)} first");
+            
+            _queryResponses.Clear();
+        }
+
         public void AddIntent(Intent intent)
         {
             _ = intent ?? throw new ArgumentNullException(nameof(intent));
             _queryIntents.Add(new QueryIntent(Id, intent));
+        }
+        
+        public void ClearIntents()
+        {
+            if (_queryIntents == null)
+                throw new InvalidOperationException($"Load {nameof(QueryIntents)} first");
+            
+            _queryIntents.Clear();
         }
 
         private IReadOnlyList<Intent> GetIntents()
