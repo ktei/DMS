@@ -71,8 +71,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var sut = new QueryRepository(context);
             var response = new Response(new[]
             {
-                new ResolutionPart("Hello, ", null, ResolutionPartType.TEXT),
-                new ResolutionPart("World!", null, ResolutionPartType.TEXT)
+                new ResolutionPart("Hello, ", null, ResolutionPartType.RTE),
+                new ResolutionPart("World!", null, ResolutionPartType.RTE)
             }, project.Id, ResponseType.RTE, 0);
             await context.AddRangeAsync(response);
             await context.SaveChangesAsync();

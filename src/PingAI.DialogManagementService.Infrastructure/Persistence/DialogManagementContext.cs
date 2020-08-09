@@ -31,6 +31,11 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         {
             modelBuilder.HasDefaultSchema("chatbot");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrganisationConfiguration).Assembly);
+            
+            // modelBuilder.Entity<EntityName>().Property<DateTime>("CreatedAt").HasColumnName("createdAt");
+            // modelBuilder.Entity<EntityName>().Property<DateTime>("UpdatedAt").HasColumnName("updatedAt");
+
+            
             base.OnModelCreating(modelBuilder);
         }
 
@@ -76,18 +81,22 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         private void UpdateTimestamps()
         {
             var entities = ChangeTracker.Entries()
-                .Where(x => x.Entity is IHaveTimestamps && 
+                .Where(x => (x.Entity is IHaveTimestamps || x.Entity is EntityName )&& 
                             (x.State == EntityState.Added || x.State == EntityState.Modified));
 
             foreach (var entity in entities)
             {
-                var now = DateTime.UtcNow;
+                var timestamp = DateTime.UtcNow;
 
-                if (entity.State == EntityState.Added)
+                if (entity.Entity is IHaveTimestamps)
                 {
-                    ((IHaveTimestamps)entity.Entity).CreatedAt = now;
+                    if (entity.State == EntityState.Added)
+                    {
+                        entity.Property("CreatedAt").CurrentValue = timestamp;
+                    }
+
+                    entity.Property("UpdatedAt").CurrentValue = timestamp;
                 }
-                ((IHaveTimestamps)entity.Entity).UpdatedAt = now;
             }
         }
     }

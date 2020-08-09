@@ -15,16 +15,12 @@ namespace PingAI.DialogManagementService.Domain.Model
         private string _color = string.Empty;
         public IntentType Type { get; private set; }
 
-        private List<PhrasePart> _phraseParts = new List<PhrasePart>();
+        private readonly List<PhrasePart> _phraseParts;
         public IReadOnlyList<PhrasePart> PhraseParts => _phraseParts.ToImmutableList();
-        
-        private readonly List<QueryIntent> _queryIntents = new List<QueryIntent>();
+
+        private readonly List<QueryIntent> _queryIntents;
         public IReadOnlyList<QueryIntent> QueryIntents => _queryIntents.ToImmutableList();
-
         
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
         private const int MaxNameLength = 255;
 
         public Intent(string name, Guid projectId,
@@ -33,6 +29,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             Name = name;
             ProjectId = projectId;
             Type = type;
+            _phraseParts = new List<PhrasePart>();
+            _queryIntents = new List<QueryIntent>();
         }
 
         public void UpdateName(string name)

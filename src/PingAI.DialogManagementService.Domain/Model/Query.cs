@@ -15,15 +15,12 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string[]? Tags { get; private set; }
         public int DisplayOrder { get; private set; }
 
-        private readonly List<QueryIntent> _queryIntents = new List<QueryIntent>();
+        private readonly List<QueryIntent> _queryIntents;
         public IReadOnlyList<QueryIntent> QueryIntents => _queryIntents.ToImmutableList();
 
-        private readonly List<QueryResponse> _queryResponses = new List<QueryResponse>();
+        private readonly List<QueryResponse> _queryResponses;
         public IReadOnlyList<QueryResponse> QueryResponses => _queryResponses.ToImmutableList();
         
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
         public Query(string name, Guid projectId, Expression[] expressions,
             string description, string[]? tags, int displayOrder)
         {
@@ -33,6 +30,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             Description = description;
             Tags = tags;
             DisplayOrder = displayOrder;
+            _queryIntents = new List<QueryIntent>();
+            _queryResponses = new List<QueryResponse>();
         }
 
         public void AddResponse(Response response)

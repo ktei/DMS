@@ -20,10 +20,6 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<QueryResponse> _queryResponses = new List<QueryResponse>();
         public IReadOnlyList<QueryResponse> QueryResponses => _queryResponses.ToImmutableList();
         
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        
-
         public Response(ResolutionPart[] resolution, Guid projectId, ResponseType type,
             int order)
         {

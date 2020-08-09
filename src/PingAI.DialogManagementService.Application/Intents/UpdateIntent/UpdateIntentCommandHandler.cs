@@ -32,7 +32,7 @@ namespace PingAI.DialogManagementService.Application.Intents.UpdateIntent
 
         public async Task<Intent> Handle(UpdateIntentCommand request, CancellationToken cancellationToken)
         {
-            var intent = await _intentRepository.GetIntent(request.IntentId);
+            var intent = await _intentRepository.GetIntentById(request.IntentId);
             if (intent == null)
                 throw new BadRequestException(IntentNotFound);
             var canRead = await _authorizationService.UserCanWriteProject(intent.ProjectId);

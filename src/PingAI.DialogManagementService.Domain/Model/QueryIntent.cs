@@ -16,9 +16,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             IntentId = intentId;
         }
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        
         public override string ToString() => $"Query:{QueryId}-Intent:{IntentId}";
     }
 }

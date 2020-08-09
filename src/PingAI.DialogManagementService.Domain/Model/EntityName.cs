@@ -10,9 +10,6 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Project? Project { get; private set; }
         public bool CanBeReferenced { get; private set; }
         
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
         public EntityName(string name, Guid projectId, bool canBeReferenced)
         {
             Name = name;

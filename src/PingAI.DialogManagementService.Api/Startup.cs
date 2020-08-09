@@ -142,6 +142,7 @@ namespace PingAI.DialogManagementService.Api
             services.AddTransient<IEntityTypeRepository, EntityTypeRepository>();
             services.AddTransient<IEntityNameRepository, EntityNameRepository>();
             services.AddTransient<IResponseRepository, ResponseRepository>();
+            services.AddTransient<IQueryRepository, QueryRepository>();
 
             services.AddHttpClient<INluService, NluService>(client =>
             {

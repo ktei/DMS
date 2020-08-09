@@ -22,7 +22,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         }
         
         public static ResolutionPart TextPart(string text) => 
-            new ResolutionPart(text ?? throw new ArgumentNullException(nameof(text)), null, ResolutionPartType.TEXT);
+            new ResolutionPart(text ?? throw new ArgumentNullException(nameof(text)), null, ResolutionPartType.RTE);
         public static ResolutionPart EntityNamePart(Guid entityNameId) =>
             new ResolutionPart(null, entityNameId, ResolutionPartType.OTHER_ENTITY_NAME);
 
@@ -38,7 +38,7 @@ namespace PingAI.DialogManagementService.Domain.Model
     
     public enum ResolutionPartType
     {
-        TEXT,
+        RTE,
         OTHER_ENTITY_NAME 
     }
 }

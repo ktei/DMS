@@ -10,9 +10,6 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Guid ResponseId { get; private set; }
         public Response? Response { get; private set; }
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
         public QueryResponse(Guid queryId, Guid responseId)
         {
             QueryId = queryId;

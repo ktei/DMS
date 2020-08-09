@@ -13,9 +13,6 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<OrganisationUser> _organisationUsers = new List<OrganisationUser>();
         public IReadOnlyList<OrganisationUser> OrganisationUsers => _organisationUsers.ToImmutableList();
         
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
         public User(string name, string auth0Id)
         {
             Name = name;

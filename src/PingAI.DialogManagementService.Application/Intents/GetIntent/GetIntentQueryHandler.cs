@@ -22,7 +22,7 @@ namespace PingAI.DialogManagementService.Application.Intents.GetIntent
         
         public async Task<Intent> Handle(GetIntentQuery request, CancellationToken cancellationToken)
         {
-            var intent = await _intentRepository.GetIntent(request.IntentId);
+            var intent = await _intentRepository.GetIntentById(request.IntentId);
             if (intent == null)
             {
                 throw new NotFoundException(IntentNotFound);

@@ -17,8 +17,6 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<EntityValue> _values = new List<EntityValue>();
         public IReadOnlyList<EntityValue> Values => _values.ToImmutableList();
         
-        public DateTime CreatedAt { get; set; } public DateTime UpdatedAt { get; set; }
-
         public EntityType(string name, Guid projectId, string description, string[]? tags)
         {
             Name = name;

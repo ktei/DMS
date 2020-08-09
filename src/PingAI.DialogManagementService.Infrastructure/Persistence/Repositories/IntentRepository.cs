@@ -22,7 +22,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .OrderBy(x => x.Name)
                 .ToListAsync();
 
-        public Task<Intent?> GetIntent(Guid intentId)
+        public Task<Intent?> GetIntentById(Guid intentId)
         {
             return _context.Intents
                 .Include(x => x.PhraseParts)

@@ -17,9 +17,6 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Guid? EntityTypeId { get; private set; }
         public EntityType? EntityType { get; private set; }
         
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
         public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
             PhrasePartType type, Guid? entityNameId, Guid? entityTypeId)
         {

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
@@ -18,11 +19,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("projectId");
             builder.Property(o => o.CanBeReferenced)
                 .HasColumnName("canBeReferenced");
-            
-            builder.Property(o => o.CreatedAt)
-                .HasColumnName("createdAt");
-            builder.Property(o => o.UpdatedAt)
-                .HasColumnName("updatedAt");
+
+            builder.AttachTimestamps();
         }
     }
 }
