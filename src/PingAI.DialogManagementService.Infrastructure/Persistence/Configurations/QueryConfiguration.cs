@@ -25,8 +25,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("tags");
             builder.Property(o => o.DisplayOrder)
                 .HasColumnName("displayOrder");
-            
+
             builder.AttachTimestamps();
+            
+            builder.Ignore(o => o.Intents);
+            builder.Ignore(o => o.Responses);
+
         }
     }
 }

@@ -7,7 +7,7 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
     {
         public string Name { get; set; }
         public string ProjectId { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public string[]? Tags { get; set; }
         public int DisplayOrder { get; set; }
         public CreateIntentDto Intent { get; set; }
@@ -23,8 +23,6 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
             RuleFor(x => x.ProjectId)
                 .NotEmpty()
                 .MustBeGuid();
-            RuleFor(x => x.Description)
-                .NotEmpty();
             RuleForEach(x => x.Tags).NotEmpty();
             RuleFor(x => x.Intent)
                 .Cascade(CascadeMode.StopOnFirstFailure)

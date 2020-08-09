@@ -33,9 +33,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         /// Sets response's type as RTE and parses the raw text
         /// into an array of <see cref="ResolutionPart"/>
         /// </summary>
-        /// <param name="rte">RTE text that will be parsed to array of <see cref="ResolutionPart"/></param>
+        /// <param name="rteText">RTE text that will be parsed to array of <see cref="ResolutionPart"/></param>
         /// <param name="entityNames">A map of all entity names of current project, the key being the name</param>
-        public void SetRte(string rte, IDictionary<string, EntityName> entityNames)
+        public void SetRteText(string rteText, IDictionary<string, EntityName> entityNames)
         {
             var resolution = new List<ResolutionPart>();
             var re = new Regex(@"\$\{([A-Za-z-_0-9]+)\}");
@@ -43,13 +43,13 @@ namespace PingAI.DialogManagementService.Domain.Model
             Match m;
             do
             {
-                m = re.Match(rte, pos);
+                m = re.Match(rteText, pos);
                 if (!m.Success) break;
                 
                 if (m.Index > pos)
                 {
                     // add plain text before current param
-                    resolution.Add(TextPart(rte.Substring(pos, m.Index - pos)));
+                    resolution.Add(TextPart(rteText.Substring(pos, m.Index - pos)));
                 }
                 
                 // add current param
@@ -68,8 +68,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             } while (m!.Success);
             
             // add the rest of the plain text
-            if (rte.Length > pos) {
-                resolution.Add(TextPart(rte.Substring(pos)));
+            if (rteText.Length > pos) {
+                resolution.Add(TextPart(rteText.Substring(pos)));
             }
 
             Resolution = resolution.ToArray();

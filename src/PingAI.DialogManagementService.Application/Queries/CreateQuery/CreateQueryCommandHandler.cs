@@ -1,3 +1,6 @@
+using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -13,17 +16,20 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
         private readonly IQueryRepository _queryRepository;
         private readonly IIntentRepository _intentRepository;
         private readonly IResponseRepository _responseRepository;
+        private readonly IEntityNameRepository _entityNameRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthorizationService _authorizationService;
 
         public CreateQueryCommandHandler(IQueryRepository queryRepository, IIntentRepository intentRepository,
-            IResponseRepository responseRepository, IUnitOfWork unitOfWork, IAuthorizationService authorizationService)
+            IResponseRepository responseRepository, IUnitOfWork unitOfWork, IAuthorizationService authorizationService,
+            IEntityNameRepository entityNameRepository)
         {
             _queryRepository = queryRepository;
             _intentRepository = intentRepository;
             _responseRepository = responseRepository;
             _unitOfWork = unitOfWork;
             _authorizationService = authorizationService;
+            _entityNameRepository = entityNameRepository;
         }
 
         public async Task<Query> Handle(CreateQueryCommand request, CancellationToken cancellationToken)
@@ -55,6 +61,10 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             }
             else if (request.Response != null)
             {
+                // TODO: we only support RTE for now
+                var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
+                Debug.Assert(!string.IsNullOrEmpty(request.RteText));
+                request.Response.SetRteText(request.RteText!, entityNames.ToDictionary(x => x.Name));
                 query.AddResponse(request.Response);
             }
             else

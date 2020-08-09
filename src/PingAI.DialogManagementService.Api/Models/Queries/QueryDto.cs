@@ -8,7 +8,7 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
 {
     public class QueryDto
     {
-        public string Id { get; set; }
+        public string QueryId { get; set; }
         public string Name { get; set; }
         public string ProjectId { get; set; }
         public ExpressionDto[] Expressions { get; private set; }
@@ -19,10 +19,10 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         public ResponseDto[] Responses { get; set; }
 
 
-        public QueryDto(string id, string name, string projectId, ExpressionDto[] expressions, string description,
+        public QueryDto(string queryId, string name, string projectId, ExpressionDto[] expressions, string description,
             string[]? tags, int displayOrder, IntentDto[] intents, ResponseDto[] responses)
         {
-            Id = id;
+            QueryId = queryId;
             Name = name;
             ProjectId = projectId;
             Expressions = expressions;
@@ -42,6 +42,11 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
             query.QueryResponses.Select(r =>
                 new ResponseDto(r.Response ?? 
                                 throw new InvalidOperationException($"{nameof(r.Response)} was not loaded"))).ToArray())
+        {
+            
+        }
+
+        public QueryDto()
         {
             
         }

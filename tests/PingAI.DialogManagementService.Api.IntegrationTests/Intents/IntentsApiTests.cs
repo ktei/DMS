@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -25,6 +26,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             _factory = factory;
             _client = _factory.CreateAuthenticatedClient();
         }
+
 
         [Fact]
         public async Task ListIntents()
@@ -56,7 +58,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 var intent = new Intent("i1", _testingFixture.Project.Id, IntentType.STANDARD);
                 var phrasePart = new PhrasePart(intent.Id,
                     Guid.NewGuid(), 0, "Hello, World!", null, PhrasePartType.TEXT,
-                    _testingFixture.EntityName.Id, _testingFixture.EntityType.Id);
+                    null, null);
                 intent.UpdatePhrases(new []{phrasePart});
                 await context.AddRangeAsync(intent);
                 await context.SaveChangesAsync();
@@ -69,8 +71,6 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 
                 Equal(intent.Id.ToString(), actual.IntentId);
                 Single(actual.PhraseParts);
-                Equal(_testingFixture.EntityName.Name, actual.PhraseParts[0].EntityName);
-                Equal(_testingFixture.EntityType.Id.ToString(), actual.PhraseParts[0].EntityTypeId);
             }); 
         }
 
@@ -78,6 +78,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
         public async Task CreateIntent()
         {
             // Arrange
+            var (entityName, entityType) = await SetupFixture(_testingFixture.Project.Id);
+            
             var phraseId1 = Guid.NewGuid().ToString();
             var phraseId2 = Guid.NewGuid().ToString();
             
@@ -98,8 +100,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                         },
                         new CreatePhrasePartDto
                         {
-                            EntityName = _testingFixture.EntityName.Name,
-                            EntityTypeId = _testingFixture.EntityType.Id.ToString(),
+                            EntityName = entityName.Name,
+                            EntityTypeId = entityType.Id.ToString(),
                             Value = "Kyoto",
                             Type = PhrasePartType.CONSTANT_ENTITY.ToString(),
                             PhraseId = phraseId1
@@ -114,7 +116,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                         {
                             Text = "Qingdao",
                             EntityName = "hometown",
-                            EntityTypeId = _testingFixture.EntityType.Id.ToString(),
+                            EntityTypeId = entityType.Id.ToString(),
                             Type = PhrasePartType.ENTITY.ToString(),
                             PhraseId = phraseId2
                         }
@@ -127,15 +129,10 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             // clean up
             await _factory.WithDbContext(async context =>
             {
-                entityNameHometown = context.EntityNames.First(e => e.Name == "hometown");
-                context.RemoveRange(context.Intents
-                    .Include(i => i.PhraseParts)
-                    .Single(i => i.Id == Guid.Parse(response.IntentId)).PhraseParts);
-                context.Intents.Remove(context.Intents.Single(i => i.Id == Guid.Parse(response.IntentId)));
-                if (entityNameHometown != null)
-                {
-                    context.Remove(entityNameHometown);
-                }
+                entityNameHometown = await context.EntityNames.FirstOrDefaultAsync(e => e.Name == "hometown");
+                context.AttachRange(entityName, entityType);
+                context.RemoveRange(entityName, entityType, entityNameHometown);
+                context.Remove(context.Intents.Single(i => i.Id == Guid.Parse(response.IntentId)));
                 await context.SaveChangesAsync();
             });
             
@@ -151,6 +148,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
         public async Task UpdateIntent()
         {
             // Arrange
+            var (entityName, entityType) = await SetupFixture(_testingFixture.Project.Id);
+            
             var intent = new Intent("HelloWorld", _testingFixture.Project.Id,
                 IntentType.STANDARD);
             var phraseId = Guid.NewGuid();
@@ -159,7 +158,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 null, null);
             var phrasePart2 = new PhrasePart(intent.Id,
                 phraseId, 0, null,"Beijing", PhrasePartType.CONSTANT_ENTITY,
-                _testingFixture.EntityName.Id, _testingFixture.EntityType.Id);
+                entityName.Id, entityType.Id);
             intent.UpdatePhrases(new PhrasePart[]
             {
                 phrasePart1,
@@ -192,8 +191,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                             Value = "Shanghai",
                             PhraseId = phraseId.ToString(),
                             Type = PhrasePartType.CONSTANT_ENTITY.ToString(),
-                            EntityName = _testingFixture.EntityName.Name,
-                            EntityTypeId = _testingFixture.EntityType.Id.ToString()
+                            EntityName = entityName.Name,
+                            EntityTypeId = entityType.Id.ToString()
                         },
                         new CreatePhrasePartDto
                         {
@@ -207,7 +206,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                             PhraseId = phraseId2.ToString(),
                             Type = PhrasePartType.ENTITY.ToString(),
                             EntityName = "TEST_departureCity",
-                            EntityTypeId = _testingFixture.EntityType.Id.ToString()
+                            EntityTypeId = entityType.Id.ToString()
                         }
                     }
                 });
@@ -215,11 +214,14 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             await _factory.WithDbContext(async context =>
             {
                 // clean up
+                context.AttachRange(entityName, entityType);
                 intent = await context.Intents
                     .Include(x => x.PhraseParts)
                     .FirstAsync(x => x.Id == intent.Id);
                 // context.RemoveRange(intent.PhraseParts);
+                var departureCity = await context.EntityNames.FirstOrDefaultAsync(e => e.Name == "TEST_departureCity");
                 context.Remove(intent);
+                context.RemoveRange(entityName, entityType, departureCity);
                 await context.SaveChangesAsync();
 
                 // Assert
@@ -229,10 +231,30 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 Equal(intent.Id.ToString(), response.IntentId);
                 Equal("helloWorld", response.Name);
                 Contains(response.PhraseParts, p => 
-                    p.EntityName == _testingFixture.EntityName.Name && p.Value == "Shanghai");
+                    p.EntityName == entityName.Name && p.Value == "Shanghai");
                 Contains(response.PhraseParts, p => 
                     p.EntityName == "TEST_departureCity" && p.Text == "Melbourne");
             });
+        }
+        
+        private async Task<(EntityName entityName, EntityType entityType)> SetupFixture(Guid projectId)
+        {
+            EntityName? entityName = null;
+            EntityType? entityType = null;
+            await _factory.WithDbContext(async context =>
+            {
+                entityName =
+                    (await context.AddAsync(new EntityName(Guid.NewGuid().ToString(), projectId, true)))
+                    .Entity;
+                entityType =
+                    (await context.AddAsync(new EntityType(Guid.NewGuid().ToString(), projectId, "test", null)))
+                    .Entity;
+                await context.SaveChangesAsync();
+            });
+            Debug.Assert(entityName != null);
+            Debug.Assert(entityType != null);
+
+            return (entityName, entityType);
         }
 
         public async Task InitializeAsync()

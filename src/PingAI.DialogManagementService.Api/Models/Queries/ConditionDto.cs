@@ -22,5 +22,10 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         {
             
         }
+
+        public ConditionDto()
+        {
+            
+        }
     }
 }

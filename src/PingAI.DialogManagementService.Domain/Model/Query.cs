@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -20,6 +21,9 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         private readonly List<QueryResponse> _queryResponses;
         public IReadOnlyList<QueryResponse> QueryResponses => _queryResponses.ToImmutableList();
+
+        public IReadOnlyList<Intent> Intents => GetIntents();
+        public IReadOnlyList<Response> Responses => GetResponses();
         
         public Query(string name, Guid projectId, Expression[] expressions,
             string description, string[]? tags, int displayOrder)
@@ -44,6 +48,28 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             _ = intent ?? throw new ArgumentNullException(nameof(intent));
             _queryIntents.Add(new QueryIntent(Id, intent));
+        }
+
+        private IReadOnlyList<Intent> GetIntents()
+        {
+            if (_queryIntents == null)
+                throw new InvalidOperationException($"Load {nameof(QueryIntents)} first");
+            
+            if (_queryIntents.Any(x => x.Intent == null))
+                throw new InvalidOperationException($"Load {nameof(QueryIntents)}.Intent first");
+
+            return _queryIntents.Select(x => x.Intent!).ToImmutableList();
+        }
+
+        private IReadOnlyList<Response> GetResponses()
+        {
+            if (_queryResponses == null)
+                throw new InvalidOperationException($"Load {nameof(QueryResponses)} first");
+            
+            if (_queryResponses.Any(x => x.Response == null))
+                throw new InvalidOperationException($"Load {nameof(QueryResponses)}.Response first");
+
+            return _queryResponses.Select(x => x.Response!).ToImmutableList();
         }
 
         public override string ToString() => Name;

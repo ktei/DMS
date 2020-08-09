@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -28,11 +29,20 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Responses
         public async Task CreateResponse()
         {
             var fixture = _testingFixture;
+            EntityName? entityName = null;
+            await _factory.WithDbContext(async context =>
+            {
+                entityName =
+                    (await context.AddAsync(new EntityName(Guid.NewGuid().ToString(), fixture.Project.Id, true)))
+                    .Entity;
+                await context.SaveChangesAsync();
+            });
+            Debug.Assert(entityName != null);
             var httpResponse = await _client.PostAsJsonAsync(
                 "/dms/api/v1/responses", new CreateResponseRequest
                 {
                     ProjectId = fixture.Project.Id.ToString(),
-                    RteText = $"Test, ${{{fixture.EntityName.Name}}}!",
+                    RteText = $"Test, ${{{entityName.Name}}}!",
                     Type = ResponseType.RTE.ToString()
                 });
             await httpResponse.IsOk();
@@ -44,11 +54,13 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Responses
                 var r = await context.Responses.FirstOrDefaultAsync(
                     resp => resp.Id == Guid.Parse(response.ResponseId));
                 context.Responses.Remove(r);
+                entityName = await context.EntityNames.FindAsync(entityName.Id);
+                context.Remove(entityName);
                 await context.SaveChangesAsync();
             });
             
             NotNull(response);
-            Contains(response.Resolution, p => p.EntityNameId == fixture.EntityName.Id.ToString());
+            Contains(response.Resolution, p => p.EntityNameId == entityName.Id.ToString());
         }
 
         public async Task InitializeAsync()

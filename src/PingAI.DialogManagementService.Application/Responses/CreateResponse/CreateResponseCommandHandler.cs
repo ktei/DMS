@@ -41,7 +41,7 @@ namespace PingAI.DialogManagementService.Application.Responses.CreateResponse
             if (request.Type == ResponseType.RTE)
             {
                 Debug.Assert(request.RteText != null);
-                response.SetRte(request.RteText!, entityNames.ToDictionary(e => e.Name));
+                response.SetRteText(request.RteText!, entityNames.ToDictionary(e => e.Name));
             }
 
             response = await _responseRepository.AddResponse(response);

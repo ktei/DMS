@@ -67,8 +67,6 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                 Organisation = organisation,
                 Project = project,
                 UserId = organisationUser.UserId,
-                EntityType = entityType, 
-                EntityName = entityName
             };
 
             return (testingFixture, async () =>

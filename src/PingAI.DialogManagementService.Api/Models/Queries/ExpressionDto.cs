@@ -18,5 +18,10 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         {
             
         }
+
+        public ExpressionDto()
+        {
+            
+        }
     }
 }

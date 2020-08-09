@@ -24,7 +24,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
-                new Organisation("test", "test", null);
+                new Organisation(Guid.NewGuid().ToString(), "test", null);
             var project = new Project( "test", organisation.Id, "title", "#ffffff",
                 "description", "fallback message", "greeting message", new string[] { });
             organisation.AddProject(project);
@@ -51,11 +51,11 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
-                new Organisation("test", "test", null);
+                new Organisation(Guid.NewGuid().ToString(), "test", null);
             await context.AddAsync(organisation);
             await context.SaveChangesAsync();
             var sut = new ProjectRepository(context);
-            var project = new Project("test", organisation.Id, null, "#ffffff",
+            var project = new Project(Guid.NewGuid().ToString(), organisation.Id, null, "#ffffff",
                 null, null, null, null);
 
             // Act

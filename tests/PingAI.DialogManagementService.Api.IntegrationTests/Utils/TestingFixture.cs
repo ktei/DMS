@@ -8,7 +8,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
         public Organisation Organisation { get; set; }
         public Project Project { get; set; }
         public Guid UserId { get; set; }
-        public EntityType EntityType { get; set; }
-        public EntityName EntityName { get; set; }
+        // public EntityType EntityType { get; set; }
+        // public EntityName EntityName { get; set; }
     }
 }

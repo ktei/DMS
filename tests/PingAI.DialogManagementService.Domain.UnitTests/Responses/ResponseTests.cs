@@ -19,7 +19,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
                 projectId, ResponseType.RTE, 0);
             
             // Act
-            sut.SetRte("Hello, World!", new Dictionary<string, EntityName>());
+            sut.SetRteText("Hello, World!", new Dictionary<string, EntityName>());
             
             // Assert
             sut.Resolution.Should().BeEquivalentTo(
@@ -40,7 +40,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
             };
             
             // Act
-            sut.SetRte("${foo}", entityNames);
+            sut.SetRteText("${foo}", entityNames);
             
             // Assert
             sut.Resolution.Should().BeEquivalentTo(
@@ -62,7 +62,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
             };
             
             // Act
-            sut.SetRte("Hello, I'm ${foo} from ${bar}!", entityNames);
+            sut.SetRteText("Hello, I'm ${foo} from ${bar}!", entityNames);
             
             // Assert
             sut.Resolution.Should().BeEquivalentTo(
@@ -87,7 +87,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
             };
             
             // Act
-            void Act() => sut.SetRte("Hi, ${bar}", entityNames);
+            void Act() => sut.SetRteText("Hi, ${bar}", entityNames);
 
             // Assert
             Assert.Throws<BadRequestException>(Act);

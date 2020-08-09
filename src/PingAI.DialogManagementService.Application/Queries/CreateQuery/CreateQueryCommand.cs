@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MediatR;
 using PingAI.DialogManagementService.Domain.Model;
 
@@ -16,5 +17,28 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
         public Intent? Intent { get; set; }
         public Guid? ResponseId { get; set; }
         public Response? Response { get; set; }
+        public string? RteText { get; set; }
+
+        public CreateQueryCommand(string name, Guid projectId, Expression[] expressions, string description,
+            string[]? tags, int displayOrder, Guid? intentId, Intent? intent, Guid? responseId, Response? response,
+            string? rteText)
+        {
+            Name = name;
+            ProjectId = projectId;
+            Expressions = expressions;
+            Description = description;
+            Tags = tags;
+            DisplayOrder = displayOrder;
+            IntentId = intentId;
+            Intent = intent;
+            ResponseId = responseId;
+            Response = response;
+            RteText = rteText;
+        }
+
+        public CreateQueryCommand()
+        {
+            
+        }
     }
 }
