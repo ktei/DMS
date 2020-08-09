@@ -35,7 +35,8 @@ namespace PingAI.DialogManagementService.Api.Validations
                     return true;
 
                 return false;
-            }).WithMessage($"{{PropertyMessage}} must be a valid enum of {enumType.Name}");
+            }).WithMessage($"{{PropertyMessage}} must be a valid enum of {enumType.Name}: [" +
+                           $"{string.Join(", ", Enum.GetNames(enumType))}]");
         }
     }
 }
