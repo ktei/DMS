@@ -25,7 +25,8 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
             RuleFor(x => x.Type)
                 .NotEmpty()
                 .MustBeEnum(typeof(IntentType));
-            RuleForEach(x => x.PhraseParts).SetValidator(new CreatePhrasePartDtoValidator());
+            RuleForEach(x => x.PhraseParts)
+                .SetValidator(new CreatePhrasePartDtoValidator());
         }
     }
 }

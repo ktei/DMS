@@ -29,13 +29,13 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var project = _testDataFactory.Project;
             var sut = new QueryRepository(context);
             var intent = new Intent("TEST_welcome", project.Id, IntentType.STANDARD);
-            object[] phraseParts = {
+            var phraseParts = new []{
                 new PhrasePart(intent.Id,
                     Guid.NewGuid(), 0, "Welcome", null, 
                     PhrasePartType.TEXT, null, null),
             };
-            await context.AddRangeAsync(intent);
-            await context.AddRangeAsync(phraseParts);
+            intent.UpdatePhrases(phraseParts);
+            await context.AddAsync(intent);
             await context.SaveChangesAsync();
             
             // Act
@@ -51,9 +51,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Assert
 
             // clean up
-            context.RemoveRange(query.QueryIntents);
-            context.RemoveRange(phraseParts);
-            context.RemoveRange(intent, query);
+            context.Remove(intent);
+            context.Remove(query);
             await context.SaveChangesAsync();
             
             NotNull(actual);

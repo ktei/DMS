@@ -26,7 +26,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
                 "test widget title", "#ffffff",
                 "test widget description", "test fallback message", 
                 "test greeting message", new string[] { });
-            await _context.AddRangeAsync(Organisation, Project);
+            Organisation.AddProject(Project);
+            await _context.AddRangeAsync(Organisation);
             EntityName = new EntityName("hometown", Project.Id, true);
             EntityType = new EntityType("city", Project.Id, "city name", null);
             await _context.AddRangeAsync(EntityName, EntityType);

@@ -37,13 +37,13 @@ namespace PingAI.DialogManagementService.Domain.Model
         public void AddResponse(Response response)
         {
             _ = response ?? throw new ArgumentNullException(nameof(response));
-            _queryResponses.Add(new QueryResponse(Id, response.Id));
+            _queryResponses.Add(new QueryResponse(Id, response));
         }
 
         public void AddIntent(Intent intent)
         {
             _ = intent ?? throw new ArgumentNullException(nameof(intent));
-            _queryIntents.Add(new QueryIntent(Id, intent.Id));
+            _queryIntents.Add(new QueryIntent(Id, intent));
         }
 
         public override string ToString() => Name;

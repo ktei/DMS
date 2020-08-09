@@ -16,6 +16,13 @@ namespace PingAI.DialogManagementService.Domain.Model
             ResponseId = responseId;
         }
 
+        public QueryResponse(Guid queryId, Response response)
+        {
+            QueryId = queryId;
+            ResponseId = response.Id;
+            Response = response;
+        }
+
         public override string ToString() => $"Query:{QueryId}-Response:{ResponseId}";
     }
 }

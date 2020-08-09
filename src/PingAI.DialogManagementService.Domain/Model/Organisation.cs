@@ -26,6 +26,14 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public void AddProject(Project project) =>
             _projects.Add(project ?? throw new ArgumentNullException(nameof(project)));
+        
+        public void AddUser(User user) =>
+            _organisationUsers.Add(new OrganisationUser(Id,
+                user ?? throw new ArgumentNullException(nameof(user))));
+
+        public void RemoveUser(User user) =>
+            _organisationUsers.RemoveAll(x => x.UserId ==
+                                              (user ?? throw new ArgumentNullException(nameof(user))).Id);
 
         public override string ToString() => Name;
     }

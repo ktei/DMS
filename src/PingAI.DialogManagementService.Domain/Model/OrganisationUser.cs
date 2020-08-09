@@ -15,6 +15,12 @@ namespace PingAI.DialogManagementService.Domain.Model
             OrganisationId = organisationId;
             UserId = userId;
         }
+        
+        public OrganisationUser(Guid organisationId, User user)
+        {
+            OrganisationId = organisationId;
+            User = user;
+        }
 
         public override string ToString() => $"{OrganisationId}-{UserId}";
     }

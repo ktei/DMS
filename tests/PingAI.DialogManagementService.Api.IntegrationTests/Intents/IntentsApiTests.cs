@@ -218,7 +218,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 intent = await context.Intents
                     .Include(x => x.PhraseParts)
                     .FirstAsync(x => x.Id == intent.Id);
-                context.RemoveRange(intent.PhraseParts);
+                // context.RemoveRange(intent.PhraseParts);
                 context.Remove(intent);
                 await context.SaveChangesAsync();
 

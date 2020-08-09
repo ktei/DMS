@@ -18,7 +18,9 @@ namespace PingAI.DialogManagementService.Api.Validations
                     return true;
 
                 return false;
-            }).WithMessage("{PropertyName} must be a valid UUID/GUID");
+            })
+                .UseJsonPathInErrorMessage()
+                .WithMessage("'{PropertyName}' must be a valid UUID/GUID");
         }
 
         public static IRuleBuilderOptions<T, string> MustBeEnum<T>(this IRuleBuilder<T, string> ruleBuilder,
@@ -35,7 +37,9 @@ namespace PingAI.DialogManagementService.Api.Validations
                     return true;
 
                 return false;
-            }).WithMessage($"{{PropertyMessage}} must be a valid enum of {enumType.Name}: [" +
+            })
+                .UseJsonPathInErrorMessage()
+                .WithMessage($"'{{PropertyName}}' must be a valid enum of {enumType.Name}: [" +
                            $"{string.Join(", ", Enum.GetNames(enumType))}]");
         }
     }

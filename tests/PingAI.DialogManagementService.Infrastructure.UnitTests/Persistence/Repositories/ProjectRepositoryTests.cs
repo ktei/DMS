@@ -27,8 +27,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 new Organisation("test", "test", null);
             var project = new Project( "test", organisation.Id, "title", "#ffffff",
                 "description", "fallback message", "greeting message", new string[] { });
+            organisation.AddProject(project);
             await context.AddAsync(organisation);
-            await context.AddAsync(project);
             await context.SaveChangesAsync();
             var sut = new ProjectRepository(context);
 
@@ -38,8 +38,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Assert
 
             // clean up
-            context.Projects.Remove(project);
-            context.Organisations.Remove(organisation);
+            context.Remove(organisation);
             await context.SaveChangesAsync();
 
             NotNull(project);

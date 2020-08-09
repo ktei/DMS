@@ -16,6 +16,13 @@ namespace PingAI.DialogManagementService.Domain.Model
             IntentId = intentId;
         }
 
+        public QueryIntent(Guid queryId, Intent intent)
+        {
+            QueryId = queryId;
+            Intent = intent ?? throw new ArgumentNullException(nameof(intent));
+            IntentId = intent.Id;
+        }
+
         public override string ToString() => $"Query:{QueryId}-Intent:{IntentId}";
     }
 }
