@@ -48,7 +48,8 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             }
             else if (request.Intent != null)
             {
-                query.AddIntent(new Intent(request.Intent.Name, query.ProjectId, request.Intent.Type));
+                query.AddIntent(new Intent(request.Intent.Name, query.ProjectId, request.Intent.Type,
+                    request.Intent.PhraseParts));
             }
             else
             {

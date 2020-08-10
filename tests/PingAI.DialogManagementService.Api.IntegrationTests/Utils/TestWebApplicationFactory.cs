@@ -31,13 +31,13 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                 
                 // uncomment this if you want to test the integration with NLU service
                 // but you need to run local NLU service at port 5678
-                services.AddHttpClient<INluService, NluService>(client =>
-                {
-                    client.BaseAddress = new Uri("http://localhost:5678");
-                });
+                // services.AddHttpClient<INluService, NluService>(client =>
+                // {
+                //     client.BaseAddress = new Uri("http://localhost:5678");
+                // });
                 
                 // uncomment this if you want to mock NluService
-                // services.AddTransient(_ => MockNluService());
+                services.AddTransient(_ => MockNluService());
             });
         }
 

@@ -52,7 +52,8 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
             {
                 // TODO: this won't delete the detached intent
                 query.ClearIntents();
-                query.AddIntent(new Intent(request.Intent.Name, query.ProjectId, request.Intent.Type));
+                query.AddIntent(new Intent(request.Intent.Name, query.ProjectId, request.Intent.Type,
+                    request.Intent.PhraseParts));
             }
             else
             {
