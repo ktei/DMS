@@ -1,6 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Npgsql;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence
 {
@@ -11,10 +13,24 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
             var optionsBuilder = new DbContextOptionsBuilder<DialogManagementContext>();
             optionsBuilder.UseNpgsql(
                 "Host=localhost;Database=postgres;Username=postgres;Password=admin");
-            return new DialogManagementContext(optionsBuilder.Options);
+            return new DialogManagementContext(optionsBuilder.Options, new MeidatR());
         }
+        
+        private class MeidatR : IMediator
+        {
+            public Task<TResponse> Send<TResponse>(IRequest<TResponse> request,
+                CancellationToken cancellationToken = new CancellationToken()) =>
+                Task.FromResult(default(TResponse));
 
+            public Task<object?> Send(object request, CancellationToken cancellationToken = new CancellationToken()) =>
+                Task.FromResult(default(object?));
 
+            public Task Publish(object notification, CancellationToken cancellationToken = new CancellationToken()) =>
+                Task.CompletedTask;
 
+            public Task Publish<TNotification>(TNotification notification,
+                CancellationToken cancellationToken = new CancellationToken()) where TNotification : INotification =>
+                Task.FromResult(default(TNotification));
+        }
     }
 }

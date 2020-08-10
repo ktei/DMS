@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Npgsql.NameTranslation;
@@ -21,20 +22,19 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type",
                 new NpgsqlNullNameTranslator());
         }
+
+        private readonly IMediator _mediator;
         
-        public DialogManagementContext(DbContextOptions<DialogManagementContext> options)
+        public DialogManagementContext(DbContextOptions<DialogManagementContext> options, IMediator mediator)
             : base(options)
         {
+            _mediator = mediator;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("chatbot");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrganisationConfiguration).Assembly);
-            
-            // modelBuilder.Entity<EntityName>().Property<DateTime>("CreatedAt").HasColumnName("createdAt");
-            // modelBuilder.Entity<EntityName>().Property<DateTime>("UpdatedAt").HasColumnName("updatedAt");
-
             
             base.OnModelCreating(modelBuilder);
         }
@@ -53,29 +53,19 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<QueryIntent> QueryIntents { get; set; }
         public DbSet<QueryResponse> QueryResponses { get; set; }
         
-        public override int SaveChanges()
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             UpdateTimestamps();
-            return base.SaveChanges();
-        }
-       
-        public override int SaveChanges(bool acceptAllChangesOnSuccess)
-        {
-            UpdateTimestamps();
-            return base.SaveChanges(acceptAllChangesOnSuccess);
-        }
-        
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            UpdateTimestamps();
-            return base.SaveChangesAsync(cancellationToken);
+            await _mediator.DispatchDomainEvents(this);
+            return await base.SaveChangesAsync(cancellationToken);
         }
 
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
             UpdateTimestamps();
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            await _mediator.DispatchDomainEvents(this);
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
         private void UpdateTimestamps()

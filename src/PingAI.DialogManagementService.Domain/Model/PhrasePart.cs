@@ -30,8 +30,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             EntityTypeId = entityTypeId;
         }
 
-        public void UpdateIntentId(Guid intentId) => IntentId = intentId;
-
         public void UpdatePosition(int position)
         {
             if (Type != PhrasePartType.CONSTANT_ENTITY)

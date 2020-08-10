@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using PingAI.DialogManagementService.Domain.Events;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class Intent : IHaveTimestamps
+    public class Intent : DomainEntity, IHaveTimestamps
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
@@ -50,22 +51,37 @@ namespace PingAI.DialogManagementService.Domain.Model
                 throw new ArgumentException($"{nameof(name)}'s max length is 255");
             }
 
+            if (Name == name) return;
+            
             Name = name;
+            AddIntentUpdatedEvent();
         }
 
         public void UpdatePhrases(IEnumerable<PhrasePart> phraseParts)
         {
             _phraseParts.Clear();
             var partsToAdd = phraseParts.ToArray();
-            for (var i = 0; i < partsToAdd.Length; i++)
+            foreach (var groupedParts in partsToAdd.GroupBy(p => p.PhraseId))
             {
-                var part = partsToAdd[i];
-                part.UpdatePosition(i);
-                part.UpdateIntentId(Id);
+                var position = 0;
+                foreach (var part in groupedParts)
+                {
+                    part.UpdatePosition(position++);
+                    _phraseParts.Add(part);
+                }
             }
-            _phraseParts.AddRange(partsToAdd);
+
+            AddIntentUpdatedEvent();
         }
 
+        private void AddIntentUpdatedEvent()
+        {
+            if (!DomainEvents.Any(e => e is IntentUpdatedEvent))
+            {
+                AddDomainEvent(new IntentUpdatedEvent(Id, ProjectId, Name, PhraseParts.ToArray()));
+            } 
+        }
+        
         public override string ToString() => Name;
     }
 

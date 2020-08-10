@@ -42,6 +42,7 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
                 .WithMessage("{PropertyName} must not be null given ENTITY type");
             RuleFor(x => x.EntityName)
                 .NotNull()
+                .MaximumLength(30) // 30 is the parameter name length limit of Dialogflow
                 .When(x => 
                     string.Compare(x.Type, PhrasePartType.ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
                 .WithMessage("{PropertyName} must not be null given ENTITY type");
@@ -59,6 +60,7 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
                 .WithMessage("{PropertyName} must not be empty given CONSTANT_ENTITY type");
             RuleFor(x => x.EntityName)
                 .NotNull()
+                .MaximumLength(30) // 30 is the parameter name length limit of Dialogflow
                 .When(x => 
                     string.Compare(x.Type, PhrasePartType.CONSTANT_ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
                 .WithMessage("{PropertyName} must not be null given CONSTANT_ENTITY type");

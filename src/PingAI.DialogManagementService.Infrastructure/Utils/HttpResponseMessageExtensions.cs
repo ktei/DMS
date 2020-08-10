@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
+using PingAI.DialogManagementService.Infrastructure.Services;
 
 namespace PingAI.DialogManagementService.Infrastructure.Utils
 {
@@ -15,7 +16,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Utils
                 throw new InvalidOperationException("Could not cast a successful response to exception");
             }
 
-            var message = await httpResponse.Content.ReadAsStringAsync();
+            var errorResponse = await ErrorResponse.BuildFromHttpContent(httpResponse.Content);
+            var message = errorResponse.ToString();
             return httpResponse.StatusCode switch
             {
                 HttpStatusCode.BadRequest => new BadRequestException(message),

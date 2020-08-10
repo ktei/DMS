@@ -33,7 +33,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Responses
             await _factory.WithDbContext(async context =>
             {
                 entityName =
-                    (await context.AddAsync(new EntityName(Guid.NewGuid().ToString(), fixture.Project.Id, true)))
+                    (await context.AddAsync(new EntityName(TestingFixture.RandomString(15), fixture.Project.Id, true)))
                     .Entity;
                 await context.SaveChangesAsync();
             });

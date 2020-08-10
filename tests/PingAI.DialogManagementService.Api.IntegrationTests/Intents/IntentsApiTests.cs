@@ -244,10 +244,10 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             await _factory.WithDbContext(async context =>
             {
                 entityName =
-                    (await context.AddAsync(new EntityName(Guid.NewGuid().ToString(), projectId, true)))
+                    (await context.AddAsync(new EntityName(TestingFixture.RandomString(15), projectId, true)))
                     .Entity;
                 entityType =
-                    (await context.AddAsync(new EntityType(Guid.NewGuid().ToString(), projectId, "test", null)))
+                    (await context.AddAsync(new EntityType(TestingFixture.RandomString(15), projectId, "test", null)))
                     .Entity;
                 await context.SaveChangesAsync();
             });

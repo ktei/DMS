@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
+using PingAI.DialogManagementService.Infrastructure.Services.Nlu;
 
 namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
 {
@@ -29,13 +31,13 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                 
                 // uncomment this if you want to test the integration with NLU service
                 // but you need to run local NLU service at port 5678
-                // services.AddHttpClient<INluService, NluService>(client =>
-                // {
-                //     client.BaseAddress = new Uri("http://localhost:5678");
-                // });
+                services.AddHttpClient<INluService, NluService>(client =>
+                {
+                    client.BaseAddress = new Uri("http://localhost:5678");
+                });
                 
                 // uncomment this if you want to mock NluService
-                services.AddTransient(_ => MockNluService());
+                // services.AddTransient(_ => MockNluService());
             });
         }
 

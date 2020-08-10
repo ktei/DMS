@@ -50,6 +50,7 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
             }
             else if (request.Intent != null)
             {
+                // TODO: this won't delete the detached intent
                 query.ClearIntents();
                 query.AddIntent(new Intent(request.Intent.Name, query.ProjectId, request.Intent.Type));
             }
@@ -71,6 +72,8 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
                 var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(query.ProjectId);
                 Debug.Assert(!string.IsNullOrEmpty(request.RteText));
                 request.Response.SetRteText(request.RteText!, entityNames.ToDictionary(x => x.Name));
+                
+                // TODO: this won't delete the detached response though
                 query.ClearResponses();
                 query.AddResponse(new Response(request.Response.Resolution,
                     query.ProjectId, request.Response.Type, request.Response.Order));
