@@ -11,10 +11,10 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         public string QueryId { get; set; }
         public string Name { get; set; }
         public string ProjectId { get; set; }
-        public ExpressionDto[] Expressions { get; private set; }
-        public string Description { get; private set; }
-        public string[]? Tags { get; private set; }
-        public int DisplayOrder { get; private set; }
+        public ExpressionDto[] Expressions { get; set; }
+        public string Description { get; set; }
+        public string[]? Tags { get; set; }
+        public int DisplayOrder { get; set; }
         public IntentDto[] Intents { get; set; }
         public ResponseDto[] Responses { get; set; }
 

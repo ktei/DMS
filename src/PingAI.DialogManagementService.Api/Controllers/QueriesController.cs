@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Queries;
 using PingAI.DialogManagementService.Application.Queries.CreateQuery;
+using PingAI.DialogManagementService.Application.Queries.GetQuery;
 using PingAI.DialogManagementService.Application.Queries.UpdateQuery;
 using PingAI.DialogManagementService.Domain.Model;
 
@@ -18,6 +19,14 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public QueriesController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("{queryId}")]
+        public async Task<ActionResult<QueryDto>> GetQuery([FromRoute] Guid queryId)
+        {
+            var query = new GetQueryQuery(queryId);
+            var result = await _mediator.Send(query);
+            return new QueryDto(result);
         }
 
         [HttpPost]
