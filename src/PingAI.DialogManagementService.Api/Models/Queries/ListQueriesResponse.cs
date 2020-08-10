@@ -3,11 +3,16 @@ using System.Collections.Generic;
 
 namespace PingAI.DialogManagementService.Api.Models.Queries
 {
-    public class ListQueryResponse : List<QueryListItemDto>
+    public class ListQueriesResponse : List<QueryListItemDto>
     {
-        public ListQueryResponse(IEnumerable<QueryListItemDto> items)
+        public ListQueriesResponse(IEnumerable<QueryListItemDto> items)
         {
             AddRange(items ?? throw new ArgumentNullException(nameof(items)));
+        }
+
+        public ListQueriesResponse()
+        {
+            
         }
     }
 }

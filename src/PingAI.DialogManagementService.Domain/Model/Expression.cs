@@ -5,8 +5,8 @@ namespace PingAI.DialogManagementService.Domain.Model
 {
     public class Expression : ValueObject
     {
-        public string EntityName { get; private set; }
-        public Condition Condition { get; private set; }
+        public string EntityName { get; set; }
+        public Condition Condition { get; set; }
 
         public override string ToString() => $"{EntityName} {Condition}";
 
@@ -19,10 +19,10 @@ namespace PingAI.DialogManagementService.Domain.Model
 
     public class Condition : ValueObject
     {
-        public Operator Operator { get; private set; }
-        public string? Value { get; private set; }
-        public Guid? EntityNameId { get; private set; }
-        public Comparer Comparer { get; private set; }
+        public Operator Operator { get; set; }
+        public string? Value { get; set; }
+        public Guid? EntityNameId { get; set; }
+        public Comparer Comparer { get; set; }
 
         public Condition(Operator @operator, string? value, Guid? entityNameId, Comparer comparer)
         {

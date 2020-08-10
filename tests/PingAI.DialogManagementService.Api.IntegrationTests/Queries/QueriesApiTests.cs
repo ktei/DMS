@@ -29,6 +29,52 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
         }
 
         [Fact]
+        public async Task ListQueries()
+        {
+            var projectId = _testingFixture.Project.Id;
+            
+            // insert a Query first
+            Query? query = null;
+            await _factory.WithDbContext(async context =>
+            {
+                query = new Query(Guid.NewGuid().ToString(),
+                    projectId, new Expression[0], Guid.NewGuid().ToString(),
+                    new[]{"t1", "t2"}, 0);
+                var resp = new Response(projectId, ResponseType.RTE, 0);
+                resp.SetRteText("Hello, World!", new Dictionary<string, EntityName>(0));
+                query.AddResponse(resp);
+                var intent = new Intent(Guid.NewGuid().ToString(), projectId, IntentType.STANDARD);
+                query.AddIntent(intent);
+                query = (await context.AddAsync(query)).Entity;
+                await context.SaveChangesAsync();
+            });
+            Debug.Assert(query != null); 
+            
+            var httpResponse = await _client.GetAsync(
+                $"/dms/api/v1/queries?projectId={projectId}"
+            );
+            await httpResponse.IsOk();
+            var response = await httpResponse.Content.ReadFromJsonAsync<List<QueryListItemDto>>();
+            
+            // clean up
+            await _factory.WithDbContext(async context =>
+            {
+                query = await context.Queries
+                    .Include(x => x.QueryIntents).ThenInclude(x => x.Intent)
+                    .Include(x => x.QueryResponses).ThenInclude(x => x.Response)
+                    .FirstOrDefaultAsync(resp => resp.Id == Guid.Parse(response.First().QueryId));
+                context.RemoveRange(query.Intents);
+                context.RemoveRange(query.Responses);
+                context.Remove(query);
+                await context.SaveChangesAsync();
+            });
+
+            Single(response);
+            Equal("Hello, World!", response[0].ResponseText);
+        }
+        
+
+        [Fact]
         public async Task GetQuery()
         {
             var projectId = _testingFixture.Project.Id;

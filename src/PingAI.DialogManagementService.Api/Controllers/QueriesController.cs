@@ -1,11 +1,15 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Queries;
 using PingAI.DialogManagementService.Application.Queries.CreateQuery;
 using PingAI.DialogManagementService.Application.Queries.GetQuery;
+using PingAI.DialogManagementService.Application.Queries.ListQueries;
 using PingAI.DialogManagementService.Application.Queries.UpdateQuery;
+using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Controllers
@@ -19,6 +23,18 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public QueriesController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+        
+        [HttpGet]
+        public async Task<ActionResult<List<QueryListItemDto>>> GetQuery([FromQuery] Guid? projectId)
+        {
+            if (!projectId.HasValue)
+            {
+                throw new BadRequestException($"{nameof(projectId)} must be provided");
+            }
+            var query = new ListQueriesQuery(projectId.Value);
+            var queries = await _mediator.Send(query);
+            return new ListQueriesResponse(queries.Select(q => new QueryListItemDto(q)));
         }
 
         [HttpGet("{queryId}")]

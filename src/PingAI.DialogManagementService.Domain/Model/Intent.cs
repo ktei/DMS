@@ -87,6 +87,26 @@ namespace PingAI.DialogManagementService.Domain.Model
                 AddDomainEvent(new IntentUpdatedEvent(Id, ProjectId, Name, PhraseParts.ToArray()));
             } 
         }
+
+        public IEnumerable<string> GetPhrases()
+        {
+            if (_phraseParts == null)
+                throw new InvalidOperationException($"Load {nameof(PhraseParts)} first");
+            
+            var groupedParts = PhraseParts.GroupBy(p => p.PhraseId);
+            var enumerable = groupedParts as IGrouping<Guid, PhrasePart>[] ?? groupedParts.ToArray();
+            foreach (var group in enumerable)
+            {
+                yield return string.Join("", enumerable.First().OrderBy(p => p.Position)
+                    .Select(p => p.Type switch
+                    {
+                        PhrasePartType.TEXT => p.Text!,
+                        PhrasePartType.ENTITY => p.EntityName!.Name,
+                        PhrasePartType.CONSTANT_ENTITY => p.Value!,
+                        _ => string.Empty
+                    }));
+            }
+        }
         
         public override string ToString() => Name;
     }
