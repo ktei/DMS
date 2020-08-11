@@ -66,6 +66,19 @@ namespace PingAI.DialogManagementService.Domain.Model
             _queryIntents.Clear();
         }
 
+        public void Delete()
+        {
+            if (_queryIntents == null)
+                throw new InvalidOperationException($"Load {nameof(QueryIntents)} first");
+
+            foreach (var intent in _queryIntents.Select(x => x.Intent))
+            {
+                if (intent == null)
+                    throw new InvalidOperationException($"Load {nameof(QueryIntents)}.Intent first");
+                intent.Delete();
+            }
+        }
+
         private IReadOnlyList<Intent> GetIntents()
         {
             if (_queryIntents == null)

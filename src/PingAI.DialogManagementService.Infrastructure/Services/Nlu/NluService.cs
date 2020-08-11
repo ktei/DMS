@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -22,6 +23,18 @@ namespace PingAI.DialogManagementService.Infrastructure.Services.Nlu
             if (httpResponse.IsSuccessStatusCode)
             {
                 return await httpResponse.Content.ReadFromJsonAsync<SaveIntentResponse>();
+            }
+
+            throw await httpResponse.AsDomainException();
+        }
+
+        public async Task DeleteIntent(Guid projectId, Guid intentId)
+        {
+            var httpResponse = 
+                await _httpClient.DeleteAsync(BuildApiPath("Intents", projectId, intentId));
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                return;
             }
 
             throw await httpResponse.AsDomainException();

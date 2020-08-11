@@ -34,21 +34,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             var projectId = _testingFixture.Project.Id;
             
             // insert a Query first
-            Query? query = null;
-            await _factory.WithDbContext(async context =>
-            {
-                query = new Query(Guid.NewGuid().ToString(),
-                    projectId, new Expression[0], Guid.NewGuid().ToString(),
-                    new[]{"t1", "t2"}, 0);
-                var resp = new Response(projectId, ResponseType.RTE, 0);
-                resp.SetRteText("Hello, World!", new Dictionary<string, EntityName>(0));
-                query.AddResponse(resp);
-                var intent = new Intent(Guid.NewGuid().ToString(), projectId, IntentType.STANDARD);
-                query.AddIntent(intent);
-                query = (await context.AddAsync(query)).Entity;
-                await context.SaveChangesAsync();
-            });
-            Debug.Assert(query != null); 
+            await SetupQuery(projectId);
             
             var httpResponse = await _client.GetAsync(
                 $"/dms/api/v1/queries?projectId={projectId}"
@@ -59,7 +45,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             // clean up
             await _factory.WithDbContext(async context =>
             {
-                query = await context.Queries
+                var query = await context.Queries
                     .Include(x => x.QueryIntents).ThenInclude(x => x.Intent)
                     .Include(x => x.QueryResponses).ThenInclude(x => x.Response)
                     .FirstOrDefaultAsync(resp => resp.Id == Guid.Parse(response.First().QueryId));
@@ -80,21 +66,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             var projectId = _testingFixture.Project.Id;
             
             // insert a Query first
-            Query? query = null;
-            await _factory.WithDbContext(async context =>
-            {
-                query = new Query(Guid.NewGuid().ToString(),
-                    projectId, new Expression[0], Guid.NewGuid().ToString(),
-                    new string[]{"t1", "t2"}, 0);
-                var resp = new Response(projectId, ResponseType.RTE, 0);
-                resp.SetRteText("Hello, World!", new Dictionary<string, EntityName>(0));
-                query.AddResponse(resp);
-                var intent = new Intent(Guid.NewGuid().ToString(), projectId, IntentType.STANDARD);
-                query.AddIntent(intent);
-                query = (await context.AddAsync(query)).Entity;
-                await context.SaveChangesAsync();
-            });
-            Debug.Assert(query != null);
+            Query query = await SetupQuery(projectId);
             
             var httpResponse = await _client.GetAsync(
                 $"/dms/api/v1/queries/{query.Id}"
@@ -188,21 +160,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             var phraseId1 = Guid.NewGuid();
             
             // insert a Query first
-            Query? query = null;
-            await _factory.WithDbContext(async context =>
-            {
-                query = new Query(Guid.NewGuid().ToString(),
-                    projectId, new Expression[0], Guid.NewGuid().ToString(),
-                    new string[]{"t1", "t2"}, 0);
-                var resp = new Response(projectId, ResponseType.RTE, 0);
-                resp.SetRteText("Hello, World!", new Dictionary<string, EntityName>(0));
-                query.AddResponse(resp);
-                var intent = new Intent(Guid.NewGuid().ToString(), projectId, IntentType.STANDARD);
-                query.AddIntent(intent);
-                query = (await context.AddAsync(query)).Entity;
-                await context.SaveChangesAsync();
-            });
-            Debug.Assert(query != null);
+            Query query = await SetupQuery(projectId);
 
             var oldIntentIds = query.Intents.Select(x => x.Id).ToArray();
             var oldResponseIds = query.Responses.Select(x => x.Id).ToArray();
@@ -268,6 +226,45 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             NotNull(response);
             Single(response.Intents);
             Single(response.Responses);
+        }
+
+        [Fact]
+        public async Task DeleteQuery()
+        {
+            var projectId = _testingFixture.Project.Id;
+            var query = await SetupQuery(projectId);
+            
+            var httpResponse = await _client.DeleteAsync($"/dms/api/v1/queries/{query.Id}");
+            await httpResponse.IsOk();
+
+            await _factory.WithDbContext(async context =>
+            {
+                var q = await context.Queries
+                    .FirstOrDefaultAsync(resp => resp.Id == query.Id);
+
+                // query should be deleted already
+                Null(q);
+            });
+        }
+
+        private async Task<Query> SetupQuery(Guid projectId)
+        {
+            Query? query = null;
+            await _factory.WithDbContext(async context =>
+            {
+                query = new Query(Guid.NewGuid().ToString(),
+                    projectId, new Expression[0], Guid.NewGuid().ToString(),
+                    new[]{"t1", "t2"}, 0);
+                var resp = new Response(projectId, ResponseType.RTE, 0);
+                resp.SetRteText("Hello, World!", new Dictionary<string, EntityName>(0));
+                query.AddResponse(resp);
+                var intent = new Intent(Guid.NewGuid().ToString(), projectId, IntentType.STANDARD);
+                query.AddIntent(intent);
+                query = (await context.AddAsync(query)).Entity;
+                await context.SaveChangesAsync();
+            });
+            Debug.Assert(query != null);
+            return query;
         }
 
         public async Task InitializeAsync()

@@ -107,7 +107,16 @@ namespace PingAI.DialogManagementService.Domain.Model
                     }));
             }
         }
-        
+
+        public void Delete()
+        {
+            // TODO: soft deletion should update DeletedAt
+            if (!DomainEvents.Any(e => e is IntentDeletedEvent))
+            {
+                AddDomainEvent(new IntentDeletedEvent(ProjectId, Id));
+            }
+        }
+
         public override string ToString() => Name;
     }
 

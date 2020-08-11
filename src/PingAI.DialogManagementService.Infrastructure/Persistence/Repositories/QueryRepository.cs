@@ -57,5 +57,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .Where(x => x.ProjectId == projectId).ToListAsync();
             return results;
         }
+
+        public void RemoveQuery(Query query)
+        {
+            _context.Queries.Remove(query);
+        }
     }
 }

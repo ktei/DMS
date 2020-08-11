@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Queries;
 using PingAI.DialogManagementService.Application.Queries.CreateQuery;
+using PingAI.DialogManagementService.Application.Queries.DeleteQuery;
 using PingAI.DialogManagementService.Application.Queries.GetQuery;
 using PingAI.DialogManagementService.Application.Queries.ListQueries;
 using PingAI.DialogManagementService.Application.Queries.UpdateQuery;
@@ -71,6 +72,13 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 new Expression[0], request.Description ?? request.Name, request.Tags,
                 request.DisplayOrder, null, intent, null, response, request.Response.RteText));
             return new UpdateQueryResponse(query);
+        }
+
+        [HttpDelete("{queryId}")]
+        public async Task<IActionResult> DeleteQuery([FromRoute] Guid queryId)
+        {
+            await _mediator.Send(new DeleteQueryCommand(queryId));
+            return Ok();
         }
     }
 }
