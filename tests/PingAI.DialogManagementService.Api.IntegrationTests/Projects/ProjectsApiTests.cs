@@ -46,12 +46,27 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
                     WidgetDescription = "description",
                     GreetingMessage = "greeting",
                     FallbackMessage = "fallback",
-                    Enquiries = new[] {"email"}
                 });
             await httpResponse.IsOk();
             var response = await httpResponse.Content.ReadFromJsonAsync<UpdateProjectResponse>();
             NotNull(response);
             Equal(fixture.Project.Id.ToString(), response.ProjectId);
+        }
+
+        [Fact]
+        public async Task UpdateEnquiries()
+        {
+            var fixture = _testingFixture;
+            var httpResponse = await _client.PutAsJsonAsync(
+                $"/dms/api/v1/projects/{fixture.Project.Id}/enquiries",
+                new UpdateEnquiriesRequest
+                {
+                    Enquiries = new[]{"e1", "e2", "e3"}
+                }); 
+            await httpResponse.IsOk();
+            var response = await httpResponse.Content.ReadFromJsonAsync<UpdateEnquiriesResponse>();
+            NotNull(response);
+            Equal(3, response.Enquiries.Length);
         }
 
         public async Task InitializeAsync()

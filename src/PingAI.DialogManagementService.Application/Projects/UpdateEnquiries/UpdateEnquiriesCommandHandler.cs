@@ -7,15 +7,15 @@ using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
 using static PingAI.DialogManagementService.Domain.ErrorHandling.ErrorDescriptions;
 
-namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
+namespace PingAI.DialogManagementService.Application.Projects.UpdateEnquiries
 {
-    public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Project>
+    public class UpdateEnquiriesCommandHandler : IRequestHandler<UpdateEnquiriesCommand, Project>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthorizationService _authorizationService;
 
-        public UpdateProjectCommandHandler(IProjectRepository projectRepository, IUnitOfWork unitOfWork,
+        public UpdateEnquiriesCommandHandler(IProjectRepository projectRepository, IUnitOfWork unitOfWork,
             IAuthorizationService authorizationService)
         {
             _projectRepository = projectRepository;
@@ -23,23 +23,17 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
             _authorizationService = authorizationService;
         }
 
-        public async Task<Project> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+        public async Task<Project> Handle(UpdateEnquiriesCommand request, CancellationToken cancellationToken)
         {
+            var project = await _projectRepository.GetProjectById(request.ProjectId);
+            if (project == null)
+                throw new ForbiddenException(ProjectWriteDenied);
+            
             var canWrite = await _authorizationService.UserCanWriteProject(request.ProjectId);
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
-            var project = await _projectRepository.GetProjectById(request.ProjectId);
-            if (project == null)
-            {
-                // TODO: this should never happen
-                // consider adding logs here
-                throw new ForbiddenException(ProjectReadDenied);
-            }
-            project.UpdateWidgetTitle(request.WidgetTitle);
-            project.UpdateWidgetColor(request.WidgetColor);
-            project.UpdateWidgetDescription(request.WidgetDescription);
-            project.UpdateFallbackMessage(request.FallbackMessage);
-            project.UpdateGreetingMessage(request.GreetingMessage);
+
+            project.UpdateEnquiries(request.Enquiries);
             await _unitOfWork.SaveChanges();
             return project;
         }

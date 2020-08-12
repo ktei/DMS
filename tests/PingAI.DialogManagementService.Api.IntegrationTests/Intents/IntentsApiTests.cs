@@ -40,12 +40,16 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 await context.SaveChangesAsync();
                 var actual = await _client.GetFromJsonAsync<List<IntentListItemDto>>(
                     $"/dms/api/v1/intents?projectId={_testingFixture.Project.Id}");
+
+                var createdIntents = await context.Intents.AsNoTracking().Where(x => x.Name == "i1" || x.Name == "t2")
+                    .ToListAsync();
                 
                 // clean up
                 context.RemoveRange(intent1, intent2);
                 await context.SaveChangesAsync();
-                
-                Equal(2, actual.Count);
+
+                True(actual.Count >= 2);
+                Equal(2, createdIntents.Count);
             });
         }
 

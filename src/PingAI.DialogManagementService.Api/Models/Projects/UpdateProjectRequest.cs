@@ -10,7 +10,6 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
         public string WidgetDescription { get; set; }
         public string FallbackMessage { get; set; }
         public string GreetingMessage { get; set; }
-        public string[] Enquiries { get; set; }
     }
 
     public class UpdateProjectRequestValidator : AbstractValidator<UpdateProjectRequest>

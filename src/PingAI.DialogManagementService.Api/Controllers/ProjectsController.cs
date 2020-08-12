@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Projects;
 using PingAI.DialogManagementService.Application.Projects.GetProject;
+using PingAI.DialogManagementService.Application.Projects.UpdateEnquiries;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 
 namespace PingAI.DialogManagementService.Api.Controllers
@@ -34,8 +35,17 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var project = await _mediator.Send(new UpdateProjectCommand(projectId,
                 request.WidgetTitle, request.WidgetColor,
                 request.WidgetDescription, request.FallbackMessage,
-                request.GreetingMessage, request.Enquiries));
+                request.GreetingMessage));
             return new UpdateProjectResponse(project);
         }
+
+        [HttpPut("{projectId}/enquiries")]
+        public async Task<ActionResult<UpdateEnquiriesResponse>> UpdateEnquiries([FromRoute] Guid projectId,
+            [FromBody] UpdateEnquiriesRequest request)
+        {
+            var project = await _mediator.Send(new UpdateEnquiriesCommand(projectId, request.Enquiries));
+            return new UpdateEnquiriesResponse(project);
+        }
+        
     }
 }

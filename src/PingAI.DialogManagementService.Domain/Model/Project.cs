@@ -83,7 +83,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             GreetingMessage = greetingMessage;
         }
 
-        public void UpdateEnquiries(string[] enquiries)
+        public void UpdateEnquiries(string[]? enquiries)
         {
             Enquiries = (enquiries ?? new string[]{})
                 .OrderBy(e => e)
