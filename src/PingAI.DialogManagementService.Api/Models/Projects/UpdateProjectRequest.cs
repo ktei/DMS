@@ -24,8 +24,6 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
                 .WithMessage("{PropertyName} must be a valid HEX color code");
             RuleFor(x => x.FallbackMessage)
                 .NotEmpty();
-            RuleFor(x => x.GreetingMessage)
-                .NotEmpty();
         }
     }
 }
