@@ -17,11 +17,11 @@ namespace PingAI.DialogManagementService.Api
         public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            using var scope = host.Services.CreateScope();
-            await using var conn = (NpgsqlConnection) scope.ServiceProvider.GetService<DialogManagementContext>()
-                .Database.GetDbConnection();
-            await conn.OpenAsync();
-            conn.ReloadTypes();
+            // using var scope = host.Services.CreateScope();
+            // await using var conn = (NpgsqlConnection) scope.ServiceProvider.GetService<DialogManagementContext>()
+            //     .Database.GetDbConnection();
+            // await conn.OpenAsync();
+            // conn.ReloadTypes();
             await host.RunAsync();
         }
 

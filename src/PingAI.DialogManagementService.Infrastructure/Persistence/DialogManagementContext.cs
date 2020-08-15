@@ -28,18 +28,18 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
             modelBuilder.HasDefaultSchema("chatbot");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrganisationConfiguration).Assembly);
             
-            modelBuilder.HasPostgresEnum<IntentType>();
-            modelBuilder.HasPostgresEnum<PhrasePartType>();
-            modelBuilder.HasPostgresEnum<ResponseType>();
+            modelBuilder.HasPostgresEnum<IntentType>("chatbot");
+            modelBuilder.HasPostgresEnum<PhrasePartType>("chatbot");
+            modelBuilder.HasPostgresEnum<ResponseType>("chatbot");
             
             base.OnModelCreating(modelBuilder);
         }
 
         private static void MapEnums()
         {
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type", new NpgsqlNullNameTranslator());
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type", new NpgsqlNullNameTranslator());
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type", new NpgsqlNullNameTranslator());
         }
 
         public DbSet<Organisation> Organisations { get; set; }
