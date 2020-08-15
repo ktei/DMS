@@ -20,7 +20,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DialogManagementContext(DbContextOptions<DialogManagementContext> options, IMediator mediator)
             : base(options)
         {
-            MapEnums();
             _mediator = mediator;
         }
 
@@ -29,8 +28,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
             modelBuilder.HasDefaultSchema("chatbot");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrganisationConfiguration).Assembly);
             
-            MapEnums();
-
             modelBuilder.HasPostgresEnum<IntentType>();
             modelBuilder.HasPostgresEnum<PhrasePartType>();
             modelBuilder.HasPostgresEnum<ResponseType>();
@@ -40,12 +37,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 
         private static void MapEnums()
         {
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type",
-                new NpgsqlNullNameTranslator());
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type",
-                new NpgsqlNullNameTranslator());
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type",
-                new NpgsqlNullNameTranslator());
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type");
         }
 
         public DbSet<Organisation> Organisations { get; set; }
