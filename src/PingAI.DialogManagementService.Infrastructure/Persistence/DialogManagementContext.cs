@@ -25,7 +25,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("chatbot");
+            // modelBuilder.HasDefaultSchema("chatbot");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrganisationConfiguration).Assembly);
             
             modelBuilder.HasPostgresEnum<IntentType>("chatbot");
