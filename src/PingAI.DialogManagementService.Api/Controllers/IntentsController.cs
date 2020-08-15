@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
@@ -45,8 +46,14 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public async Task<ActionResult<UpdateIntentResponse>> UpdateIntent([FromRoute] Guid intentId,
             [FromBody] UpdateIntentRequest request)
         {
-            var phraseParts = request.PhraseParts?.Select(p => 
-                MapCreatePhrasePartDto(Guid.Empty, intentId, p));
+            var phraseParts = new List<PhrasePart>();
+            if (request.Phrases != null)
+            {
+                phraseParts.AddRange(from phrase in request.Phrases
+                    let phraseId = Guid.NewGuid()
+                    from part in phrase
+                    select MapCreatePhrasePartDto(Guid.Empty, intentId, phraseId, part));
+            }
             var intent = await _mediator.Send(new UpdateIntentCommand(intentId, request.Name, phraseParts));
             
             return new UpdateIntentResponse(intent);
@@ -56,8 +63,15 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public async Task<ActionResult<CreateIntentResponse>> CreateIntent([FromBody] CreateIntentRequest request)
         {
             var intentId = Guid.NewGuid();
-            var phraseParts = request.PhraseParts?.Select(p => 
-                MapCreatePhrasePartDto(Guid.Parse(request.ProjectId), intentId, p));
+            var phraseParts = new List<PhrasePart>();
+            if (request.Phrases != null)
+            {
+                phraseParts.AddRange(from phrase in request.Phrases
+                    let phraseId = Guid.NewGuid()
+                    from part in phrase
+                    select MapCreatePhrasePartDto(Guid.Parse(request.ProjectId), intentId, phraseId, part));
+            }
+
             var intent = await _mediator.Send(
                 new CreateIntentCommand(intentId, request.Name, Guid.Parse(request.ProjectId),
                 Enum.Parse<IntentType>(request.Type, true), phraseParts));
@@ -65,11 +79,11 @@ namespace PingAI.DialogManagementService.Api.Controllers
             return new CreateIntentResponse(intent);
         }
 
-        private static PhrasePart MapCreatePhrasePartDto(Guid projectId, Guid intentId, CreatePhrasePartDto p)
+        private static PhrasePart MapCreatePhrasePartDto(Guid projectId, Guid intentId, Guid phraseId, CreatePhrasePartDto p)
         {
-            var phrasePart = new PhrasePart(intentId, Guid.Parse(p.PhraseId),
+            var phrasePart = new PhrasePart(intentId, phraseId,
                 p.Position, p.Text, p.Value, Enum.Parse<PhrasePartType>(p.Type),
-                null,
+                default(Guid?),
                 p.EntityTypeId == null ? default(Guid?) : Guid.Parse(p.EntityTypeId));
             if (p.EntityName != null)
             {

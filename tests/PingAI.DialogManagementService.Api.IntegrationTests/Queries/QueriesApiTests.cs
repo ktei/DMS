@@ -96,7 +96,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
         public async Task CreateQuery()
         {
             var projectId = _testingFixture.Project.Id;
-            var phraseId1 = Guid.NewGuid();
+            var (entityName, entityType) = await SetupEntityNamesAndTypes(projectId);
+            var newEntityName = TestingFixture.RandomString(15);
             var payload = new CreateQueryRequest
             {
                 Name = "TEST_query",
@@ -108,17 +109,35 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                     Name = "TEST_query_intent",
                     PhraseParts = new[]
                     {
-                        new CreatePhrasePartDto
+                        new []
                         {
-                            Text = "Hello, ",
-                            PhraseId = phraseId1.ToString(),
-                            Type = PhrasePartType.TEXT.ToString()
+                            new CreatePhrasePartDto
+                            {
+                                Text = "Hello, ",
+                                Type = PhrasePartType.TEXT.ToString()
+                            },
+                            new CreatePhrasePartDto
+                            {
+                                Text = "World!",
+                                Type = PhrasePartType.ENTITY.ToString(),
+                                EntityName = entityName.Name,
+                                EntityTypeId = entityType.Id.ToString(),
+                            }
                         },
-                        new CreatePhrasePartDto
+                        new []
                         {
-                            Text = "World!",
-                            PhraseId = phraseId1.ToString(),
-                            Type = PhrasePartType.TEXT.ToString()
+                            new CreatePhrasePartDto
+                            {
+                                Text = "Hello ",
+                                Type = PhrasePartType.TEXT.ToString()
+                            },
+                            new CreatePhrasePartDto
+                            {
+                                Text = "World",
+                                Type = PhrasePartType.ENTITY.ToString(),
+                                EntityName = newEntityName,
+                                EntityTypeId = entityType.Id.ToString(),
+                            }
                         }
                     }
                 },
@@ -142,14 +161,20 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                     .Include(x => x.QueryIntents).ThenInclude(x => x.Intent)
                     .Include(x => x.QueryResponses).ThenInclude(x => x.Response)
                     .FirstOrDefaultAsync(resp => resp.Id == Guid.Parse(response.QueryId));
+                var newEntity = await context.EntityNames.FirstAsync(x => x.Name == newEntityName);
                 context.RemoveRange(query.Intents);
                 context.RemoveRange(query.Responses);
                 context.Remove(query);
+                context.AttachRange(entityName, entityType);
+                context.RemoveRange(entityName, entityType);
+                context.Remove(newEntity);
                 await context.SaveChangesAsync();
             });
             
             NotNull(response);
             Single(response.Intents);
+            Equal(4, response.Intents.First().PhraseParts.Length);
+            Contains(response.Intents.First().PhraseParts, p => p.EntityName == newEntityName);
             Single(response.Responses);
         }
         
@@ -177,17 +202,18 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                     Name = "TEST_query_intent",
                     PhraseParts = new[]
                     {
-                        new CreatePhrasePartDto
+                        new[]
                         {
-                            Text = "Hello, ",
-                            PhraseId = phraseId1.ToString(),
-                            Type = PhrasePartType.TEXT.ToString()
-                        },
-                        new CreatePhrasePartDto
-                        {
-                            Text = "World!",
-                            PhraseId = phraseId1.ToString(),
-                            Type = PhrasePartType.TEXT.ToString()
+                            new CreatePhrasePartDto
+                            {
+                                Text = "Hello, ",
+                                Type = PhrasePartType.TEXT.ToString()
+                            },
+                            new CreatePhrasePartDto
+                            {
+                                Text = "World!",
+                                Type = PhrasePartType.TEXT.ToString()
+                            }
                         }
                     }
                 },
@@ -265,6 +291,26 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             });
             Debug.Assert(query != null);
             return query;
+        }
+        
+        private async Task<(EntityName entityName, EntityType entityType)> SetupEntityNamesAndTypes(Guid projectId)
+        {
+            EntityName? entityName = null;
+            EntityType? entityType = null;
+            await _factory.WithDbContext(async context =>
+            {
+                entityName =
+                    (await context.AddAsync(new EntityName(TestingFixture.RandomString(15), projectId, true)))
+                    .Entity;
+                entityType =
+                    (await context.AddAsync(new EntityType(TestingFixture.RandomString(15), projectId, "test", null)))
+                    .Entity;
+                await context.SaveChangesAsync();
+            });
+            Debug.Assert(entityName != null);
+            Debug.Assert(entityType != null);
+
+            return (entityName, entityType);
         }
 
         public async Task InitializeAsync()

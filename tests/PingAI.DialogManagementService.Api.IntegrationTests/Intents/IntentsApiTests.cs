@@ -62,7 +62,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 var intent = new Intent("i1", _testingFixture.Project.Id, IntentType.STANDARD);
                 var phrasePart = new PhrasePart(intent.Id,
                     Guid.NewGuid(), 0, "Hello, World!", null, PhrasePartType.TEXT,
-                    null, null);
+                    default(Guid?), null);
                 intent.UpdatePhrases(new []{phrasePart});
                 await context.AddRangeAsync(intent);
                 await context.SaveChangesAsync();
@@ -94,35 +94,37 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                     Name = "test intent",
                     ProjectId = _testingFixture.Project.Id.ToString(),
                     Type = IntentType.STANDARD.ToString(),
-                    PhraseParts = new[]
+                    Phrases = new[]
                     {
-                        new CreatePhrasePartDto
+                        new[]
                         {
-                            Text = "My favourite city is Kyoto",
-                            PhraseId = phraseId1,
-                            Type = PhrasePartType.TEXT.ToString(),
+                            new CreatePhrasePartDto
+                            {
+                                Text = "My favourite city is Kyoto",
+                                Type = PhrasePartType.TEXT.ToString(),
+                            },
+                            new CreatePhrasePartDto
+                            {
+                                EntityName = entityName.Name,
+                                EntityTypeId = entityType.Id.ToString(),
+                                Value = "Kyoto",
+                                Type = PhrasePartType.CONSTANT_ENTITY.ToString(),
+                            },
                         },
-                        new CreatePhrasePartDto
+                        new[]
                         {
-                            EntityName = entityName.Name,
-                            EntityTypeId = entityType.Id.ToString(),
-                            Value = "Kyoto",
-                            Type = PhrasePartType.CONSTANT_ENTITY.ToString(),
-                            PhraseId = phraseId1
-                        },
-                        new CreatePhrasePartDto
-                        {
-                            Text = "My hometown is ",
-                            PhraseId = phraseId2,
-                            Type = PhrasePartType.TEXT.ToString(),
-                        },
-                        new CreatePhrasePartDto
-                        {
-                            Text = "Qingdao",
-                            EntityName = "hometown",
-                            EntityTypeId = entityType.Id.ToString(),
-                            Type = PhrasePartType.ENTITY.ToString(),
-                            PhraseId = phraseId2
+                            new CreatePhrasePartDto
+                            {
+                                Text = "My hometown is ",
+                                Type = PhrasePartType.TEXT.ToString(),
+                            },
+                            new CreatePhrasePartDto
+                            {
+                                Text = "Qingdao",
+                                EntityName = "hometown",
+                                EntityTypeId = entityType.Id.ToString(),
+                                Type = PhrasePartType.ENTITY.ToString(),
+                            }
                         }
                     }
                 });
@@ -159,11 +161,11 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             var phraseId = Guid.NewGuid();
             var phrasePart1 = new PhrasePart(intent.Id,
                 phraseId, 0, "hello world", null, PhrasePartType.TEXT,
-                null, null);
+                default(Guid?), null);
             var phrasePart2 = new PhrasePart(intent.Id,
                 phraseId, 0, null,"Beijing", PhrasePartType.CONSTANT_ENTITY,
                 entityName.Id, entityType.Id);
-            intent.UpdatePhrases(new PhrasePart[]
+            intent.UpdatePhrases(new[]
             {
                 phrasePart1,
                 phrasePart2
@@ -176,41 +178,42 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             });
 
             // Act
-            var phraseId2 = Guid.NewGuid();
             var httpResponse = await _client.PutAsJsonAsync(
                 $"/dms/api/v1/intents/{intent.Id}",
                 new UpdateIntentRequest
                 {
                     Name = "helloWorld",
-                    PhraseParts = new[]
+                    Phrases = new[]
                     {
-                        new CreatePhrasePartDto
+                        new[]
                         {
-                            Text = "Hello World!",
-                            PhraseId = phraseId.ToString(),
-                            Type = PhrasePartType.TEXT.ToString()
+                            new CreatePhrasePartDto
+                            {
+                                Text = "Hello World!",
+                                Type = PhrasePartType.TEXT.ToString()
+                            },
+                            new CreatePhrasePartDto
+                            {
+                                Value = "Shanghai",
+                                Type = PhrasePartType.CONSTANT_ENTITY.ToString(),
+                                EntityName = entityName.Name,
+                                EntityTypeId = entityType.Id.ToString()
+                            }
                         },
-                        new CreatePhrasePartDto
+                        new[]
                         {
-                            Value = "Shanghai",
-                            PhraseId = phraseId.ToString(),
-                            Type = PhrasePartType.CONSTANT_ENTITY.ToString(),
-                            EntityName = entityName.Name,
-                            EntityTypeId = entityType.Id.ToString()
-                        },
-                        new CreatePhrasePartDto
-                        {
-                            Text = "My flight departs from ",
-                            PhraseId = phraseId2.ToString(),
-                            Type = PhrasePartType.TEXT.ToString()
-                        },
-                        new CreatePhrasePartDto
-                        {
-                            Text = "Melbourne",
-                            PhraseId = phraseId2.ToString(),
-                            Type = PhrasePartType.ENTITY.ToString(),
-                            EntityName = "TEST_departureCity",
-                            EntityTypeId = entityType.Id.ToString()
+                            new CreatePhrasePartDto
+                            {
+                                Text = "My flight departs from ",
+                                Type = PhrasePartType.TEXT.ToString()
+                            },
+                            new CreatePhrasePartDto
+                            {
+                                Text = "Melbourne",
+                                Type = PhrasePartType.ENTITY.ToString(),
+                                EntityName = "TEST_departureCity",
+                                EntityTypeId = entityType.Id.ToString()
+                            }
                         }
                     }
                 });

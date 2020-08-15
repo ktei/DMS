@@ -16,13 +16,13 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Intents
             {
                 new PhrasePart(Guid.NewGuid(),
                     Guid.NewGuid(), 0, "test", 
-                    null, PhrasePartType.TEXT, null, null),
+                    null, PhrasePartType.TEXT, default(Guid?), null),
             });
             
             // Act
             sut.UpdatePhrases(new[] { new PhrasePart(
                 sut.Id, Guid.NewGuid(), 0, "Hello, World!", null, PhrasePartType.TEXT,
-                null, null)});
+                default(Guid?), null)});
             var actual = sut.PhraseParts;
 
             // Assert

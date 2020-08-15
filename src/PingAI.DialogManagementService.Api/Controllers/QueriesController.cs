@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PingAI.DialogManagementService.Api.Models.Intents;
 using PingAI.DialogManagementService.Api.Models.Queries;
 using PingAI.DialogManagementService.Application.Queries.CreateQuery;
 using PingAI.DialogManagementService.Application.Queries.DeleteQuery;
@@ -51,6 +52,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
         {
             var projectId = Guid.Parse(request.ProjectId);
             var intent = new Intent(request.Intent.Name, projectId, IntentType.STANDARD);
+            var phraseParts = FlattenPhraseParts(projectId, intent.Id, request.Intent.PhraseParts);
+            intent.UpdatePhrases(phraseParts);
             var response = new Response(projectId, ResponseType.RTE, request.Response.Order);
             var query = await _mediator.Send(new CreateQueryCommand(
                 request.Name, Guid.Parse(request.ProjectId),
@@ -65,6 +68,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
             [FromBody] UpdateQueryRequest request)
         {
             var intent = new Intent(request.Intent.Name, IntentType.STANDARD);
+            var phraseParts = FlattenPhraseParts(Guid.Empty, intent.Id, request.Intent.PhraseParts);
+            intent.UpdatePhrases(phraseParts);
             var response = new Response(ResponseType.RTE, request.Response.Order);
             var query = await _mediator.Send(new UpdateQueryCommand(
                 queryId,
@@ -72,6 +77,22 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 new Expression[0], request.Description ?? request.Name, request.Tags,
                 request.DisplayOrder, null, intent, null, response, request.Response.RteText));
             return new UpdateQueryResponse(query);
+        }
+
+        private static IEnumerable<PhrasePart> FlattenPhraseParts(Guid projectId, Guid intentId,
+            CreatePhrasePartDto[][] partsGroups)
+        {
+            foreach (var parts in partsGroups)
+            {
+                var phraseId = Guid.NewGuid();
+                foreach (var part in parts)
+                {
+                    yield return new PhrasePart(intentId, phraseId, part.Position, part.Text,
+                        part.Value, Enum.Parse<PhrasePartType>(part.Type),
+                        string.IsNullOrEmpty(part.EntityName) ? null : new EntityName(part.EntityName, projectId, true),
+                        string.IsNullOrEmpty(part.EntityTypeId) ? default(Guid?) : Guid.Parse(part.EntityTypeId));
+                }
+            }
         }
 
         [HttpDelete("{queryId}")]

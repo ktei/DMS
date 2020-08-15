@@ -68,16 +68,16 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             intent.UpdatePhrases(new[]
             {
                 new PhrasePart(intent.Id, phraseId1, 0, "Hello, World!",
-                    null, PhrasePartType.TEXT, null, null),
+                    null, PhrasePartType.TEXT, default(Guid?), default),
                 
                 new PhrasePart(intent.Id, phraseId2, 0, "The city is ",
-                    null, PhrasePartType.TEXT, null, null),
+                    null, PhrasePartType.TEXT, default(Guid?), default),
                 new PhrasePart(intent.Id, phraseId2, 1, "Melbourne",
                     null, PhrasePartType.ENTITY, _testDataFactory.EntityName.Id,
                     _testDataFactory.EntityType.Id),
                 
                 new PhrasePart(intent.Id, phraseId3, 0, "My city is Kyoto",
-                    null, PhrasePartType.TEXT, null, null),
+                    null, PhrasePartType.TEXT, default(Guid?), default),
                 new PhrasePart(intent.Id, phraseId3, null, null,
                     "Kyoto", PhrasePartType.CONSTANT_ENTITY, _testDataFactory.EntityName.Id,
                     _testDataFactory.EntityType.Id)

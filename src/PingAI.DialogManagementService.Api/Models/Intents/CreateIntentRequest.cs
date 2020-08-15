@@ -9,7 +9,7 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
         public string ProjectId { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
-        public CreatePhrasePartDto[]? PhraseParts { get; set; }
+        public CreatePhrasePartDto[][]? Phrases { get; set; }
     }
 
     public class CreateIntentRequestValidator : AbstractValidator<CreateIntentRequest>
@@ -25,8 +25,8 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
             RuleFor(x => x.Type)
                 .NotEmpty()
                 .MustBeEnum(typeof(IntentType));
-            RuleForEach(x => x.PhraseParts)
-                .SetValidator(new CreatePhrasePartDtoValidator());
+            RuleForEach(x => x.Phrases)
+                .ForEach(x => x.SetValidator(new CreatePhrasePartDtoValidator()));
         }
     }
 }

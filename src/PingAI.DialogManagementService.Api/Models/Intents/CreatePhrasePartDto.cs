@@ -7,7 +7,6 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
 {
     public class CreatePhrasePartDto
     {
-        public string PhraseId { get; set; }
         public int? Position { get; set; }
         public string? Text { get; set; }
         public string? Value { get; set; }
@@ -20,9 +19,6 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
     {
         public CreatePhrasePartDtoValidator()
         {
-            RuleFor(x => x.PhraseId)
-                .NotEmpty()
-                .MustBeGuid();
             RuleFor(x => x.Type)
                 .NotEmpty()
                 .MustBeEnum(typeof(PhrasePartType));

@@ -5,7 +5,7 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
     public class UpdateIntentRequest
     {
         public string Name { get; set; }
-        public CreatePhrasePartDto[]? PhraseParts { get; set; }
+        public CreatePhrasePartDto[][]? Phrases { get; set; }
     }
 
     public class UpdateIntentRequestValidator : AbstractValidator<UpdateIntentRequest>
@@ -15,7 +15,8 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .MaximumLength(255);
-            RuleForEach(x => x.PhraseParts).SetValidator(new CreatePhrasePartDtoValidator());
+            RuleForEach(x => x.Phrases)
+                .ForEach(x => x.SetValidator(new CreatePhrasePartDtoValidator()));
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -17,12 +18,13 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
         private readonly IIntentRepository _intentRepository;
         private readonly IResponseRepository _responseRepository;
         private readonly IEntityNameRepository _entityNameRepository;
+        private readonly IEntityTypeRepository _entityTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthorizationService _authorizationService;
 
         public CreateQueryCommandHandler(IQueryRepository queryRepository, IIntentRepository intentRepository,
             IResponseRepository responseRepository, IUnitOfWork unitOfWork, IAuthorizationService authorizationService,
-            IEntityNameRepository entityNameRepository)
+            IEntityNameRepository entityNameRepository, IEntityTypeRepository entityTypeRepository)
         {
             _queryRepository = queryRepository;
             _intentRepository = intentRepository;
@@ -30,6 +32,7 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             _unitOfWork = unitOfWork;
             _authorizationService = authorizationService;
             _entityNameRepository = entityNameRepository;
+            _entityTypeRepository = entityTypeRepository;
         }
 
         public async Task<Query> Handle(CreateQueryCommand request, CancellationToken cancellationToken)
@@ -48,6 +51,41 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             }
             else if (request.Intent != null)
             {
+                var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
+                var entityTypes = await _entityTypeRepository.GetEntityTypesByProjectId(request.ProjectId);
+                var entityTypeIds = entityTypes.Select(e => e.Id).ToArray();
+                var entityNamesToCreate = new List<EntityName>();
+                
+                foreach (var phrasePart in request.Intent.PhraseParts)
+                {
+                    if (phrasePart.EntityName != null)
+                    {
+                        var existingEntityName = entityNames.FirstOrDefault(e => 
+                            e.Name == phrasePart.EntityName.Name);
+                        if (existingEntityName != null)
+                        {
+                            phrasePart.UpdateEntityName(existingEntityName);
+                        }
+                        else
+                        {
+                            var newEntityName = new EntityName(phrasePart.EntityName.Name,
+                                request.ProjectId, true);
+                            phrasePart.UpdateEntityName(newEntityName);
+                            entityNamesToCreate.Add(newEntityName);
+                        }
+                    }
+
+                    if (phrasePart.EntityTypeId.HasValue && !entityTypeIds.Contains(phrasePart.EntityTypeId.Value))
+                    {
+                        throw new BadRequestException(ErrorDescriptions.EntityTypeNotFound);
+                    }
+                }
+
+                foreach (var newEntityName in entityNamesToCreate)
+                {
+                    await _entityNameRepository.AddEntityName(newEntityName);
+                }
+                
                 query.AddIntent(new Intent(request.Intent.Name, query.ProjectId, request.Intent.Type,
                     request.Intent.PhraseParts));
             }

@@ -6,7 +6,7 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
     public class CreateIntentDto
     {
         public string Name { get; set; }
-        public CreatePhrasePartDto[] PhraseParts { get; set; }
+        public CreatePhrasePartDto[][] PhraseParts { get; set; }
     }
 
     public class CreateIntentDtoValidator : AbstractValidator<CreateIntentDto>
@@ -16,7 +16,8 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
             RuleFor(x => x.Name)
                 .NotEmpty();
 
-            RuleForEach(x => x.PhraseParts).SetValidator(new CreatePhrasePartDtoValidator());
+            RuleForEach(x => x.PhraseParts)
+                .ForEach(x => x.SetValidator(new CreatePhrasePartDtoValidator()));
         }
     }
 }
