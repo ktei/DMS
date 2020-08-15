@@ -13,15 +13,15 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 {
     public class DialogManagementContext : DbContext
     {
-        static DialogManagementContext()
-        {
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type",
-                new NpgsqlNullNameTranslator());
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type",
-                new NpgsqlNullNameTranslator());
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type",
-                new NpgsqlNullNameTranslator());
-        }
+        // static DialogManagementContext()
+        // {
+        //     NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type",
+        //         new NpgsqlNullNameTranslator());
+        //     NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type",
+        //         new NpgsqlNullNameTranslator());
+        //     NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type",
+        //         new NpgsqlNullNameTranslator());
+        // }
 
         private readonly IMediator _mediator;
         
@@ -35,6 +35,17 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         {
             modelBuilder.HasDefaultSchema("chatbot");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrganisationConfiguration).Assembly);
+            
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type",
+                new NpgsqlNullNameTranslator());
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type",
+                new NpgsqlNullNameTranslator());
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type",
+                new NpgsqlNullNameTranslator());
+
+            modelBuilder.HasPostgresEnum<IntentType>();
+            modelBuilder.HasPostgresEnum<PhrasePartType>();
+            modelBuilder.HasPostgresEnum<ResponseType>();
             
             base.OnModelCreating(modelBuilder);
         }
