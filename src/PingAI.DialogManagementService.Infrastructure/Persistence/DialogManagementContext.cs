@@ -20,6 +20,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DialogManagementContext(DbContextOptions<DialogManagementContext> options, IMediator mediator)
             : base(options)
         {
+            MapEnums();
             _mediator = mediator;
         }
 
