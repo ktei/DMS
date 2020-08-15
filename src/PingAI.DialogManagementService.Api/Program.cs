@@ -1,17 +1,28 @@
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Npgsql;
+using PingAI.DialogManagementService.Infrastructure.Persistence;
 
 namespace PingAI.DialogManagementService.Api
 {
     public static class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            using var scope = host.Services.CreateScope();
+            await using var conn = (NpgsqlConnection) scope.ServiceProvider.GetService<DialogManagementContext>()
+                .Database.GetDbConnection();
+            await conn.OpenAsync();
+            conn.ReloadTypes();
+            await host.RunAsync();
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
