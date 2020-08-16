@@ -62,7 +62,11 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             if (_queryIntents == null)
                 throw new InvalidOperationException($"Load {nameof(QueryIntents)} first");
-            
+
+            foreach (var queryIntent in _queryIntents)
+            {
+                queryIntent.Intent!.Delete();
+            }
             _queryIntents.Clear();
         }
 

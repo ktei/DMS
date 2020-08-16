@@ -84,9 +84,6 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             // Arrange
             var (entityName, entityType) = await SetupFixture(_testingFixture.Project.Id);
             
-            var phraseId1 = Guid.NewGuid().ToString();
-            var phraseId2 = Guid.NewGuid().ToString();
-            
             // Act
             var httpResponse = await _client.PostAsJsonAsync(
                 "/dms/api/v1/intents", new CreateIntentRequest

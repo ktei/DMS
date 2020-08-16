@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
     public class Expression : ValueObject
     {
+        [JsonPropertyName("entityName")]
         public string EntityName { get; set; }
+        
+        [JsonPropertyName("condition")]
         public Condition Condition { get; set; }
 
         public override string ToString() => $"{EntityName} {Condition}";
@@ -19,9 +23,16 @@ namespace PingAI.DialogManagementService.Domain.Model
 
     public class Condition : ValueObject
     {
+        [JsonPropertyName("operator")]
         public Operator Operator { get; set; }
+        
+        [JsonPropertyName("value")]
         public string? Value { get; set; }
+        
+        [JsonPropertyName("entityNameId")]
         public Guid? EntityNameId { get; set; }
+        
+        [JsonPropertyName("comparer")]
         public Comparer Comparer { get; set; }
 
         public Condition(Operator @operator, string? value, Guid? entityNameId, Comparer comparer)
