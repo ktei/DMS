@@ -34,7 +34,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             var projectId = _testingFixture.Project.Id;
             
             // insert a Query first
-            await SetupQuery(projectId);
+            var q = await SetupQuery(projectId);
             
             var httpResponse = await _client.GetAsync(
                 $"/dms/api/v1/queries?projectId={projectId}"
@@ -55,8 +55,9 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                 await context.SaveChangesAsync();
             });
 
-            Single(response);
-            Equal("Hello, World!", response[0].ResponseText);
+            var actual = response.FirstOrDefault(r => r.Name == q.Name);
+            NotNull(actual);
+            Equal("Hello, World!", actual.ResponseText);
         }
         
 
