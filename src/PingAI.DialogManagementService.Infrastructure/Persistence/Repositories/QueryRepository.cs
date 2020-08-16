@@ -54,13 +54,25 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
 
                 .Include(x => x.QueryResponses)
                 .ThenInclude(x => x.Response)
-                .Where(x => x.ProjectId == projectId).ToListAsync();
+                .Where(x => x.ProjectId == projectId)
+                .OrderBy(x => x.DisplayOrder)
+                .ToListAsync();
             return results;
         }
 
         public void RemoveQuery(Query query)
         {
             _context.Queries.Remove(query);
+        }
+
+        public async Task<int> GetMaxDisplayOrder(Guid projectId)
+        {
+            var queryWithMaxDisplayOrder = await _context.Queries
+                .Where(x => x.ProjectId == projectId)
+                .OrderByDescending(x => x.DisplayOrder)
+                .FirstOrDefaultAsync();
+
+            return queryWithMaxDisplayOrder?.DisplayOrder ?? 0;
         }
     }
 }

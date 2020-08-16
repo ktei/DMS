@@ -41,8 +41,9 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             if (!canWrite)
                 throw new ForbiddenException(ErrorDescriptions.ProjectWriteDenied);
 
+            var nextDisplayOrder = (await _queryRepository.GetMaxDisplayOrder(request.ProjectId)) + 1;
             var query = new Query(request.Name, request.ProjectId, request.Expressions,
-                request.Description, request.Tags, request.DisplayOrder);
+                request.Description, request.Tags, nextDisplayOrder);
             if (request.IntentId.HasValue)
             {
                 var intent = await _intentRepository.GetIntentById(request.IntentId.Value);
