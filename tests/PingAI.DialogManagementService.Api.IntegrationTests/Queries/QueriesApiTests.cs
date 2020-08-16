@@ -55,7 +55,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                 await context.SaveChangesAsync();
             });
 
-            var actual = response.FirstOrDefault(r => r.Name == q.Name);
+            var actual = response.FirstOrDefault(r => 
+                r.Intent.Name == q.Intents.First().Name);
             NotNull(actual);
             Equal("Hello, World!", actual.ResponseText);
         }
@@ -183,7 +184,6 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
         public async Task UpdateQuery()
         {
             var projectId = _testingFixture.Project.Id;
-            var phraseId1 = Guid.NewGuid();
             
             // insert a Query first
             Query query = await SetupQuery(projectId);
@@ -285,7 +285,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                 var resp = new Response(projectId, ResponseType.RTE, 0);
                 resp.SetRteText("Hello, World!", new Dictionary<string, EntityName>(0));
                 query.AddResponse(resp);
-                var intent = new Intent(Guid.NewGuid().ToString(), projectId, IntentType.STANDARD);
+                var intent = new Intent(TestingFixture.RandomString(15), projectId, IntentType.STANDARD);
                 query.AddIntent(intent);
                 query = (await context.AddAsync(query)).Entity;
                 await context.SaveChangesAsync();

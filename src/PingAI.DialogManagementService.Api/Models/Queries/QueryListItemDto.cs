@@ -6,20 +6,19 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
     public class QueryListItemDto
     {
         public string QueryId { get; set; }
-        public string Name { get; set; }
-        public string IntentPhrase { get; set; }
+        
+        public QueryListItemIntent Intent { get; set; }
         public string ResponseText { get; set; }
 
-        public QueryListItemDto(string queryId, string name, string intentPhrase, string responseText)
+        public QueryListItemDto(string queryId, QueryListItemIntent intent, string responseText)
         {
             QueryId = queryId;
-            Name = name;
-            IntentPhrase = intentPhrase;
+            Intent = intent;
             ResponseText = responseText;
         }
 
-        public QueryListItemDto(Query query) : this(query.Id.ToString(), query.Name,
-            query.Intents.FirstOrDefault()?.GetPhrases().FirstOrDefault() ?? "N/A",
+        public QueryListItemDto(Query query) : this(query.Id.ToString(),
+            new QueryListItemIntent(query.Intents.First()),
             query.Responses.FirstOrDefault()?.GetDisplayText())
         {
             

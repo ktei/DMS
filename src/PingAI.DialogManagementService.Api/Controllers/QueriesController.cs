@@ -28,7 +28,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<List<QueryListItemDto>>> GetQuery([FromQuery] Guid? projectId)
+        public async Task<ActionResult<List<QueryListItemDto>>> ListQueries([FromQuery] Guid? projectId)
         {
             if (!projectId.HasValue)
             {
