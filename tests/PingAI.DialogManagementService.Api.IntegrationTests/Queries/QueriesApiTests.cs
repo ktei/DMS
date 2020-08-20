@@ -200,7 +200,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                 Tags = new[] {"t1", "t2"},
                 Intent = new CreateIntentDto
                 {
-                    Name = "TEST_query_intent",
+                    Name = query.Intents.First().Name, // "TEST_query_intent",
                     PhraseParts = new[]
                     {
                         new[]
@@ -285,7 +285,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                 var resp = new Response(projectId, ResponseType.RTE, 0);
                 resp.SetRteText("Hello, World!", new Dictionary<string, EntityName>(0));
                 query.AddResponse(resp);
-                var intent = new Intent(TestingFixture.RandomString(15), projectId, IntentType.STANDARD);
+                var intent = new Intent(TestingFixture.RandomString(15), projectId, IntentType.STANDARD, new PhrasePart[0]);
                 query.AddIntent(intent);
                 query = (await context.AddAsync(query)).Entity;
                 await context.SaveChangesAsync();

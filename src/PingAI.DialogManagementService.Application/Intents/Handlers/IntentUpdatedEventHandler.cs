@@ -18,12 +18,13 @@ namespace PingAI.DialogManagementService.Application.Intents.Handlers
         
         public Task Handle(IntentUpdatedEvent notification, CancellationToken cancellationToken)
         {
+            var intent = notification.Intent;
             return _nluService.SaveIntent(new SaveIntentRequest
             {
-                IntentId = notification.IntentId,
-                Name = notification.IntentName,
-                ProjectId = notification.ProjectId,
-                TrainingPhrases = notification.PhraseParts.GroupBy(p => p.PhraseId)
+                IntentId = intent.Id,
+                Name = intent.Name,
+                ProjectId = intent.ProjectId,
+                TrainingPhrases = intent.PhraseParts.GroupBy(p => p.PhraseId)
                     .Select(g => new TrainingPhrase
                     {
                         Parts = g.Select(p => new PhrasePart

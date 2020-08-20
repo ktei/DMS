@@ -17,6 +17,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 
             var domainEvents = domainEntities
                 .SelectMany(x => x.Entity.DomainEvents)
+                .OrderBy(x => x.TimestampUtc)
                 .ToImmutableList();
 
             foreach (var domainEntity in domainEntities)

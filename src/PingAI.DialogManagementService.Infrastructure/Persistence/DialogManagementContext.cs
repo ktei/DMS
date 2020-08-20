@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Npgsql.NameTranslation;
+using PingAI.DialogManagementService.Domain.Events;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Configurations;
 
@@ -31,6 +32,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
             modelBuilder.HasPostgresEnum<IntentType>("chatbot");
             modelBuilder.HasPostgresEnum<PhrasePartType>("chatbot");
             modelBuilder.HasPostgresEnum<ResponseType>("chatbot");
+            
+            modelBuilder.Ignore<DomainEvent>();
             
             base.OnModelCreating(modelBuilder);
         }

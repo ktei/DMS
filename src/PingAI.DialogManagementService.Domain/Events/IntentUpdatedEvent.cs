@@ -4,19 +4,13 @@ using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Domain.Events
 {
-    public class IntentUpdatedEvent : INotification
+    public class IntentUpdatedEvent : DomainEvent 
     {
-        public Guid IntentId { get; }
-        public Guid ProjectId { get; }
-        public string IntentName { get; }
-        public PhrasePart[] PhraseParts { get; }
+        public Intent Intent { get; }
 
-        public IntentUpdatedEvent(Guid intentId, Guid projectId, string intentName, PhrasePart[] phraseParts)
+        public IntentUpdatedEvent(Intent intent)
         {
-            IntentId = intentId;
-            ProjectId = projectId;
-            IntentName = intentName;
-            PhraseParts = phraseParts;
+            Intent = intent;
         }
     }
 }

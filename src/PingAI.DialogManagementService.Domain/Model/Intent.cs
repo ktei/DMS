@@ -39,11 +39,6 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             UpdatePhrases(phraseParts);
         }
-        
-        public Intent(string name,
-            IntentType type) : this(name, Guid.Empty, type)
-        {
-        }
 
         public void UpdateName(string name)
         {
@@ -82,10 +77,14 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         private void AddIntentUpdatedEvent()
         {
-            if (!DomainEvents.Any(e => e is IntentUpdatedEvent))
-            {
-                AddDomainEvent(new IntentUpdatedEvent(Id, ProjectId, Name, PhraseParts.ToArray()));
-            } 
+            // Updated event only makes sense when there is no Deleted event
+            if (DomainEvents.Any(e => e is IntentDeletedEvent))
+                return;
+
+            // Deduplicate
+            var oldUpdateEvent = DomainEvents.FirstOrDefault(e => e is IntentUpdatedEvent);
+            RemoveDomainEvent(oldUpdateEvent);
+            AddDomainEvent(new IntentUpdatedEvent(this));
         }
 
         public IEnumerable<string> GetPhrases()
@@ -110,10 +109,14 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public void Delete()
         {
+            // If this intent is going to be deleted,
+            // there's no point to have other events
+            ClearDomainEvents();
+            
             // TODO: soft deletion should update DeletedAt
             if (!DomainEvents.Any(e => e is IntentDeletedEvent))
             {
-                AddDomainEvent(new IntentDeletedEvent(ProjectId, Id));
+                AddDomainEvent(new IntentDeletedEvent(this));
             }
         }
 

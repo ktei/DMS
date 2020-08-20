@@ -10,5 +10,6 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
         Task<List<Intent>> GetIntentsByProjectId(Guid projectId);
         Task<Intent?> GetIntentById(Guid intentId);
         Task<Intent> AddIntent(Intent intent);
+        void RemoveIntent(Intent intent);
     }
 }

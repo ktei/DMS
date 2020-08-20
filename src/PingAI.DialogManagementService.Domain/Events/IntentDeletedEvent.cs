@@ -1,17 +1,16 @@
 using System;
 using MediatR;
+using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Domain.Events
 {
-    public class IntentDeletedEvent : INotification
+    public class IntentDeletedEvent : DomainEvent
     {
-        public Guid ProjectId { get; }
-        public Guid IntentId { get; }
+        public Intent Intent { get; }
 
-        public IntentDeletedEvent(Guid projectId, Guid intentId)
+        public IntentDeletedEvent(Intent intent)
         {
-            ProjectId = projectId;
-            IntentId = intentId;
+            Intent = intent;
         }
     }
 }

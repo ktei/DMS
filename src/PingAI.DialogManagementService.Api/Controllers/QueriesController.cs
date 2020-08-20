@@ -51,9 +51,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public async Task<ActionResult<CreateQueryResponse>> CreateQuery([FromBody] CreateQueryRequest request)
         {
             var projectId = Guid.Parse(request.ProjectId);
-            var intent = new Intent(request.Intent.Name, projectId, IntentType.STANDARD);
-            var phraseParts = FlattenPhraseParts(projectId, intent.Id, request.Intent.PhraseParts);
-            intent.UpdatePhrases(phraseParts);
+            var phraseParts = FlattenPhraseParts(projectId, Guid.Empty, request.Intent.PhraseParts);
+            var intent = new Intent(request.Intent.Name, projectId, IntentType.STANDARD, phraseParts);
             var response = new Response(projectId, ResponseType.RTE, request.Response.Order);
             var query = await _mediator.Send(new CreateQueryCommand(
                 request.Name, Guid.Parse(request.ProjectId),
@@ -67,9 +66,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
             [FromRoute] Guid queryId,
             [FromBody] UpdateQueryRequest request)
         {
-            var intent = new Intent(request.Intent.Name, IntentType.STANDARD);
-            var phraseParts = FlattenPhraseParts(Guid.Empty, intent.Id, request.Intent.PhraseParts);
-            intent.UpdatePhrases(phraseParts);
+            var phraseParts = FlattenPhraseParts(Guid.Empty, Guid.Empty, request.Intent.PhraseParts);
+            var intent = new Intent(request.Intent.Name, Guid.Empty, IntentType.STANDARD, phraseParts);
             var response = new Response(ResponseType.RTE, request.Response.Order);
             var query = await _mediator.Send(new UpdateQueryCommand(
                 queryId,

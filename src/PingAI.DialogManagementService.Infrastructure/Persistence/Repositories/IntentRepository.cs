@@ -37,5 +37,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             var result = await _context.AddAsync(intent ?? throw new ArgumentNullException(nameof(intent)));
             return result.Entity;
         }
+
+        public void RemoveIntent(Intent intent)
+        {
+            _context.Intents.Remove(intent);
+        }
     }
 }
