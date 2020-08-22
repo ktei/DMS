@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class User : IHaveTimestamps
+    public class User : DomainEntity, IHaveTimestamps
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class Query : IHaveTimestamps
+    public class Query : DomainEntity, IHaveTimestamps
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }

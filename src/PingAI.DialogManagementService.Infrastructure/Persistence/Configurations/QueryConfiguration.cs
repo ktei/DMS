@@ -32,7 +32,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             
             builder.Ignore(o => o.Intents);
             builder.Ignore(o => o.Responses);
-
         }
     }
 }

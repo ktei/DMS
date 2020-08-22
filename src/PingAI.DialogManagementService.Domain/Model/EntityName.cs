@@ -2,7 +2,7 @@ using System;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class EntityName : IHaveTimestamps
+    public class EntityName : DomainEntity, IHaveTimestamps
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }

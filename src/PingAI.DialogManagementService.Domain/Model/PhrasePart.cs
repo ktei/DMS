@@ -36,6 +36,14 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             EntityName = entityName;
         }
+        
+        public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
+            PhrasePartType type, EntityName? entityName, EntityType? entityType) : this(intentId,
+            phraseId, position, text, value, type, default(Guid?), default(Guid?))
+        {
+            EntityName = entityName;
+            EntityType = entityType;
+        }
 
         public void UpdatePosition(int position)
         {

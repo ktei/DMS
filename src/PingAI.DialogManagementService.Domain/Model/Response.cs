@@ -9,7 +9,7 @@ using static PingAI.DialogManagementService.Domain.Model.ResolutionPart;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class Response : IHaveTimestamps
+    public class Response : DomainEntity, IHaveTimestamps
     {
         public Guid Id { get; private set; }
         public ResolutionPart[] Resolution { get; private set; }

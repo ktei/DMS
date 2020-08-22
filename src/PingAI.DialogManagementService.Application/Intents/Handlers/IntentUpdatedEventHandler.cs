@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,8 @@ namespace PingAI.DialogManagementService.Application.Intents.Handlers
         public Task Handle(IntentUpdatedEvent notification, CancellationToken cancellationToken)
         {
             var intent = notification.Intent;
+            if (intent.ProjectId == Guid.Empty)
+                return Task.CompletedTask;
             return _nluService.SaveIntent(new SaveIntentRequest
             {
                 IntentId = intent.Id,
