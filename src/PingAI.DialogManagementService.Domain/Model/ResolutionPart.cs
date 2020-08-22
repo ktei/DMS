@@ -13,6 +13,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Guid? EntityNameId { get; set; }
         
         [JsonPropertyName("type")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public ResolutionPartType Type { get; set; }
 
         public ResolutionPart(string? text, Guid? entityNameId, ResolutionPartType type)

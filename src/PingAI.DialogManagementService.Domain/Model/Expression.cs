@@ -24,6 +24,7 @@ namespace PingAI.DialogManagementService.Domain.Model
     public class Condition : ValueObject
     {
         [JsonPropertyName("operator")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public Operator Operator { get; set; }
         
         [JsonPropertyName("value")]
@@ -33,6 +34,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Guid? EntityNameId { get; set; }
         
         [JsonPropertyName("comparer")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public Comparer Comparer { get; set; }
 
         public Condition(Operator @operator, string? value, Guid? entityNameId, Comparer comparer)
