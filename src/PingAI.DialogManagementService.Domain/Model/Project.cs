@@ -57,7 +57,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             _intents = new List<Intent>();
             _responses = new List<Response>();
             _queries = new List<Query>();
-
         }
 
         public void UpdateWidgetTitle(string widgetTitle)
@@ -136,7 +135,12 @@ namespace PingAI.DialogManagementService.Domain.Model
             _responses.Add(response);
         }
 
-        public Project Publish()
+        /// <summary>
+        /// Export current project by copying it to a new project and return the copy
+        /// </summary>
+        /// <returns>The project copy</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public Project Export()
         {
             if (Id == Guid.Empty)
             {
@@ -159,7 +163,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                     n => new EntityName(n.Name, Guid.Empty, n.CanBeReferenced));
             var entityTypesCopy =
                 _entityTypes.ToDictionary(e => e.Id,
-                    e => new EntityType(e.Name, Guid.Empty, e.Description, e.Tags));
+                    e => new EntityType(e.Name, Guid.Empty, e.Description, e.Tags?.ToArray()));
 
             PhrasePart CopyPhrasePart(Intent i, PhrasePart p) =>
                 new PhrasePart(i.Id, p.PhraseId, p.Position,
@@ -172,7 +176,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             static Response CopyResponse(Response r) =>
                 new Response(r.Resolution.ToArray(), Guid.Empty, r.Type, r.Order);
             
-            var projectToPublish = new Project(Name,
+            var projectToPublish = new Project($"{Name}__{Guid.NewGuid()}",
                 OrganisationId, WidgetTitle, WidgetColor!,
                 WidgetDescription, FallbackMessage, GreetingMessage, Enquiries);
 

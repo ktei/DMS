@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
@@ -74,5 +76,105 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
 
             NotNull(project);
         }
+
+        [Fact]
+        public async Task ExportProject()
+        {
+            // Arrange
+            await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
+            var organisation =
+                new Organisation(RandomString(10), "test", null);
+            var project = new Project(RandomString(10), organisation.Id, null, "#ffffff",
+                null, null, null, null);
+            var entityType = new EntityType(RandomString(10), project.Id, RandomString(15), new []{"t1"});
+            var entityName = new EntityName(RandomString(10), project.Id, true);
+            project.AddEntityType(entityType);
+            project.AddEntityName(entityName);
+            var intent = new Intent(RandomString(15), project.Id, IntentType.STANDARD,
+                new[]
+                {
+                    new PhrasePart(Guid.Empty, Guid.NewGuid(), 0, "Hello, World", null,
+                        PhrasePartType.TEXT, default(Guid?), default),
+                    new PhrasePart(Guid.Empty, Guid.NewGuid(), 0, "test", null,
+                        PhrasePartType.ENTITY, entityName, entityType)
+                });
+            var response = new Response(new ResolutionPart[]
+            {
+                new ResolutionPart("Test response", null, ResolutionPartType.RTE), 
+            }, project.Id, ResponseType.RTE, 0);
+            project.AddIntent(intent);
+            project.AddResponse(response);
+            var query = new Query(RandomString(10), project.Id, new Expression[0],
+                RandomString(15), new []{"t1"}, 0);
+            query.AddIntent(intent);
+            query.AddResponse(response);
+            project.AddQuery(query);
+            organisation.AddProject(project);
+            await context.AddAsync(organisation);
+            await context.SaveChangesAsync();
+            var sut = new ProjectRepository(context);
+            
+            // Act
+            var exportedProject = project.Export();
+            exportedProject = await sut.AddProject(exportedProject);
+            await context.SaveChangesAsync();
+
+            // Assert
+            var actual = await context.Projects.AsNoTracking()
+                .Include(p => p.EntityNames)
+                .Include(p => p.EntityTypes)
+                
+                .Include(p => p.Intents)
+                .ThenInclude(i => i.PhraseParts).ThenInclude(p => p.EntityName)
+
+                .Include(p => p.Intents)
+                .ThenInclude(i => i.PhraseParts).ThenInclude(p => p.EntityType)
+
+                .Include(p => p.Responses)
+
+                .Include(p => p.Queries)
+                .ThenInclude(q => q.QueryIntents).ThenInclude(q => q.Intent)
+                .ThenInclude(i => i!.PhraseParts).ThenInclude(p => p.EntityName)
+
+                .Include(p => p.Queries)
+                .ThenInclude(q => q.QueryIntents).ThenInclude(q => q.Intent)
+                .ThenInclude(i => i!.PhraseParts).ThenInclude(p => p.EntityType)
+
+                .Include(p => p.Queries)
+                .ThenInclude(q => q.QueryResponses).ThenInclude(q => q.Response)
+                
+                .SingleAsync(x => x.Id == exportedProject.Id);
+
+            try
+            {
+                actual.Should().BeEquivalentTo(exportedProject, options =>
+                    options.IgnoringCyclicReferences().Excluding(x => x.Organisation)
+                        .Excluding(x => x.Intents[0].QueryIntents)
+                        .Excluding(x => x.Responses[0].QueryResponses));
+            }
+            finally
+            {
+                // clean up
+                context.RemoveRange(entityName, entityType, intent, response,
+                    query, project);
+                context.RemoveRange(exportedProject.EntityNames);
+                context.RemoveRange(exportedProject.EntityTypes);
+                context.RemoveRange(exportedProject.Queries);
+                context.RemoveRange(exportedProject.Intents);
+                context.RemoveRange(exportedProject.Responses);
+                context.RemoveRange(project, exportedProject);
+                context.Remove(organisation);
+                await context.SaveChangesAsync();
+            }
+        }
+        
+        private static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[Random.Next(s.Length)]).ToArray());
+        }
+
+        private static readonly Random Random = new Random();
     }
 }
