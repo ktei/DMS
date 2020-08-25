@@ -11,9 +11,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
         {
             builder.ToTable("ProjectVersions", "chatbot");
             builder.ConfigureId();
-
+            
+            builder.Property(o => o.OrganisationId)
+                .HasColumnName("organisationId");
             builder.Property(o => o.Version)
-                .HasColumnName("version");
+                .HasColumnName("version")
+                .HasConversion(v => v.Version, v => new Ver(v));
             builder.Property(o => o.ProjectId)
                 .HasColumnName("projectId");
             builder.Property(o => o.VersionGroupId)

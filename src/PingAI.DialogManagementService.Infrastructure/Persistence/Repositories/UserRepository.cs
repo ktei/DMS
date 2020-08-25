@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
@@ -15,11 +16,15 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public Task<User?> GetUserByAut0Id(string auth0Id)
+        public Task<User?> GetUserByAut0Id(string auth0Id,
+            Func<IQueryable<User>, IQueryable<User>>? configureUser = default)
         {
-            return _context.Users
-                .Include(x => x.OrganisationUsers)
-                .FirstOrDefaultAsync(x => x.Auth0Id == auth0Id);
+            IQueryable<User> query = _context.Users
+                .AsNoTracking()
+                .Include(x => x.OrganisationUsers);
+
+            query = configureUser?.Invoke(query) ?? query;
+            return query.FirstOrDefaultAsync(x => x.Auth0Id == auth0Id);
         }
     }
 }

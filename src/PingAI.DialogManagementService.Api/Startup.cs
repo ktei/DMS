@@ -23,6 +23,7 @@ using PingAI.DialogManagementService.Api.Behaviours;
 using PingAI.DialogManagementService.Api.Filters;
 using PingAI.DialogManagementService.Api.Models;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
+using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
@@ -92,6 +93,7 @@ namespace PingAI.DialogManagementService.Api
             services.AddScoped<IAuthorizationHandler, ProjectAuthorizationHandler>();
             services.AddHttpContextAccessor();
             services.AddTransient<IAuthorizationService, AuthorizationService>();
+            services.AddTransient<IRequestContext, HttpRequestContext>();
 
             services.AddSwaggerGen(options =>
             {
@@ -143,6 +145,7 @@ namespace PingAI.DialogManagementService.Api
             services.AddTransient<IEntityNameRepository, EntityNameRepository>();
             services.AddTransient<IResponseRepository, ResponseRepository>();
             services.AddTransient<IQueryRepository, QueryRepository>();
+            services.AddTransient<IProjectVersionRepository, ProjectVersionRepository>();
 
             services.AddHttpClient<INluService, NluService>(client =>
             {

@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Projects;
 using PingAI.DialogManagementService.Application.Projects.GetProject;
+using PingAI.DialogManagementService.Application.Projects.ListProjects;
 using PingAI.DialogManagementService.Application.Projects.UpdateEnquiries;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 
@@ -19,6 +22,13 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public ProjectsController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<ProjectListItemDto>>> ListProjects([FromQuery] Guid? organisationId)
+        {
+            var projects = await _mediator.Send(new ListProjectsQuery(organisationId));
+            return projects.Select(p => new ProjectListItemDto(p.Id.ToString(), p.Name)).ToList();
         }
         
         [HttpGet("{projectId}")]
@@ -46,6 +56,5 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var project = await _mediator.Send(new UpdateEnquiriesCommand(projectId, request.Enquiries));
             return new UpdateEnquiriesResponse(project);
         }
-        
     }
 }

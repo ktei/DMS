@@ -10,10 +10,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
         public void Configure(EntityTypeBuilder<Project> builder)
         {
             builder.ToTable("Projects", "chatbot");
+            builder.ConfigureId();
 
-            builder.HasKey(o => o.Id);
-            builder.Property(o => o.Id)
-                .HasColumnName("id");
             builder.Property(o => o.OrganisationId)
                 .HasColumnName("organisationId");
             builder.Property(o => o.Name)

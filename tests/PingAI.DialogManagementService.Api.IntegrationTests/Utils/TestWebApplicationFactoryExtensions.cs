@@ -42,8 +42,6 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
             var organisation =
                 await context.Organisations.FindAsync(Guid.Parse("6b95c285-363c-4b2a-a322-54fe3cad9698"));
             var project = await context.Projects.FindAsync(Guid.Parse("3932f12d-ed9e-441a-8a13-8c4ca88b2e4c"));
-            var organisationUser = new OrganisationUser(organisation.Id,
-                Guid.Parse("3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f"));
             var entityType = await context.EntityTypes.FirstOrDefaultAsync(e => e.Name == "TEST_city");
             var entityName = await context.EntityNames.FirstOrDefaultAsync(e => e.Name == "TEST_favouriteCity");
             entityType ??= (await context.AddAsync(new EntityType( 
@@ -66,7 +64,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
             {
                 Organisation = organisation,
                 Project = project,
-                UserId = organisationUser.UserId,
+                UserId = Guid.Parse("3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f")
             };
 
             return (testingFixture, async () =>

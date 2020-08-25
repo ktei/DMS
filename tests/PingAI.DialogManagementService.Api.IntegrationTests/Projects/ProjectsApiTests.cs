@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -20,6 +21,15 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
         {
             _factory = factory;
             _client = _factory.CreateAuthenticatedClient();
+        }
+
+        [Fact]
+        public async Task ListProjects()
+        {
+            var response = await _client.GetFromJsonAsync<List<ProjectListItemDto>>(
+                $"/dms/api/v1/projects?organisationId={_testingFixture.Organisation.Id}");
+            NotNull(response);
+            True(response.Count > 0);
         }
 
         [Fact]

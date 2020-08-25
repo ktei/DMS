@@ -21,13 +21,39 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         }
 
         [Fact]
+        public async Task GetProjectsByIds()
+        {
+            // Arrange
+            await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
+            var organisation =
+                new Organisation(Guid.NewGuid().ToString(), "test", null);
+            var project = new Project( "test", organisation.Id,  "title", "#ffffff",
+                "description", "fallback message", "greeting message", new string[] { });
+            organisation.AddProject(project);
+            await context.AddAsync(organisation);
+            await context.SaveChangesAsync();
+            var sut = new ProjectRepository(context); 
+            
+            // Act
+            var actual = await sut.GetProjectsByIds(new []{project.Id});
+
+            // Assert
+
+            // clean up
+            context.Remove(organisation);
+            await context.SaveChangesAsync();
+
+            Single(actual);
+        }
+
+        [Fact]
         public async Task GetProjectById()
         {
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
                 new Organisation(Guid.NewGuid().ToString(), "test", null);
-            var project = new Project( "test", organisation.Id, "title", "#ffffff",
+            var project = new Project( "test", organisation.Id,  "title", "#ffffff",
                 "description", "fallback message", "greeting message", new string[] { });
             organisation.AddProject(project);
             await context.AddAsync(organisation);
@@ -57,7 +83,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await context.AddAsync(organisation);
             await context.SaveChangesAsync();
             var sut = new ProjectRepository(context);
-            var project = new Project(Guid.NewGuid().ToString(), organisation.Id, null, "#ffffff",
+            var project = new Project(Guid.NewGuid().ToString(), organisation.Id, 
+                null, "#ffffff",
                 null, null, null, null);
 
             // Act
@@ -84,21 +111,24 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
                 new Organisation(RandomString(10), "test", null);
-            var project = new Project(RandomString(10), organisation.Id, null, "#ffffff",
+            var project = new Project(RandomString(10), organisation.Id, 
+                null, "#ffffff",
                 null, null, null, null);
-            var entityType = new EntityType(RandomString(10), project.Id, RandomString(15), new []{"t1"});
+            var entityType = new EntityType(
+                RandomString(10), project.Id, RandomString(15), new []{"t1"});
             var entityName = new EntityName(RandomString(10), project.Id, true);
             project.AddEntityType(entityType);
             project.AddEntityName(entityName);
             var intent = new Intent(RandomString(15), project.Id, IntentType.STANDARD,
                 new[]
                 {
-                    new PhrasePart(Guid.Empty, Guid.NewGuid(), 0, "Hello, World", null,
+                    new PhrasePart(Guid.Empty, Guid.NewGuid(), 0, 
+                        "Hello, World", null,
                         PhrasePartType.TEXT, default(Guid?), default),
                     new PhrasePart(Guid.Empty, Guid.NewGuid(), 0, "test", null,
                         PhrasePartType.ENTITY, entityName, entityType)
                 });
-            var response = new Response(new ResolutionPart[]
+            var response = new Response(new[]
             {
                 new ResolutionPart("Test response", null, ResolutionPartType.RTE), 
             }, project.Id, ResponseType.RTE, 0);

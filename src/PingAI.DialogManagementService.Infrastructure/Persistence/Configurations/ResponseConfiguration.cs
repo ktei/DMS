@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PingAI.DialogManagementService.Domain.Model;
@@ -15,7 +17,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("id");
             builder.Property(o => o.Resolution)
                 .HasColumnName("resolution")
-                .HasColumnType("jsonb");
+                .HasColumnType("jsonb")
+                .HasConversion(x => JsonUtils.Serialize(x, default),
+                    x => JsonUtils.Deserialize<ResolutionPart[]>(x, default));
             builder.Property(o => o.ProjectId)
                 .HasColumnName("projectId");
             builder.Property(o => o.Type)

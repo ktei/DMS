@@ -14,6 +14,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<Project> _projects;
         public IReadOnlyList<Project> Projects => _projects.ToImmutableList();
 
+        private readonly List<ProjectVersion> _projectVersions;
+        public IReadOnlyList<ProjectVersion> ProjectVersions => _projectVersions.ToImmutableList();
+
         private readonly List<OrganisationUser> _organisationUsers;
         public IReadOnlyList<OrganisationUser> OrganisationUsers => _organisationUsers.ToImmutableList();
         
@@ -23,6 +26,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             Description = description;
             Tags = tags;
             _projects = new List<Project>();
+            _projectVersions = new List<ProjectVersion>();
             _organisationUsers = new List<OrganisationUser>();
         }
 
@@ -33,6 +37,15 @@ namespace PingAI.DialogManagementService.Domain.Model
                 throw new InvalidOperationException($"Load {nameof(Projects)} first");
 
             _projects.Add(project);
+        }
+
+        public void AddProjectVersion(ProjectVersion projectVersion)
+        {
+            _ = projectVersion ?? throw new ArgumentNullException(nameof(projectVersion));
+            if (_projectVersions == null)
+                throw new InvalidOperationException($"Load {nameof(ProjectVersions)} first");
+            
+            _projectVersions.Add(projectVersion);
         }
 
         public void AddUser(User user)

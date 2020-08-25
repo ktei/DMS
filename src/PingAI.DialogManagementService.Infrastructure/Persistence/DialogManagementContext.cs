@@ -47,6 +47,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 
         public DbSet<Organisation> Organisations { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectVersion> ProjectVersions { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<OrganisationUser> OrganisationUsers { get; set; }
         public DbSet<Intent> Intents { get; set; }

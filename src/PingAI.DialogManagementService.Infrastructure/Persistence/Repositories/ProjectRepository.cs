@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
@@ -13,6 +15,15 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public ProjectRepository(DialogManagementContext context)
         {
             _context = context;
+        }
+
+        public Task<List<Project>> GetProjectsByIds(IEnumerable<Guid> projectIds,
+            Func<IQueryable<Project>, IQueryable<Project>>? configureQuery = null)
+        {
+            _ = projectIds ?? throw new ArgumentNullException(nameof(projectIds));
+            var projects = _context.Projects.Where(p => projectIds.Contains(p.Id));
+            projects = configureQuery?.Invoke(projects) ?? projects;
+            return projects.ToListAsync();
         }
 
         public Task<Project?> GetProjectById(Guid id) => 
