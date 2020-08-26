@@ -29,6 +29,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public Task<Project?> GetProjectById(Guid id) => 
             _context.Projects.FirstOrDefaultAsync(x => x.Id == id);
 
+        public Task<bool> ProjectNameExists(Guid organisationId, string name)
+        {
+            return _context.Projects.AnyAsync(p => p.Name == name && 
+                                                   p.OrganisationId == organisationId);
+        }
+
         public async Task<Project> AddProject(Project project)
         {
             var result =

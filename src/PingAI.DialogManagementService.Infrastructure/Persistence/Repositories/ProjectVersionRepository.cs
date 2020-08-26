@@ -20,7 +20,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public Task<List<ProjectVersion>> GetDesignTimeVersionsByOrganisationId(Guid organisationId)
         {
             return _context.ProjectVersions.Where(p => p.OrganisationId == organisationId &&
-                                                p.Version == Ver.DesignTime)
+                                                p.Version == ProjectVersionNumber.DesignTime)
                 .ToListAsync();
         }
 

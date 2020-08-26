@@ -16,9 +16,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         
         public Guid VersionGroupId { get; private set; }
         
-        public Ver Version { get; private set; }
+        public ProjectVersionNumber Version { get; private set; }
 
-        public ProjectVersion(Guid projectId, Guid organisationId, Guid versionGroupId, Ver version)
+        public ProjectVersion(Guid projectId, Guid organisationId, Guid versionGroupId, ProjectVersionNumber version)
         {
             ProjectId = projectId;
             OrganisationId = organisationId;
@@ -26,7 +26,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             Version = version;
         }
         
-        public ProjectVersion(Project project, Guid organisationId, Guid versionGroupId, Ver version)
+        public ProjectVersion(Project project, Guid organisationId, Guid versionGroupId, ProjectVersionNumber version)
         {
             Project = project ?? throw new ArgumentNullException(nameof(project));
             OrganisationId = organisationId;

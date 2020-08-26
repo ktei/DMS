@@ -11,6 +11,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
         Task<List<Project>> GetProjectsByIds(IEnumerable<Guid> projectIds,
             Func<IQueryable<Project>, IQueryable<Project>>? configureQuery = null);
         Task<Project?> GetProjectById(Guid id);
+        Task<bool> ProjectNameExists(Guid organisationId, string name);
         Task<Project> AddProject(Project project);
     }
 }

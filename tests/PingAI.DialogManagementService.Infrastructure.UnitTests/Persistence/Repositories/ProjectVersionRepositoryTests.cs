@@ -28,7 +28,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 "description", "fallback message", "greeting message", new string[] { });
             organisation.AddProject(project);
             var projectVersion = new ProjectVersion(project, organisation.Id,
-                Guid.NewGuid(), Ver.NewDesignTime());
+                Guid.NewGuid(), ProjectVersionNumber.NewDesignTime());
             organisation.AddProjectVersion(projectVersion);
             await context.AddAsync(organisation);
             await context.SaveChangesAsync();
@@ -44,7 +44,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Assert
             Single(actual);
             Equal(actual[0].ProjectId, project.Id);
-            Equal(Ver.DesignTime, actual[0].Version);
+            Equal(ProjectVersionNumber.DesignTime, actual[0].Version);
         }
     }
 }

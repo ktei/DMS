@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using FluentValidation.AspNetCore;
@@ -17,7 +18,9 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using PingAI.DialogManagementService.Api.Authorization;
 using PingAI.DialogManagementService.Api.Authorization.Handlers;
+using PingAI.DialogManagementService.Api.Authorization.Requirements;
 using PingAI.DialogManagementService.Api.Authorization.Services;
 using PingAI.DialogManagementService.Api.Behaviours;
 using PingAI.DialogManagementService.Api.Filters;
@@ -81,16 +84,23 @@ namespace PingAI.DialogManagementService.Api
             }).AddJwtBearer(options =>
             {
                 options.Authority = Configuration["OAuth:Authority"];
-                options.Audience = Configuration["OAuth:Audience"];
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidIssuer = Configuration["Oauth:TokenIssuer"],
                     NameClaimType = ClaimTypes.NameIdentifier,
-                    RequireExpirationTime = true
+                    RequireExpirationTime = true,
+                    ValidAudiences = Configuration["OAuth:Audience"]
+                        .Split(",", StringSplitOptions.RemoveEmptyEntries)
                 };
+            });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Policies.AdminOnly, policy =>
+                    policy.Requirements.Add(new AdministratorOnlyRequirement()));
             });
             
             services.AddScoped<IAuthorizationHandler, ProjectAuthorizationHandler>();
+            services.AddScoped<IAuthorizationHandler, AdministratorOnlyAuthorizationHandler>();
             services.AddHttpContextAccessor();
             services.AddTransient<IAuthorizationService, AuthorizationService>();
             services.AddTransient<IRequestContext, HttpRequestContext>();

@@ -24,7 +24,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
         public IntentsApiTests(TestWebApplicationFactory factory)
         {
             _factory = factory;
-            _client = _factory.CreateAuthenticatedClient();
+            _client = _factory.CreateUserAuthenticatedClient();
         }
 
 

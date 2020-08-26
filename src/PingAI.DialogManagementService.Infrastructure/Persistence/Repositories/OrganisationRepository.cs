@@ -24,6 +24,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             if (!organisationIds.Any()) return new List<Organisation>(0);
             return await _context.Organisations
                 .Include(x => x.Projects)
+                .Include(x => x.ProjectVersions)
                 .Where(x => organisationIds.Contains(x.Id))
                 .ToListAsync();
         }

@@ -14,7 +14,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
 {
     public static class TestWebApplicationFactoryExtensions
     {
-        public static HttpClient CreateAuthenticatedClient(this TestWebApplicationFactory factory) =>
+        public static HttpClient CreateUserAuthenticatedClient(this TestWebApplicationFactory factory) =>
             factory.WithWebHostBuilder(builder =>
                 {
                     builder.ConfigureTestServices(services =>
@@ -24,7 +24,26 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                                 options.DefaultAuthenticateScheme = "Test";
                             })
-                            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+                            .AddScheme<AuthenticationSchemeOptions, TestUserAuthHandler>(
+                                "Test", options => { });
+                    });
+                })
+                .CreateClient(new WebApplicationFactoryClientOptions
+                {
+                    AllowAutoRedirect = false
+                });
+        
+        public static HttpClient CreateAdminAuthenticatedClient(this TestWebApplicationFactory factory) =>
+            factory.WithWebHostBuilder(builder =>
+                {
+                    builder.ConfigureTestServices(services =>
+                    {
+                        services.AddAuthentication(options =>
+                            {
+                                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                                options.DefaultAuthenticateScheme = "Test";
+                            })
+                            .AddScheme<AuthenticationSchemeOptions, TestAdminAuthHandler>(
                                 "Test", options => { });
                     });
                 })

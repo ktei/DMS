@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class Ver : ValueObject
+    public class ProjectVersionNumber : ValueObject
     {
         public const int DesignTime = 0;
         
         public int Version { get; }
 
-        public Ver(int version)
+        public ProjectVersionNumber(int version)
         {
             if (version < DesignTime)
                 throw new ArgumentException(nameof(version));
@@ -18,9 +18,9 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public bool IsDesignTime => Version == 0;
         
-        public static Ver NewDesignTime() => new Ver(DesignTime);
+        public static ProjectVersionNumber NewDesignTime() => new ProjectVersionNumber(DesignTime);
 
-        public Ver Next() => new Ver(Version + 1);
+        public ProjectVersionNumber Next() => new ProjectVersionNumber(Version + 1);
         
         protected override IEnumerable<object> GetAtomicValues()
         {
@@ -29,7 +29,7 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public override string ToString() => $"v{Version}";
 
-        public static implicit operator int(Ver v) => v.Version;
-        public static explicit operator Ver(int v) => new Ver(v);
+        public static implicit operator int(ProjectVersionNumber v) => v.Version;
+        public static explicit operator ProjectVersionNumber(int v) => new ProjectVersionNumber(v);
     }
 }
