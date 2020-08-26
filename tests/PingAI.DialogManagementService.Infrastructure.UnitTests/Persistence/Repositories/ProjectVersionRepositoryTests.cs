@@ -24,7 +24,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
                 new Organisation(Guid.NewGuid().ToString(), "test", null);
-            var project = new Project( "test", organisation.Id,  "title", "#ffffff",
+            var project = new Project( "test", organisation.Id,  "title", Defaults.WidgetColor,
                 "description", "fallback message", "greeting message", new string[] { });
             organisation.AddProject(project);
             var projectVersion = new ProjectVersion(project, organisation.Id,

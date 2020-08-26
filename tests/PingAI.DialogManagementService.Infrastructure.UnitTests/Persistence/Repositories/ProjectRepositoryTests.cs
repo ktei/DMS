@@ -27,7 +27,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
                 new Organisation(Guid.NewGuid().ToString(), "test", null);
-            var project = new Project( "test", organisation.Id,  "title", "#ffffff",
+            var project = new Project( "test", organisation.Id,  "title", Defaults.WidgetColor,
                 "description", "fallback message", "greeting message", new string[] { });
             organisation.AddProject(project);
             await context.AddAsync(organisation);
@@ -53,7 +53,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
                 new Organisation(Guid.NewGuid().ToString(), "test", null);
-            var project = new Project( "test", organisation.Id,  "title", "#ffffff",
+            var project = new Project( "test", organisation.Id,  "title", Defaults.WidgetColor,
                 "description", "fallback message", "greeting message", new string[] { });
             organisation.AddProject(project);
             await context.AddAsync(organisation);
@@ -84,7 +84,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await context.SaveChangesAsync();
             var sut = new ProjectRepository(context);
             var project = new Project(Guid.NewGuid().ToString(), organisation.Id, 
-                null, "#ffffff",
+                null, Defaults.WidgetColor,
                 null, null, null, null);
 
             // Act
@@ -112,7 +112,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var organisation =
                 new Organisation(RandomString(10), "test", null);
             var project = new Project(RandomString(10), organisation.Id, 
-                null, "#ffffff",
+                null, Defaults.WidgetColor,
                 null, null, null, null);
             var entityType = new EntityType(
                 RandomString(10), project.Id, RandomString(15), new []{"t1"},

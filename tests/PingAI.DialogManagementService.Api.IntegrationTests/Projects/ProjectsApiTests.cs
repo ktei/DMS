@@ -54,7 +54,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
                 new UpdateProjectRequest
                 {
                     WidgetTitle = "title",
-                    WidgetColor = "#ffffff",
+                    WidgetColor = "#2196f3",
                     WidgetDescription = "description",
                     GreetingMessage = "greeting",
                     FallbackMessage = "fallback",

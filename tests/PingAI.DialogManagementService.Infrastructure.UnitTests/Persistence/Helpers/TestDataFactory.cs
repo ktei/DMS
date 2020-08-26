@@ -23,7 +23,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
             Organisation =
                 new Organisation(Guid.NewGuid().ToString(), "test description", null);
             Project = new Project(Guid.NewGuid().ToString(), Organisation.Id, 
-                "test widget title", "#ffffff",
+                "test widget title", Defaults.WidgetColor,
                 "test widget description", "test fallback message", 
                 "test greeting message", new string[] { });
             Organisation.AddProject(Project);
