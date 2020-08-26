@@ -40,6 +40,24 @@ namespace PingAI.DialogManagementService.Infrastructure.Services.Nlu
             throw await httpResponse.AsDomainException();
         }
 
+        public async Task Export(Guid sourceProjectId, Guid targetProjectId)
+        {
+            var httpResponse =
+                await _httpClient.PostAsJsonAsync(BuildApiPath("Projects", "export"),
+                    new
+                    {
+                        sourceProjectId,
+                        targetProjectId
+                    });
+            
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                return;
+            }
+            
+            throw await httpResponse.AsDomainException();
+        }
+
         private static string BuildApiPath(params object[] segments)
             => $"/nlu/1/{string.Join("/", segments)}";
     }

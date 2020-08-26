@@ -224,16 +224,16 @@ namespace PingAI.DialogManagementService.Domain.Model
                 projectToPublish.AddQuery(q);
             }
             
-            AddProjectPublishedEvent();
+            AddProjectPublishedEvent(projectToPublish);
             
             return projectToPublish;
         }
 
-        private void AddProjectPublishedEvent()
+        private void AddProjectPublishedEvent(Project publishedProjectId)
         {
             if (!DomainEvents.Any(e => e is ProjectPublishedEvent))
             {
-                AddDomainEvent(new ProjectPublishedEvent(Id));
+                AddDomainEvent(new ProjectPublishedEvent(this, publishedProjectId));
             }
         }
         

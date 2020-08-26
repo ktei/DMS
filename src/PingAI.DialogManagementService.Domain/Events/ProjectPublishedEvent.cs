@@ -1,14 +1,17 @@
 using System;
+using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Domain.Events
 {
     public class ProjectPublishedEvent : DomainEvent
     {
-        public Guid ProjectId { get; }
+        public Project SourceProject { get; }
+        public Project PublishedProject { get; }
 
-        public ProjectPublishedEvent(Guid projectId)
+        public ProjectPublishedEvent(Project sourceProject, Project publishedProject)
         {
-            ProjectId = projectId;
+            SourceProject = sourceProject;
+            PublishedProject = publishedProject;
         }
     }
 }
