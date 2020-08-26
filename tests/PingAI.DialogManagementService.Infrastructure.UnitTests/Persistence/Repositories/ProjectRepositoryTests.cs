@@ -115,7 +115,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 null, "#ffffff",
                 null, null, null, null);
             var entityType = new EntityType(
-                RandomString(10), project.Id, RandomString(15), new []{"t1"});
+                RandomString(10), project.Id, RandomString(15), new []{"t1"},
+                new []{new EntityValue("v", Guid.Empty, default)});
             var entityName = new EntityName(RandomString(10), project.Id, true);
             project.AddEntityType(entityType);
             project.AddEntityName(entityName);
@@ -152,13 +153,14 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Assert
             var actual = await context.Projects.AsNoTracking()
                 .Include(p => p.EntityNames)
-                .Include(p => p.EntityTypes)
+                .Include(p => p.EntityTypes).ThenInclude(x => x.Values)
                 
                 .Include(p => p.Intents)
                 .ThenInclude(i => i.PhraseParts).ThenInclude(p => p.EntityName)
 
                 .Include(p => p.Intents)
                 .ThenInclude(i => i.PhraseParts).ThenInclude(p => p.EntityType)
+                .ThenInclude(x => x!.Values)
 
                 .Include(p => p.Responses)
 
@@ -169,6 +171,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 .Include(p => p.Queries)
                 .ThenInclude(q => q.QueryIntents).ThenInclude(q => q.Intent)
                 .ThenInclude(i => i!.PhraseParts).ThenInclude(p => p.EntityType)
+                .ThenInclude(x => x!.Values)
 
                 .Include(p => p.Queries)
                 .ThenInclude(q => q.QueryResponses).ThenInclude(q => q.Response)
@@ -185,6 +188,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             finally
             {
                 // clean up
+                context.RemoveRange(entityType.Values);
                 context.RemoveRange(entityName, entityType, intent, response,
                     query, project);
                 context.RemoveRange(exportedProject.EntityNames);

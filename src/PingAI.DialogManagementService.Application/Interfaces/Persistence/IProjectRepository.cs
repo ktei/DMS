@@ -8,9 +8,12 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
 {
     public interface IProjectRepository
     {
-        Task<List<Project>> GetProjectsByIds(IEnumerable<Guid> projectIds,
-            Func<IQueryable<Project>, IQueryable<Project>>? configureQuery = null);
+        Task<List<Project>> GetProjectsByIds(IEnumerable<Guid> projectIds);
         Task<Project?> GetProjectById(Guid id);
+        
+        // TODO: this is a bit disgusting, fix me
+        Task<Project?> GetFullProjectById(Guid id);
+
         Task<bool> ProjectNameExists(Guid organisationId, string name);
         Task<Project> AddProject(Project project);
     }

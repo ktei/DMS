@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
+using PingAI.DialogManagementService.Domain.Events;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -163,7 +164,9 @@ namespace PingAI.DialogManagementService.Domain.Model
                     n => new EntityName(n.Name, Guid.Empty, n.CanBeReferenced));
             var entityTypesCopy =
                 _entityTypes.ToDictionary(e => e.Id,
-                    e => new EntityType(e.Name, Guid.Empty, e.Description, e.Tags?.ToArray()));
+                    e => new EntityType(e.Name, Guid.Empty,
+                        e.Description, e.Tags?.ToArray(), 
+                        e.Values.Select(v => new EntityValue(v.Value, Guid.Empty, v.Synonyms))));
 
             PhrasePart CopyPhrasePart(Intent i, PhrasePart p) =>
                 new PhrasePart(i.Id, p.PhraseId, p.Position,
@@ -220,8 +223,18 @@ namespace PingAI.DialogManagementService.Domain.Model
                 }
                 projectToPublish.AddQuery(q);
             }
-
+            
+            AddProjectPublishedEvent();
+            
             return projectToPublish;
+        }
+
+        private void AddProjectPublishedEvent()
+        {
+            if (!DomainEvents.Any(e => e is ProjectPublishedEvent))
+            {
+                AddDomainEvent(new ProjectPublishedEvent(Id));
+            }
         }
         
         public override string ToString() => Name;

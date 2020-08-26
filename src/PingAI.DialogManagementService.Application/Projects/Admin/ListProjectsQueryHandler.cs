@@ -28,7 +28,8 @@ namespace PingAI.DialogManagementService.Application.Projects.Admin
             if (!projectVersions.Any())
                 return new List<Project>(0);
 
-            var projects = await _projectRepository.GetProjectsByIds(projectVersions.Select(p => p.ProjectId));
+            var projects = await _projectRepository
+                .GetProjectsByIds(projectVersions.Select(p => p.ProjectId));
             return projects;
         }
     }

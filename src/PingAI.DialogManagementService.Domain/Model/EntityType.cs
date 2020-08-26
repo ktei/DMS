@@ -14,7 +14,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string Description { get; private set; }
         public string[]? Tags { get; private set; }
 
-        private readonly List<EntityValue> _values = new List<EntityValue>();
+        private readonly List<EntityValue> _values;
         public IReadOnlyList<EntityValue> Values => _values.ToImmutableList();
         
         public EntityType(string name, Guid projectId, string description, string[]? tags)
@@ -23,7 +23,18 @@ namespace PingAI.DialogManagementService.Domain.Model
             ProjectId = projectId;
             Description = description;
             Tags = tags;
+            _values = new List<EntityValue>();
         }
+        
+        public EntityType(string name, Guid projectId, string description, string[]? tags, IEnumerable<EntityValue> values)
+        {
+            Name = name;
+            ProjectId = projectId;
+            Description = description;
+            Tags = tags;
+            _values = (values ?? throw new ArgumentNullException(nameof(values))).ToList();
+        }
+
         
         public void UpdateValues(IEnumerable<EntityValue> values)
         {

@@ -16,7 +16,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("organisationId");
             builder.Property(o => o.Version)
                 .HasColumnName("version")
-                .HasConversion(v => v.Version, v => new ProjectVersionNumber(v));
+                .HasConversion(v => v.Number,
+                    v => new ProjectVersionNumber(v));
             builder.Property(o => o.ProjectId)
                 .HasColumnName("projectId");
             builder.Property(o => o.VersionGroupId)

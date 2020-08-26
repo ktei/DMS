@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
@@ -22,6 +23,19 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             return _context.ProjectVersions.Where(p => p.OrganisationId == organisationId &&
                                                 p.Version == ProjectVersionNumber.DesignTime)
                 .ToListAsync();
+        }
+
+        public async Task<ProjectVersion?> GetLatestVersionByProjectId(Guid projectId)
+        {
+            var v = await _context.ProjectVersions
+                .FirstOrDefaultAsync(x => x.ProjectId == projectId);
+            if (v == null)
+                return null;
+
+            return await _context.ProjectVersions.Where(x => x.VersionGroupId == v.VersionGroupId)
+                .OrderBy("version DESC")
+                // .OrderByDescending(x => x.Version.Number)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<ProjectVersion> AddProjectVersion(ProjectVersion projectVersion)

@@ -7,29 +7,29 @@ namespace PingAI.DialogManagementService.Domain.Model
     {
         public const int DesignTime = 0;
         
-        public int Version { get; }
+        public int Number { get; }
 
-        public ProjectVersionNumber(int version)
+        public ProjectVersionNumber(int number)
         {
-            if (version < DesignTime)
-                throw new ArgumentException(nameof(version));
-            Version = version;
+            if (number < DesignTime)
+                throw new ArgumentException(nameof(number));
+            Number = number;
         }
 
-        public bool IsDesignTime => Version == 0;
+        public bool IsDesignTime => Number == 0;
         
         public static ProjectVersionNumber NewDesignTime() => new ProjectVersionNumber(DesignTime);
 
-        public ProjectVersionNumber Next() => new ProjectVersionNumber(Version + 1);
+        public ProjectVersionNumber Next() => new ProjectVersionNumber(Number + 1);
         
         protected override IEnumerable<object> GetAtomicValues()
         {
-            yield return Version;
+            yield return Number;
         }
 
-        public override string ToString() => $"v{Version}";
+        public override string ToString() => $"v{Number}";
 
-        public static implicit operator int(ProjectVersionNumber v) => v.Version;
+        public static implicit operator int(ProjectVersionNumber v) => v.Number;
         public static explicit operator ProjectVersionNumber(int v) => new ProjectVersionNumber(v);
     }
 }

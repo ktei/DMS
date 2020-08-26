@@ -17,17 +17,48 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public Task<List<Project>> GetProjectsByIds(IEnumerable<Guid> projectIds,
-            Func<IQueryable<Project>, IQueryable<Project>>? configureQuery = null)
+        public Task<List<Project>> GetProjectsByIds(IEnumerable<Guid> projectIds)
         {
             _ = projectIds ?? throw new ArgumentNullException(nameof(projectIds));
             var projects = _context.Projects.Where(p => projectIds.Contains(p.Id));
-            projects = configureQuery?.Invoke(projects) ?? projects;
             return projects.ToListAsync();
         }
 
-        public Task<Project?> GetProjectById(Guid id) => 
-            _context.Projects.FirstOrDefaultAsync(x => x.Id == id);
+        public Task<Project?> GetProjectById(Guid id)
+        {
+            return _context.Projects.FirstOrDefaultAsync(x => x.Id == id);
+        }
+        
+        public Task<Project?> GetFullProjectById(Guid id)
+        {
+            return _context.Projects
+                .Include(p => p.EntityNames)
+                .Include(p => p.EntityTypes).ThenInclude(x => x.Values)
+                .Include(p => p.Intents)
+                
+                .Include(p => p.Intents)
+                .ThenInclude(i => i.PhraseParts).ThenInclude(p => p.EntityName)
+
+                .Include(p => p.Intents)
+                .ThenInclude(i => i.PhraseParts).ThenInclude(p => p.EntityType)
+                .ThenInclude(x => x!.Values)
+
+                .Include(p => p.Responses)
+
+                .Include(p => p.Queries)
+                .ThenInclude(q => q.QueryIntents).ThenInclude(q => q.Intent)
+                .ThenInclude(i => i!.PhraseParts).ThenInclude(p => p.EntityName)
+
+                .Include(p => p.Queries)
+                .ThenInclude(q => q.QueryIntents).ThenInclude(q => q.Intent)
+                .ThenInclude(i => i!.PhraseParts).ThenInclude(p => p.EntityType)
+                .ThenInclude(x => x!.Values)
+
+                .Include(p => p.Queries)
+                .ThenInclude(q => q.QueryResponses).ThenInclude(q => q.Response)
+
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
 
         public Task<bool> ProjectNameExists(Guid organisationId, string name)
         {
