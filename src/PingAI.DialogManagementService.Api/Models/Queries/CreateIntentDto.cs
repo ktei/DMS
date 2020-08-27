@@ -1,5 +1,6 @@
 using FluentValidation;
 using PingAI.DialogManagementService.Api.Models.Intents;
+using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Queries
 {
@@ -14,7 +15,8 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         public CreateIntentDtoValidator()
         {
             RuleFor(x => x.Name)
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(Intent.MaxNameLength);
 
             RuleForEach(x => x.PhraseParts)
                 .ForEach(x => x.SetValidator(new CreatePhrasePartDtoValidator()));

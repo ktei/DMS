@@ -22,12 +22,17 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<QueryIntent> _queryIntents;
         public IReadOnlyList<QueryIntent> QueryIntents => _queryIntents.ToImmutableList();
         
-        private const int MaxNameLength = 255;
+        public const int MaxNameLength = 100;
 
         public Intent(string name, Guid projectId,
             IntentType type)
         {
-            Name = name;
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException($"{nameof(name)} cannot be empty");
+            if (name.Trim().Length > MaxNameLength)
+                throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
+            
+            Name = name.Trim();
             ProjectId = projectId;
             Type = type;
             _phraseParts = new List<PhrasePart>();

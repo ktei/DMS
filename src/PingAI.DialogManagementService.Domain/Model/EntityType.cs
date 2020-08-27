@@ -18,6 +18,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public IReadOnlyList<EntityValue> Values => _values.ToImmutableList();
 
         public const int MaxNameLength = 30;
+        public const int MaxTagLength = 50;
         
         public EntityType(string name, Guid projectId, string description, string[]? tags)
         {
@@ -26,10 +27,17 @@ namespace PingAI.DialogManagementService.Domain.Model
             if (name.Trim().Length > MaxNameLength)
                 throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
             
-            Name = name;
+            if (tags != null && tags.Any(t => t == null 
+                                              || t.Trim().Length == 0 || t.Trim().Length > MaxTagLength))
+                throw new ArgumentException(
+                    $"Some {nameof(Tags)} are not valid: empty tags and tags with " +
+                    $"length > {MaxTagLength} are not allowed");
+
+            
+            Name = name.Trim();
             ProjectId = projectId;
             Description = description;
-            Tags = tags;
+            Tags = tags?.Select(t => t.Trim()).ToArray();
             _values = new List<EntityValue>();
         }
         

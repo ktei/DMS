@@ -17,9 +17,11 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Project? Project { get; private set; }
         public ResponseType Type { get; private set; }
         public int Order { get; private set; }
-        
-        private readonly List<QueryResponse> _queryResponses = new List<QueryResponse>();
+
+        private readonly List<QueryResponse> _queryResponses;
         public IReadOnlyList<QueryResponse> QueryResponses => _queryResponses.ToImmutableList();
+
+        public const int MaxRteTextLength = 4000;
         
         public Response(ResolutionPart[] resolution, Guid projectId, ResponseType type,
             int order)
@@ -28,6 +30,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             ProjectId = projectId;
             Type = type;
             Order = order;
+            _queryResponses = new List<QueryResponse>();
         }
         
         public Response(Guid projectId, ResponseType type,
@@ -48,6 +51,12 @@ namespace PingAI.DialogManagementService.Domain.Model
         /// <param name="entityNames">A map of all entity names of current project, the key being the name</param>
         public void SetRteText(string rteText, IDictionary<string, EntityName> entityNames)
         {
+            if (string.IsNullOrEmpty(rteText))
+                throw new ArgumentException($"{nameof(rteText)} cannot be empty");
+            
+            if (rteText.Length > MaxRteTextLength)
+                throw new ArgumentException($"Max length of {nameof(rteText)} is {MaxRteTextLength}");
+                
             var resolution = new List<ResolutionPart>();
             var re = new Regex(@"\$\{([A-Za-z-_0-9]+)\}");
             var pos = 0;

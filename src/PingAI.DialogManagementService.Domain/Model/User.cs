@@ -18,6 +18,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         
         public User(string name, string auth0Id)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException($"{nameof(name)} cannot be empty");
+            
             Name = name;
             Auth0Id = auth0Id;
             _organisationUsers = new List<OrganisationUser>();

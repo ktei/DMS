@@ -1,5 +1,6 @@
 using FluentValidation;
 using PingAI.DialogManagementService.Api.Validations;
+using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Queries
 {
@@ -19,11 +20,13 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         public CreateQueryRequestValidator()
         {
             RuleFor(x => x.Name)
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(Query.MaxNameLength);
             RuleFor(x => x.ProjectId)
                 .NotEmpty()
                 .MustBeGuid();
-            RuleForEach(x => x.Tags).NotEmpty();
+            RuleForEach(x => x.Tags).NotEmpty()
+                .MaximumLength(Query.MaxTagLength);
             RuleFor(x => x.Intent)
                 .Cascade(CascadeMode.StopOnFirstFailure)
                 .NotNull()

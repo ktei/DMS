@@ -25,14 +25,28 @@ namespace PingAI.DialogManagementService.Domain.Model
         public IReadOnlyList<Intent> Intents => GetIntents();
         public IReadOnlyList<Response> Responses => GetResponses();
         
+        public const int MaxNameLength = 100;
+        public const int MaxTagLength = 50;
+        
         public Query(string name, Guid projectId, Expression[] expressions,
             string description, string[]? tags, int displayOrder)
         {
-            Name = name;
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException($"{nameof(name)} cannot be empty");
+            if (name.Trim().Length > MaxNameLength)
+                throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
+
+            if (tags != null && tags.Any(t => t == null 
+                                              || t.Trim().Length == 0 || t.Trim().Length > MaxTagLength))
+                throw new ArgumentException(
+                    $"Some {nameof(Tags)} are not valid: empty tags and tags with " +
+                    $"length > {MaxTagLength} are not allowed");
+
+            Name = name.Trim();
             ProjectId = projectId;
             Expressions = expressions;
             Description = description;
-            Tags = tags;
+            Tags = tags?.Select(t => t.Trim()).ToArray();
             DisplayOrder = displayOrder;
             _queryIntents = new List<QueryIntent>();
             _queryResponses = new List<QueryResponse>();

@@ -42,10 +42,20 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<Query> _queries;
         public IReadOnlyList<Query> Queries => _queries.ToImmutableList();
 
+        public const int MaxNameLength = 250;
+
         public Project(string name, Guid organisationId, string? widgetTitle, string widgetColor,
             string? widgetDescription, string? fallbackMessage, string? greetingMessage, string[]? enquiries)
         {
-            Name = name;
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException($"{nameof(name)} cannot be empty");
+            if (name.Trim().Length > MaxNameLength)
+                throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
+            
+            if (string.IsNullOrWhiteSpace(widgetColor))
+                throw new ArgumentException($"{nameof(widgetColor)} cannot be empty");
+            
+            Name = name.Trim();
             OrganisationId = organisationId;
             WidgetTitle = widgetTitle;
             WidgetColor = widgetColor;

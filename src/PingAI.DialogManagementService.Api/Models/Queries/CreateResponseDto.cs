@@ -19,7 +19,8 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
                 .NotEmpty()
                 .MustBeEnum(typeof(ResponseType));
             RuleFor(x => x.RteText)
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(Response.MaxRteTextLength);
         }
     }
 }

@@ -23,10 +23,10 @@ namespace PingAI.DialogManagementService.Domain.Model
         public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
             PhrasePartType type, Guid? entityNameId, Guid? entityTypeId)
         {
-            if (Text?.Length > 255)
+            if (Text?.Length > MaxTextLength)
                 throw new ArgumentException($"Max length of {nameof(Text)} is {MaxTextLength}");
             
-            if (Value?.Length > 255)
+            if (Value?.Length > MaxValueLength)
                 throw new ArgumentException($"Max length of {nameof(Value)} is {MaxValueLength}");
             
             IntentId = intentId;

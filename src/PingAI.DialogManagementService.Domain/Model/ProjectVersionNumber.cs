@@ -12,7 +12,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public ProjectVersionNumber(int number)
         {
             if (number < DesignTime)
-                throw new ArgumentException(nameof(number));
+                throw new ArgumentException($"{nameof(number)} must be greater than {DesignTime}");
             Number = number;
         }
 

@@ -20,9 +20,16 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<OrganisationUser> _organisationUsers;
         public IReadOnlyList<OrganisationUser> OrganisationUsers => _organisationUsers.ToImmutableList();
         
+        public const int MaxNameLength = 250;
+        
         public Organisation(string name, string description, string[]? tags)
         {
-            Name = name;
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException($"{nameof(name)} cannot be empty");
+            if (name.Trim().Length > MaxNameLength)
+                throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
+            
+            Name = name.Trim();
             Description = description;
             Tags = tags;
             _projects = new List<Project>();
