@@ -11,9 +11,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
         {
             builder.ToTable("QueryIntents", "chatbot");
 
-            builder.HasKey(o => o.Id);
-            builder.Property(o => o.Id)
-                .HasColumnName("id");
+            builder.ConfigureId();
+            
             builder.Property(o => o.QueryId)
                 .HasColumnName("queryId");
             builder.Property(o => o.IntentId)

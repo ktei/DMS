@@ -59,6 +59,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<Query> Queries { get; set; }
         public DbSet<QueryIntent> QueryIntents { get; set; }
         public DbSet<QueryResponse> QueryResponses { get; set; }
+        public DbSet<SlackWorkspace> SlackWorkspaces { get; set; }
         
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 
@@ -36,6 +38,9 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
 
         public async Task Cleanup()
         {
+            var slackWorkspaces = await _context.SlackWorkspaces
+                .Where(x => x.ProjectId == Project.Id).ToListAsync();
+            _context.RemoveRange(slackWorkspaces);
             _context.RemoveRange(Project, Organisation, EntityName, EntityType);
             await _context.SaveChangesAsync();
         }

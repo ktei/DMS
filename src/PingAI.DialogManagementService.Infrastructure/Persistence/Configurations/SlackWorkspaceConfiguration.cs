@@ -5,22 +5,23 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class EntityNameConfiguration :  IEntityTypeConfiguration<EntityName>
+    public class SlackWorkspaceConfiguration : IEntityTypeConfiguration<SlackWorkspace>
     {
-        public void Configure(EntityTypeBuilder<EntityName> builder)
+        public void Configure(EntityTypeBuilder<SlackWorkspace> builder)
         {
-            builder.ToTable("EntityNames", "chatbot");
+            builder.ToTable("SlackWorkspaces", "chatbot");
             builder.ConfigureId();
 
-            builder.Property(o => o.Name)
-                .HasColumnName("name")
-                .HasMaxLength(255);
             builder.Property(o => o.ProjectId)
                 .HasColumnName("projectId");
-            builder.Property(o => o.CanBeReferenced)
-                .HasColumnName("canBeReferenced");
+            builder.Property(o => o.OAuthAccessToken)
+                .HasColumnName("oauthAccessToken");
+            builder.Property(o => o.WebhookUrl)
+                .HasColumnName("webhookURL");
 
             builder.AttachTimestamps();
+            
+            builder.HasOne(o => o.Project);
         }
     }
 }

@@ -12,9 +12,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
         public void Configure(EntityTypeBuilder<Response> builder)
         {
             builder.ToTable("Responses", "chatbot");
-            builder.HasKey(o => o.Id);
-            builder.Property(o => o.Id)
-                .HasColumnName("id");
+            builder.ConfigureId();
             builder.Property(o => o.Resolution)
                 .HasColumnName("resolution")
                 .HasColumnType("jsonb")
