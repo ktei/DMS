@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Policy;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -28,10 +29,13 @@ using PingAI.DialogManagementService.Api.Models;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
+using PingAI.DialogManagementService.Application.Interfaces.Services.Slack;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
+using PingAI.DialogManagementService.Infrastructure.Configuration;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
 using PingAI.DialogManagementService.Infrastructure.Services.Nlu;
+using PingAI.DialogManagementService.Infrastructure.Services.Slack;
 using IAuthorizationService = PingAI.DialogManagementService.Application.Interfaces.Services.IAuthorizationService;
 
 namespace PingAI.DialogManagementService.Api
@@ -161,6 +165,12 @@ namespace PingAI.DialogManagementService.Api
             {
                 client.BaseAddress = new Uri(Configuration["NluApiHost"]);
             });
+            services.AddHttpClient<ISlackService, SlackService>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration["Slack:ApiHost"]);
+            });
+
+            services.AddSingleton<IConfigurationManager, ConfigurationManager>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -196,5 +206,19 @@ namespace PingAI.DialogManagementService.Api
                 endpoints.MapControllers();
             });
         }
+    }
+
+    internal class ConfigurationManager : IConfigurationManager
+    {
+        private readonly IConfiguration _configuration;
+
+        public ConfigurationManager(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        public string SlackClientId => _configuration["Slack:ClientId"];
+        public string SlackClientSecret => _configuration["Slack:ClientSecret"];
+        public string SlackRedirectUri => _configuration["Slack:RedirectUri"];
     }
 }
