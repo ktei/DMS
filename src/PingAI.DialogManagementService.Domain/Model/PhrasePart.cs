@@ -16,10 +16,19 @@ namespace PingAI.DialogManagementService.Domain.Model
         public EntityName? EntityName { get; private set; }
         public Guid? EntityTypeId { get; private set; }
         public EntityType? EntityType { get; private set; }
+
+        public const int MaxValueLength = 255;
+        public const int MaxTextLength = 255;
         
         public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
             PhrasePartType type, Guid? entityNameId, Guid? entityTypeId)
         {
+            if (Text?.Length > 255)
+                throw new ArgumentException($"Max length of {nameof(Text)} is {MaxTextLength}");
+            
+            if (Value?.Length > 255)
+                throw new ArgumentException($"Max length of {nameof(Value)} is {MaxValueLength}");
+            
             IntentId = intentId;
             PhraseId = phraseId;
             Position = position;

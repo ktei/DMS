@@ -16,9 +16,16 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         private readonly List<EntityValue> _values;
         public IReadOnlyList<EntityValue> Values => _values.ToImmutableList();
+
+        public const int MaxNameLength = 30;
         
         public EntityType(string name, Guid projectId, string description, string[]? tags)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException($"{nameof(name)} cannot be empty");
+            if (name.Trim().Length > MaxNameLength)
+                throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
+            
             Name = name;
             ProjectId = projectId;
             Description = description;
