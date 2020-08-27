@@ -13,7 +13,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Services.Slack
         [JsonPropertyName("ok")]
         public bool Ok { get; set; }
         
-        [JsonPropertyName("accesss_token")]
+        [JsonPropertyName("access_token")]
         public string? AccessToken { get; set; }
         
         [JsonPropertyName("error")]

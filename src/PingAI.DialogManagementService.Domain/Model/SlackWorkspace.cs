@@ -16,5 +16,15 @@ namespace PingAI.DialogManagementService.Domain.Model
             OAuthAccessToken = oAuthAccessToken;
             WebhookUrl = webhookUrl;
         }
+
+        public void UpdateSlackConfig(string oauthAccessToken, string webhookUrl)
+        {
+            if (string.IsNullOrEmpty(oauthAccessToken))
+                throw new ArgumentException(nameof(oauthAccessToken));
+            if (string.IsNullOrEmpty(webhookUrl))
+                throw new ArgumentException(nameof(webhookUrl));
+            OAuthAccessToken = oauthAccessToken;
+            WebhookUrl = webhookUrl;
+        }
     }
 }
