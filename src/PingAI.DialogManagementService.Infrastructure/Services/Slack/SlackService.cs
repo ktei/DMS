@@ -44,7 +44,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Services.Slack
             var res = await _httpClient.SendAsync(req);
             if (res.IsSuccessStatusCode)
             {
-                var content = await res.Content.ReadAsStringAsync();
                 return await res.Content.ReadFromJsonAsync<ExchangeCodeResponse>();
             }
 
