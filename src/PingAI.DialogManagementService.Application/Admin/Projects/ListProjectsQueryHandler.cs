@@ -6,7 +6,7 @@ using MediatR;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Domain.Model;
 
-namespace PingAI.DialogManagementService.Application.Projects.Admin
+namespace PingAI.DialogManagementService.Application.Admin.Projects
 {
     public class ListProjectsQueryHandler : IRequestHandler<ListProjectsQuery, List<Project>>
     {

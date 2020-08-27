@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MediatR;
 using PingAI.DialogManagementService.Domain.Model;
 
-namespace PingAI.DialogManagementService.Application.Projects.Admin
+namespace PingAI.DialogManagementService.Application.Admin.Projects
 {
     public class ListProjectsQuery : IRequest<List<Project>>
     {

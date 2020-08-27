@@ -33,8 +33,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             return _organisationUsers.Select(x => x.OrganisationId!).ToImmutableList();
         }
 
-        public bool CanAccessOrganisation(Guid organisationId) => OrganisationIds.Contains(organisationId);
-
         public override string ToString() => Name;
     }
 }

@@ -9,16 +9,16 @@ using PingAI.DialogManagementService.Api.Models.Projects;
 using Xunit;
 using static Xunit.Assert;
 
-namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
+namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
 {
-    public class AdminProjectsApiTests : IClassFixture<TestWebApplicationFactory>, IAsyncLifetime
+    public class ProjectsApiTests : IClassFixture<TestWebApplicationFactory>, IAsyncLifetime
     {
         private readonly HttpClient _client;
         private TestingFixture _testingFixture;
         private readonly TestWebApplicationFactory _factory;
         private Func<Task> _tearDownTestingFixture;
 
-        public AdminProjectsApiTests(TestWebApplicationFactory factory)
+        public ProjectsApiTests(TestWebApplicationFactory factory)
         {
             _factory = factory;
             _client = _factory.CreateAdminAuthenticatedClient();

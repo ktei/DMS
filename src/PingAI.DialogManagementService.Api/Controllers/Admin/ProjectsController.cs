@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Projects;
-using PingAI.DialogManagementService.Application.Projects.Admin;
+using PingAI.DialogManagementService.Application.Admin.Projects;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 
 namespace PingAI.DialogManagementService.Api.Controllers.Admin
