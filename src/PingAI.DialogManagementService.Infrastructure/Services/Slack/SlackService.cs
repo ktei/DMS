@@ -20,25 +20,22 @@ namespace PingAI.DialogManagementService.Infrastructure.Services.Slack
             _configurationManager = configurationManager;
         }
         
-        public async Task<ExchangeCodeResponse> ExchangeOAuthCode(string state, string code)
+        public async Task<ExchangeCodeResponse> ExchangeOAuthCode(string code, string redirectUri)
         {
-            if (string.IsNullOrEmpty(state))
-                throw new ArgumentException(nameof(state));
             if (string.IsNullOrEmpty(code))
                 throw new ArgumentException(nameof(code));
             if (string.IsNullOrEmpty(_configurationManager.SlackClientId))
                 throw new InvalidOperationException($"Configure {nameof(_configurationManager.SlackClientId)} first");
             if (string.IsNullOrEmpty(_configurationManager.SlackClientSecret))
                 throw new InvalidOperationException($"Configure {nameof(_configurationManager.SlackClientSecret)} first");
-            if (string.IsNullOrEmpty(_configurationManager.SlackRedirectUri))
-                throw new InvalidOperationException($"Configure {nameof(_configurationManager.SlackRedirectUri)} first");
             
             var dict = new Dictionary<string, string>
             {
                 {"code", code},
                 {"client_id", _configurationManager.SlackClientId},
                 {"client_secret", _configurationManager.SlackClientSecret},
-                {"redirect_uri", _configurationManager.SlackRedirectUri}
+                {"redirect_uri", redirectUri.Substring(0, 
+                    redirectUri.IndexOf("?", StringComparison.OrdinalIgnoreCase))}
             };
             var req = new HttpRequestMessage(HttpMethod.Post, "/api/oauth.v2.access")
             {

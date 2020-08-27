@@ -5,7 +5,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Services.Slack
 {
     public interface ISlackService
     {
-        Task<ExchangeCodeResponse> ExchangeOAuthCode(string state, string code);
+        Task<ExchangeCodeResponse> ExchangeOAuthCode(string code, string redirectUri);
     }
 
     public class ExchangeCodeResponse

@@ -41,7 +41,7 @@ namespace PingAI.DialogManagementService.Application.Integration.Slack
                 throw new ForbiddenException("Invalid state");
             }
             
-            var slackResponse = await _slackService.ExchangeOAuthCode(state, code);
+            var slackResponse = await _slackService.ExchangeOAuthCode(code, request.RedirectUri);
             if (!slackResponse.Ok)
             {
                 throw new BadRequestException($"Failed to connect to Slack: {slackResponse.Error}");

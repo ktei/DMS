@@ -220,6 +220,5 @@ namespace PingAI.DialogManagementService.Api
 
         public string SlackClientId => _configuration["Slack:ClientId"];
         public string SlackClientSecret => _configuration["Slack:ClientSecret"];
-        public string SlackRedirectUri => _configuration["Slack:RedirectUri"];
     }
 }

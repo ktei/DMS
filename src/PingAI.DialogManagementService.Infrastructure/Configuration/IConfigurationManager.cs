@@ -4,6 +4,5 @@ namespace PingAI.DialogManagementService.Infrastructure.Configuration
     {
         string SlackClientId { get; }
         string SlackClientSecret { get; }
-        string SlackRedirectUri { get; }
     }
 }
