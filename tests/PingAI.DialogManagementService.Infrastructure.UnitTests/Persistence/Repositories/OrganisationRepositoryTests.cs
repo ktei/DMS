@@ -28,7 +28,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 "test", null);
             var project = new Project("test project", organisation.Id, 
                 "widget title", Defaults.WidgetColor, "widget description",
-                "fallback message", "greeting message", new string[]{});
+                "fallback message", "greeting message", new string[]{},
+                ApiKey.Empty, null);
             organisation.AddProject(project);
             
             // Act
@@ -59,7 +60,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 "test", null);
             var project = new Project("test project", organisation.Id, 
                 "widget title", Defaults.WidgetColor, "widget description",
-                "fallback message", "greeting message", new string[]{});
+                "fallback message", "greeting message", new string[]{},
+                ApiKey.Empty, null);
             organisation.AddProject(project);
             
             // Act

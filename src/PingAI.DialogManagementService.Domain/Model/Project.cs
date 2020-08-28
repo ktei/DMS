@@ -14,18 +14,13 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Guid OrganisationId { get; private set; }
         public Organisation? Organisation { get; private set; }
         public string? WidgetTitle { get; private set; }
-
-        private string? _widgetColor;
-        public string? WidgetColor
-        {
-            get => (_widgetColor ?? string.Empty).TrimEnd();
-            private set => _widgetColor = value;
-        }
-        
+        public string? WidgetColor { get; private set; }
         public string? WidgetDescription { get; private set; }
         public string? FallbackMessage { get; private set; }
         public string? GreetingMessage { get; private set; }
         public string[]? Enquiries { get; private set; }
+        public ApiKey? ApiKey { get; private set; }
+        public string[]? Domains { get; private set; }
 
         private readonly List<Intent> _intents;
         public IReadOnlyList<Intent> Intents => _intents.ToImmutableList();
@@ -45,7 +40,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         public const int MaxNameLength = 250;
 
         public Project(string name, Guid organisationId, string? widgetTitle, string widgetColor,
-            string? widgetDescription, string? fallbackMessage, string? greetingMessage, string[]? enquiries)
+            string? widgetDescription, string? fallbackMessage, string? greetingMessage, string[]? enquiries,
+            ApiKey? apiKey, string[]? domains)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException($"{nameof(name)} cannot be empty");
@@ -63,6 +59,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             FallbackMessage = fallbackMessage;
             GreetingMessage = greetingMessage;
             Enquiries = enquiries;
+            ApiKey = apiKey;
+            Domains = domains;
             _entityTypes = new List<EntityType>();
             _entityNames = new List<EntityName>();
             _intents = new List<Intent>();
@@ -192,7 +190,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             var projectToPublish = new Project($"{Name}__{Guid.NewGuid()}",
                 OrganisationId, 
                 WidgetTitle, WidgetColor!,
-                WidgetDescription, FallbackMessage, GreetingMessage, Enquiries);
+                WidgetDescription, FallbackMessage, GreetingMessage, Enquiries, null, null);
 
             var intentsCopy = _intents.ToDictionary(i => i.Id, CopyIntent);
             var responsesCopy = _responses.ToDictionary(r => r.Id, CopyResponse);

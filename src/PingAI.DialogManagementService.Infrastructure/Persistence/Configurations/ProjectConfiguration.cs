@@ -29,6 +29,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("widgetTitle");
             builder.Property(o => o.Enquiries)
                 .HasColumnName("enquiries");
+            builder.Property(o => o.ApiKey)
+                .HasColumnName("apiKey")
+                .HasConversion(k => k.Key, 
+                    k => k == null ? ApiKey.Empty : (ApiKey)k);
+            builder.Property(o => o.Domains)
+                .HasColumnName("domains");
 
             builder.AttachTimestamps();
             

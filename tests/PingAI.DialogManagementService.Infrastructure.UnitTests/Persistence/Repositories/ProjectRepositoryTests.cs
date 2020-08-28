@@ -28,7 +28,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var organisation =
                 new Organisation(Guid.NewGuid().ToString(), "test", null);
             var project = new Project( "test", organisation.Id,  "title", Defaults.WidgetColor,
-                "description", "fallback message", "greeting message", new string[] { });
+                "description", "fallback message", "greeting message", new string[] { },
+                ApiKey.Empty, null);
             organisation.AddProject(project);
             await context.AddAsync(organisation);
             await context.SaveChangesAsync();
@@ -54,7 +55,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var organisation =
                 new Organisation(Guid.NewGuid().ToString(), "test", null);
             var project = new Project( "test", organisation.Id,  "title", Defaults.WidgetColor,
-                "description", "fallback message", "greeting message", new string[] { });
+                "description", "fallback message", 
+                "greeting message", new string[] { }, ApiKey.Empty, null);
             organisation.AddProject(project);
             await context.AddAsync(organisation);
             await context.SaveChangesAsync();
@@ -85,7 +87,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var sut = new ProjectRepository(context);
             var project = new Project(Guid.NewGuid().ToString(), organisation.Id, 
                 null, Defaults.WidgetColor,
-                null, null, null, null);
+                null, null, null, null,
+                ApiKey.Empty, null);
 
             // Act
             await sut.AddProject(project);
@@ -113,7 +116,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 new Organisation(RandomString(10), "test", null);
             var project = new Project(RandomString(10), organisation.Id, 
                 null, Defaults.WidgetColor,
-                null, null, null, null);
+                null, null, null, null,
+                ApiKey.Empty, null);
             var entityType = new EntityType(
                 RandomString(10), project.Id, RandomString(15), new []{"t1"},
                 new []{new EntityValue("v", Guid.Empty, default)});

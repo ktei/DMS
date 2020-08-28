@@ -46,7 +46,8 @@ namespace PingAI.DialogManagementService.Application.Projects.CreateProject
 
             var project = new Project(request.Name, organisation.Id,
                 null, Defaults.WidgetColor, null, 
-                null, null, null);
+                null, null, null,
+                ApiKey.Empty, null);
             organisation.AddProjectVersion(new ProjectVersion(project, organisationId, 
                 Guid.NewGuid(), ProjectVersionNumber.NewDesignTime()));
 
