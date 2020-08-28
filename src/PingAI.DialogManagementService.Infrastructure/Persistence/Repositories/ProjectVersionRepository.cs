@@ -25,6 +25,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .ToListAsync();
         }
 
+        public Task<List<ProjectVersion>> GetDesignTimeVersions()
+        {
+            return _context.ProjectVersions.Where(p => p.Version == ProjectVersionNumber.DesignTime)
+                .ToListAsync();
+        }
+
         public async Task<ProjectVersion?> GetLatestVersionByProjectId(Guid projectId)
         {
             var v = await _context.ProjectVersions

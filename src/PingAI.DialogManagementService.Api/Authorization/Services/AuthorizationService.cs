@@ -12,7 +12,8 @@ namespace PingAI.DialogManagementService.Api.Authorization.Services
         private readonly Microsoft.AspNetCore.Authorization.IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthorizationService(Microsoft.AspNetCore.Authorization.IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor)
+        public AuthorizationService(Microsoft.AspNetCore.Authorization.IAuthorizationService authorizationService,
+            IHttpContextAccessor httpContextAccessor)
         {
             _authorizationService = authorizationService;
             _httpContextAccessor = httpContextAccessor;
@@ -31,6 +32,14 @@ namespace PingAI.DialogManagementService.Api.Authorization.Services
             var authResult =
                 await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, projectId,
                     Operations.Write);
+            return authResult.Succeeded;
+        }
+
+        public async Task<bool> HasAdminPrivilege()
+        {
+            var authResult =
+                await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, null,
+                    new[] {new AdministratorOnlyRequirement()});
             return authResult.Succeeded;
         }
     }

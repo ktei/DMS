@@ -7,5 +7,6 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Services
     {
         Task<bool> UserCanReadProject(Guid projectId);
         Task<bool> UserCanWriteProject(Guid projectId);
+        Task<bool> HasAdminPrivilege();
     }
 }

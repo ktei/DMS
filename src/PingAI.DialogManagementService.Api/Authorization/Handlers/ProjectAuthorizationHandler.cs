@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using PingAI.DialogManagementService.Api.Authorization.Utils;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 
 namespace PingAI.DialogManagementService.Api.Authorization.Handlers
@@ -13,20 +14,13 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
         private readonly IUserRepository _userRepository;
         private readonly IOrganisationRepository _organisationRepository;
 
-        private static readonly Guid[] SuperAdmins = new[]
-        {
-            "3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f", // rui
-            "6ace6d50-05b3-46b8-9fdd-25e94e778d3e", // robert
-            "a8e2ceb2-6564-4121-9fae-4dd9ee861d8c", // ping
-            "ef8ab59a-fad8-490a-ab2a-1cb70d6b53bf" // steve
-        }.Select(Guid.Parse).ToArray();
-
-        public ProjectAuthorizationHandler(IUserRepository userRepository, IOrganisationRepository organisationRepository)
+        public ProjectAuthorizationHandler(IUserRepository userRepository,
+            IOrganisationRepository organisationRepository)
         {
             _userRepository = userRepository;
             _organisationRepository = organisationRepository;
         }
-        
+
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
             OperationAuthorizationRequirement requirement,
             Guid resource)
@@ -37,8 +31,8 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
                 context.Fail();
                 return;
             }
-
-            if (SuperAdmins.Contains(user.Id))
+            
+            if (context.User.IsAdmin())
             {
                 context.Succeed(requirement);
                 return;

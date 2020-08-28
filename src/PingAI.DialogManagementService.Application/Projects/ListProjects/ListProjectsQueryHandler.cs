@@ -14,37 +14,50 @@ namespace PingAI.DialogManagementService.Application.Projects.ListProjects
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IProjectVersionRepository _projectVersionRepository;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IRequestContext _requestContext;
 
         public ListProjectsQueryHandler(IProjectRepository projectRepository,
-            IProjectVersionRepository projectVersionRepository, IRequestContext requestContext)
+            IProjectVersionRepository projectVersionRepository, IRequestContext requestContext,
+            IAuthorizationService authorizationService)
         {
             _projectRepository = projectRepository;
             _projectVersionRepository = projectVersionRepository;
             _requestContext = requestContext;
+            _authorizationService = authorizationService;
         }
 
         public async Task<List<Project>> Handle(ListProjectsQuery request, CancellationToken cancellationToken)
         {
-            Guid? organisationId = null;
-            var user = await _requestContext.GetUser();
-            if (user.OrganisationIds.Any())
+            var isAdmin = await _authorizationService.HasAdminPrivilege();
+            List<ProjectVersion> projectVersions;
+            if (isAdmin)
             {
-                // TODO: what if user has multiple organisations?
-                organisationId = user.OrganisationIds.First();
+                projectVersions = await _projectVersionRepository.GetDesignTimeVersions();
             }
+            else
+            {
+                Guid? organisationId = null;
+                var user = await _requestContext.GetUser();
+                if (user.OrganisationIds.Any())
+                {
+                    // TODO: what if user has multiple organisations?
+                    organisationId = user.OrganisationIds.First();
+                }
 
-            // no organisation found, no project to query
-            if (!organisationId.HasValue)
-                return new List<Project>(0);
+                // no organisation found, no project to query
+                if (!organisationId.HasValue)
+                    return new List<Project>(0);
 
-            var projectVersions =
-                await _projectVersionRepository.GetDesignTimeVersionsByOrganisationId(organisationId.Value);
+                projectVersions =
+                    await _projectVersionRepository.GetDesignTimeVersionsByOrganisationId(organisationId.Value);
+            }
 
             if (!projectVersions.Any())
                 return new List<Project>(0);
 
-            var projects = await _projectRepository.GetProjectsByIds(projectVersions.Select(p => p.ProjectId));
+            var projects = await _projectRepository.GetProjectsByIds(
+                projectVersions.Select(p => p.ProjectId));
             return projects;
         }
     }
