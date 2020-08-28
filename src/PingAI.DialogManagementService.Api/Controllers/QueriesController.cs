@@ -28,13 +28,32 @@ namespace PingAI.DialogManagementService.Api.Controllers
         }
         
         [HttpGet]
-        public async Task<ActionResult<List<QueryListItemDto>>> ListQueries([FromQuery] Guid? projectId)
+        public async Task<ActionResult<List<QueryListItemDto>>> ListQueries([FromQuery] Guid? projectId,
+            [FromQuery] string? queryType)
         {
             if (!projectId.HasValue)
             {
                 throw new BadRequestException($"{nameof(projectId)} must be provided");
             }
-            var query = new ListQueriesQuery(projectId.Value);
+
+            static bool CheckQueryType(string? t)
+            {
+                switch (t)
+                {
+                    case null:
+                    case QueryTypes.Faq:
+                    case QueryTypes.Handover:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            
+            if (!CheckQueryType(queryType))
+                throw new BadRequestException($"{nameof(queryType)} is invalid. Accepted types are " +
+                                              $"{QueryTypes.Faq}, {QueryTypes.Handover}");
+            
+            var query = new ListQueriesQuery(projectId.Value, queryType);
             var queries = await _mediator.Send(query);
             return new ListQueriesResponse(queries.Select(q => new QueryListItemDto(q)));
         }

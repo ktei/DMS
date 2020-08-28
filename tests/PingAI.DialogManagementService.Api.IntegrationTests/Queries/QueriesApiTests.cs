@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using Npgsql.NameTranslation;
 using PingAI.DialogManagementService.Api.IntegrationTests.Utils;
 using PingAI.DialogManagementService.Api.Models.Intents;
 using PingAI.DialogManagementService.Api.Models.Queries;
@@ -32,12 +34,10 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
         public async Task ListQueries()
         {
             var projectId = _testingFixture.Project.Id;
-            
-            // insert a Query first
             var q = await SetupQuery(projectId);
             
             var httpResponse = await _client.GetAsync(
-                $"/dms/api/v1/queries?projectId={projectId}"
+                $"/dms/api/v1/queries?projectId={projectId}&queryType=faq"
             );
             await httpResponse.IsOk();
             var response = await httpResponse.Content.ReadFromJsonAsync<List<QueryListItemDto>>();

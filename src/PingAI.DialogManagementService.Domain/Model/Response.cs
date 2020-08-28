@@ -110,7 +110,11 @@ namespace PingAI.DialogManagementService.Domain.Model
     public enum ResponseType
     {
         RTE,
-        FACEBOOK,
-        VIDEO
+        HANDOVER,
+        VIDEO,
+        SOCIAL,
+        WEBHOOk,
+        FORM
     }
 }
+

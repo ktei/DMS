@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -27,7 +30,19 @@ namespace PingAI.DialogManagementService.Application.Queries.ListQueries
             if (!canRead)
                 throw new ForbiddenException(ProjectReadDenied);
 
-            var queries = await _queryRepository.GetQueriesByProjectId(request.ProjectId);
+            Expression<Func<Query, bool>>? filter = request.QueryType switch
+            {
+                // TODO: we shouldn't compare enums with "ToString", but
+                // without it the code throws runtime exception complaining
+                // it can't find enum_Response_type
+                QueryTypes.Faq => q => q.QueryResponses.Any(
+                    qr => qr.Response.Type.ToString() == ResponseType.RTE.ToString()),
+                QueryTypes.Handover => q => q.QueryResponses.Any(
+                    qr => qr.Response.Type.ToString() == ResponseType.HANDOVER.ToString()),
+                _ => null
+            };
+            
+            var queries = await _queryRepository.GetQueriesByProjectId(request.ProjectId, filter);
             return queries;
         }
     }

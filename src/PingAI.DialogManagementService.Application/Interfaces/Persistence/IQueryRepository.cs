@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using PingAI.DialogManagementService.Domain.Model;
 
@@ -9,7 +10,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
     {
         Task<Query?> GetQueryById(Guid queryId);
         Task<Query> AddQuery(Query query);
-        Task<List<Query>> GetQueriesByProjectId(Guid projectId);
+        Task<List<Query>> GetQueriesByProjectId(Guid projectId, Expression<Func<Query, bool>>? filter = null);
         void RemoveQuery(Query query);
         Task<int> GetMaxDisplayOrder(Guid projectId);
     }
