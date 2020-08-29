@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using FluentValidation;
+using PingAI.DialogManagementService.Api.Validations;
 
 namespace PingAI.DialogManagementService.Api.Models.Projects
 {
@@ -10,6 +11,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
         public string WidgetDescription { get; set; }
         public string FallbackMessage { get; set; }
         public string GreetingMessage { get; set; }
+        public string[]? Domains { get; set; }
     }
 
     public class UpdateProjectRequestValidator : AbstractValidator<UpdateProjectRequest>
@@ -23,6 +25,10 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
                 .WithMessage("{PropertyName} must be a valid HEX color code");
             RuleFor(x => x.FallbackMessage)
                 .NotEmpty();
+
+            RuleForEach(x => x.Domains)
+                .NotEmpty()
+                .MustBeUrl();
         }
     }
 }

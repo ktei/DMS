@@ -46,7 +46,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var project = await _mediator.Send(new UpdateProjectCommand(projectId,
                 request.WidgetTitle, request.WidgetColor,
                 request.WidgetDescription, request.FallbackMessage,
-                request.GreetingMessage));
+                request.GreetingMessage, request.Domains));
             return new UpdateProjectResponse(project);
         }
 

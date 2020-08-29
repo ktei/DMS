@@ -117,7 +117,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var project = new Project(RandomString(10), organisation.Id, 
                 null, Defaults.WidgetColor,
                 null, null, null, null,
-                ApiKey.Empty, null);
+                ApiKey.Empty, new []{"https://google.com"});
             var entityType = new EntityType(
                 RandomString(10), project.Id, RandomString(15), new []{"t1"},
                 new []{new EntityValue("v", Guid.Empty, default)});

@@ -66,6 +66,16 @@ namespace PingAI.DialogManagementService.Domain.Model
             _intents = new List<Intent>();
             _responses = new List<Response>();
             _queries = new List<Query>();
+
+            if (ApiKey == null || ApiKey.IsEmpty)
+            {
+                GenerateNewApiKey();
+            }
+        }
+
+        public void GenerateNewApiKey()
+        {
+            ApiKey = ApiKey.GenerateNew();
         }
 
         public void UpdateWidgetTitle(string widgetTitle)
@@ -190,7 +200,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             var projectToPublish = new Project($"{Name}__{Guid.NewGuid()}",
                 OrganisationId, 
                 WidgetTitle, WidgetColor!,
-                WidgetDescription, FallbackMessage, GreetingMessage, Enquiries, null, null);
+                WidgetDescription, FallbackMessage, GreetingMessage, 
+                Enquiries, ApiKey, Domains?.ToArray());
 
             var intentsCopy = _intents.ToDictionary(i => i.Id, CopyIntent);
             var responsesCopy = _responses.ToDictionary(r => r.Id, CopyResponse);

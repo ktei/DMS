@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace PingAI.DialogManagementService.Domain.Model
@@ -26,12 +27,15 @@ namespace PingAI.DialogManagementService.Domain.Model
         
         public static readonly ApiKey Empty = new ApiKey();
 
+        public bool IsEmpty => string.IsNullOrEmpty(_key);
+
         public static ApiKey GenerateNew()
         {
             var key = new byte[KeyLength];
             using var generator = RandomNumberGenerator.Create();
             generator.GetBytes(key);
-            return new ApiKey(Convert.ToBase64String(key));
+            var keyStr = string.Join("", Convert.ToBase64String(key).Take(32));
+            return new ApiKey(keyStr);
         }
         
         protected override IEnumerable<object> GetAtomicValues()
