@@ -43,6 +43,15 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
             Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
+        [Fact]
+        public async Task GetRuntimeProjectByDesignTimeProjectId()
+        {
+            var response = await _client.GetFromJsonAsync<ProjectDto>(
+                $"/dms/api/admin/v1/projects/{_testingFixture.Project.Id}/runtime");
+            NotNull(response);
+            Equal(_testingFixture.Project.Id, Guid.Parse(response.ProjectId));
+        }
+
         public async Task InitializeAsync()
         {
             (_testingFixture, _tearDownTestingFixture) = await _factory.SetupTestingFixture();

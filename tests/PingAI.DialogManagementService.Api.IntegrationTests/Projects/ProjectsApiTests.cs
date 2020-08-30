@@ -39,7 +39,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
         {
             var fixture = _testingFixture;
             var projectId = fixture.Project.Id;
-            var response = await _client.GetFromJsonAsync<GetProjectResponse>(
+            var response = await _client.GetFromJsonAsync<ProjectDto>(
                 $"/dms/api/v1/projects/{projectId}");
             NotNull(response);
             Equal(projectId.ToString(), response.ProjectId);
@@ -60,7 +60,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
                     FallbackMessage = "fallback",
                 });
             await httpResponse.IsOk();
-            var response = await httpResponse.Content.ReadFromJsonAsync<UpdateProjectResponse>();
+            var response = await httpResponse.Content.ReadFromJsonAsync<ProjectDto>();
             NotNull(response);
             Equal(fixture.Project.Id.ToString(), response.ProjectId);
         }

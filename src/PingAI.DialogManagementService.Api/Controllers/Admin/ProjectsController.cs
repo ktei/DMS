@@ -30,5 +30,13 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
             var projects = await _mediator.Send(new ListProjectsQuery(organisationId.Value));
             return projects.Select(p => new ProjectListItemDto(p.Id.ToString(), p.Name)).ToList();
         }
+
+        [HttpGet("{designTimeProjectId}/runtime")]
+        public async Task<ActionResult<ProjectDto>> GetRuntimeProjectByDesignTimeProjectId(
+            [FromRoute] Guid designTimeProjectId)
+        {
+            var project = await _mediator.Send(new GetRuntimeProjectQuery(designTimeProjectId));
+            return new ProjectDto(project);
+        }
     }
 }

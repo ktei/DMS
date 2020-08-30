@@ -33,21 +33,21 @@ namespace PingAI.DialogManagementService.Api.Controllers
         }
         
         [HttpGet("{projectId}")]
-        public async Task<ActionResult<GetProjectResponse>> GetProject([FromRoute] Guid projectId)
+        public async Task<ActionResult<ProjectDto>> GetProject([FromRoute] Guid projectId)
         {
             var project = await _mediator.Send(new GetProjectQuery(projectId));
-            return new GetProjectResponse(project);
+            return new ProjectDto(project);
         }
 
         [HttpPut("{projectId}")]
-        public async Task<ActionResult<UpdateProjectResponse>> UpdateProject([FromRoute] Guid projectId,
+        public async Task<ActionResult<ProjectDto>> UpdateProject([FromRoute] Guid projectId,
             [FromBody] UpdateProjectRequest request)
         {
             var project = await _mediator.Send(new UpdateProjectCommand(projectId,
                 request.WidgetTitle, request.WidgetColor,
                 request.WidgetDescription, request.FallbackMessage,
                 request.GreetingMessage, request.Domains));
-            return new UpdateProjectResponse(project);
+            return new ProjectDto(project);
         }
 
         [HttpPut("{projectId}/enquiries")]
