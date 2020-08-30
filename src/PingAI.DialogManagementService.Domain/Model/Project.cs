@@ -107,6 +107,15 @@ namespace PingAI.DialogManagementService.Domain.Model
             GreetingMessage = greetingMessage;
         }
 
+        public void UpdateDomains(string[]? domains)
+        {
+            Domains = (domains ?? new string[] { })
+                .Select(x => (x ?? "").Trim())
+                .Where(x => !string.IsNullOrEmpty(x))
+                .Distinct()
+                .ToArray();
+        }
+
         public void UpdateEnquiries(string[]? enquiries)
         {
             Enquiries = (enquiries ?? new string[]{})

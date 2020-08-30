@@ -40,6 +40,7 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
             project.UpdateWidgetDescription(request.WidgetDescription);
             project.UpdateFallbackMessage(request.FallbackMessage);
             project.UpdateGreetingMessage(request.GreetingMessage);
+            project.UpdateDomains(request.Domains);
             await _unitOfWork.SaveChanges();
             return project;
         }
