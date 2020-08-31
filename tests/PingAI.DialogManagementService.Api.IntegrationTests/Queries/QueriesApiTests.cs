@@ -154,7 +154,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                 "/dms/api/v1/queries", payload
             );
             await httpResponse.IsOk();
-            var response = await httpResponse.Content.ReadFromJsonAsync<CreateQueryResponse>();
+            var response = await httpResponse.Content.ReadFromJsonAsync<QueryDto>();
             
             // clean up
             await _factory.WithDbContext(async context =>
@@ -178,6 +178,100 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             Equal(4, response.Intents.First().PhraseParts.Length);
             Contains(response.Intents.First().PhraseParts, p => p.EntityName == newEntityName);
             Single(response.Responses);
+        }
+        
+        [Fact]
+        public async Task CreateQueryV1_1()
+        {
+            var projectId = _testingFixture.Project.Id;
+            var (entityName, entityType) = await SetupEntityNamesAndTypes(projectId);
+            var newEntityName = TestingFixture.RandomString(15);
+            var payload = new CreateQueryRequestV1_1
+            {
+                Name = "TEST_query",
+                DisplayOrder = 0,
+                ProjectId = projectId.ToString(),
+                Tags = new[] {"t1", "t2"},
+                Intent = new CreateIntentDto
+                {
+                    Name = "TEST_query_intent",
+                    PhraseParts = new[]
+                    {
+                        new[]
+                        {
+                            new CreatePhrasePartDto
+                            {
+                                Text = "Hello, ",
+                                Type = PhrasePartType.TEXT.ToString()
+                            },
+                            new CreatePhrasePartDto
+                            {
+                                Text = "World!",
+                                Type = PhrasePartType.ENTITY.ToString(),
+                                EntityName = entityName.Name,
+                                EntityTypeId = entityType.Id.ToString(),
+                            }
+                        },
+                        new[]
+                        {
+                            new CreatePhrasePartDto
+                            {
+                                Text = "Hello ",
+                                Type = PhrasePartType.TEXT.ToString()
+                            },
+                            new CreatePhrasePartDto
+                            {
+                                Text = "World",
+                                Type = PhrasePartType.ENTITY.ToString(),
+                                EntityName = newEntityName,
+                                EntityTypeId = entityType.Id.ToString(),
+                            }
+                        }
+                    }
+                },
+                Responses = new[]
+                {
+                    new CreateResponseDto
+                    {
+                        Order = 0,
+                        RteText = "Greetings!",
+                        Type = ResponseType.RTE.ToString()
+                    },
+                    new CreateResponseDto
+                    {
+                        Order = 1,
+                        Type = ResponseType.HANDOVER.ToString()
+                    }
+                }
+            };
+            var httpResponse = await _client.PostAsJsonAsync(
+                "/dms/api/v1.1/queries", payload
+            );
+            await httpResponse.IsOk();
+            var response = await httpResponse.Content.ReadFromJsonAsync<QueryDto>();
+            
+            // clean up
+            await _factory.WithDbContext(async context =>
+            {
+                var query = await context.Queries
+                    .Include(x => x.QueryIntents).ThenInclude(x => x.Intent)
+                    .Include(x => x.QueryResponses).ThenInclude(x => x.Response)
+                    .FirstOrDefaultAsync(resp => resp.Id == Guid.Parse(response.QueryId));
+                var newEntity = await context.EntityNames.FirstAsync(x => x.Name == newEntityName);
+                context.RemoveRange(query.Intents);
+                context.RemoveRange(query.Responses);
+                context.Remove(query);
+                context.AttachRange(entityName, entityType);
+                context.RemoveRange(entityName, entityType);
+                context.Remove(newEntity);
+                await context.SaveChangesAsync();
+            });
+            
+            NotNull(response);
+            Single(response.Intents);
+            Equal(4, response.Intents.First().PhraseParts.Length);
+            Contains(response.Intents.First().PhraseParts, p => p.EntityName == newEntityName);
+            Equal(2, response.Responses.Length);
         }
         
         [Fact]

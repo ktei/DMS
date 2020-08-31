@@ -16,11 +16,11 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
         public Guid? IntentId { get; set; }
         public Intent? Intent { get; set; }
         public Guid? ResponseId { get; set; }
-        public Response? Response { get; set; }
+        public Response[]? Responses { get; set; }
         public string? RteText { get; set; }
 
         public CreateQueryCommand(string name, Guid projectId, Expression[] expressions, string description,
-            string[]? tags, int displayOrder, Guid? intentId, Intent? intent, Guid? responseId, Response? response,
+            string[]? tags, int displayOrder, Guid? intentId, Intent? intent, Guid? responseId, Response[]? responses,
             string? rteText)
         {
             Name = name;
@@ -32,7 +32,7 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             IntentId = intentId;
             Intent = intent;
             ResponseId = responseId;
-            Response = response;
+            Responses = responses;
             RteText = rteText;
         }
 

@@ -101,14 +101,23 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
                 if (response == null) throw new BadRequestException(ErrorDescriptions.ResponseNotFound);
                 query.AddResponse(response);
             }
-            else if (request.Response != null)
+            else if (request.Responses?.Any() == true)
             {
-                // TODO: we only support RTE for now
+                // TODO: we only support 2 cases for now:
+                // 1. 1 RTE
+                // 2. 1 RTE + 1 HANDOVER
                 var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
+               
                 Debug.Assert(!string.IsNullOrEmpty(request.RteText));
-                request.Response.SetRteText(request.RteText!, entityNames.ToDictionary(x => x.Name));
-                query.AddResponse(new Response(request.Response.Resolution,
-                    query.ProjectId, request.Response.Type, request.Response.Order));
+                
+                request.Responses.FirstOrDefault(x => x.Type == ResponseType.RTE)?
+                    .SetRteText(request.RteText!, entityNames.ToDictionary(x => x.Name));
+                
+                foreach (var response in request.Responses)
+                {
+                    query.AddResponse(new Response(response.Resolution,
+                        query.ProjectId, response.Type, response.Order));
+                }
             }
             else
             {

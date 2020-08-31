@@ -7,7 +7,7 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
     public class CreateResponseDto
     {
         public string Type { get; set; }
-        public string RteText { get; set; }
+        public string? RteText { get; set; }
         public int Order { get; set; }
     }
 
@@ -20,7 +20,8 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
                 .MustBeEnum(typeof(ResponseType));
             RuleFor(x => x.RteText)
                 .NotEmpty()
-                .MaximumLength(Response.MaxRteTextLength);
+                .MaximumLength(Response.MaxRteTextLength)
+                .When(x => x.Type == ResponseType.RTE.ToString());
         }
     }
 }

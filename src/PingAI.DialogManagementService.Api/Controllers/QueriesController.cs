@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Intents;
 using PingAI.DialogManagementService.Api.Models.Queries;
@@ -16,9 +17,10 @@ using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Controllers
 {
-    [ApiController]
-    [Route("dms/api/v{version:apiVersion}/[controller]")]
-    public class QueriesController : ControllerBase
+    [ApiVersion("1")]
+    [ApiVersion("1.1")]
+    [Authorize]
+    public class QueriesController : ApiControllerBase
     {
         private readonly IMediator _mediator;
 
@@ -66,8 +68,9 @@ namespace PingAI.DialogManagementService.Api.Controllers
             return new QueryDto(result);
         }
 
+        [MapToApiVersion("1")]
         [HttpPost]
-        public async Task<ActionResult<CreateQueryResponse>> CreateQuery([FromBody] CreateQueryRequest request)
+        public async Task<ActionResult<QueryDto>> CreateQuery([FromBody] CreateQueryRequest request)
         {
             var projectId = Guid.Parse(request.ProjectId);
             var phraseParts = FlattenPhraseParts(projectId, Guid.Empty, request.Intent.PhraseParts);
@@ -76,8 +79,25 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var query = await _mediator.Send(new CreateQueryCommand(
                 request.Name, Guid.Parse(request.ProjectId),
                 new Expression[0], request.Description ?? request.Name, request.Tags,
-                request.DisplayOrder, null, intent, null, response, request.Response.RteText));
-            return new CreateQueryResponse(query);
+                request.DisplayOrder, null, intent, null, new[] {response}, request.Response.RteText));
+            return new QueryDto(query);
+        }
+        
+        [MapToApiVersion("1.1")]
+        [HttpPost]
+        public async Task<ActionResult<QueryDto>> CreateQueryV1_1([FromBody] CreateQueryRequestV1_1 request)
+        {
+            var projectId = Guid.Parse(request.ProjectId);
+            var phraseParts = FlattenPhraseParts(projectId, Guid.Empty, request.Intent.PhraseParts);
+            var intent = new Intent(request.Intent.Name, projectId, IntentType.STANDARD, phraseParts);
+            var responses = request.Responses.Select(r => 
+                new Response(projectId, Enum.Parse<ResponseType>(r.Type), r.Order)).ToArray();
+            var query = await _mediator.Send(new CreateQueryCommand(
+                request.Name, Guid.Parse(request.ProjectId),
+                new Expression[0], request.Description ?? request.Name, request.Tags,
+                request.DisplayOrder, null, intent, null, responses, 
+                request.Responses.FirstOrDefault(r => r.Type == ResponseType.RTE.ToString())?.RteText));
+            return new QueryDto(query);
         }
 
         [HttpPut("{queryId}")]

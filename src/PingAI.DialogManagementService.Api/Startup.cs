@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +39,7 @@ using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
 using PingAI.DialogManagementService.Infrastructure.Services.Nlu;
 using PingAI.DialogManagementService.Infrastructure.Services.Slack;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using IAuthorizationService = PingAI.DialogManagementService.Application.Interfaces.Services.IAuthorizationService;
 
 namespace PingAI.DialogManagementService.Api
@@ -122,6 +125,36 @@ namespace PingAI.DialogManagementService.Api
                     Title = "Dialog Management API v1"
                 });
                 
+                options.SwaggerDoc("v1.1", new OpenApiInfo
+                {
+                    Version = "v1.1",
+                    Title = "Dialog Management API v1.1"
+                });
+                
+                options.OperationFilter<RemoveVersionFromParameter>();
+                options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
+                
+                options.DocInclusionPredicate((version, desc) =>
+                {
+                    var controllerActionDescriptor = desc.ActionDescriptor as ControllerActionDescriptor;
+                    
+                    var versions = 
+                        controllerActionDescriptor?.ControllerTypeInfo.GetCustomAttributes(true)
+                        .OfType<ApiVersionAttribute>()
+                        .SelectMany(attr => attr.Versions) ?? new ApiVersion[0];
+
+                    var mappedVersions = new ApiVersion[0];
+                    if (desc.TryGetMethodInfo(out var mi))
+                    {
+                        mappedVersions = mi.GetCustomAttributes(true).OfType<MapToApiVersionAttribute>()
+                            .SelectMany(attr => attr.Versions)
+                            .ToArray();
+                    }
+
+                    return versions.Any(v => $"v{v.ToString()}" == version)
+                           && (!mappedVersions.Any() || mappedVersions.Any(v => $"v{v.ToString()}" == version));;
+                });
+                
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -194,7 +227,8 @@ namespace PingAI.DialogManagementService.Api
                     {
                         x.SwaggerEndpoint($"/{Configuration["RoutePrefix"]}/swagger/v1/swagger.json",
                             $"Dialog Management API v1");
-                        
+                        x.SwaggerEndpoint($"/{Configuration["RoutePrefix"]}/swagger/v1.1/swagger.json",
+                            $"Dialog Management API v1.1");                        
                         x.RoutePrefix = $"{Configuration["RoutePrefix"]}/swagger";
                     });
             }
@@ -225,5 +259,28 @@ namespace PingAI.DialogManagementService.Api
 
         public string SlackClientId => _configuration["Slack:ClientId"];
         public string SlackClientSecret => _configuration["Slack:ClientSecret"];
+    }
+    
+    internal class RemoveVersionFromParameter : IOperationFilter
+    {
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        {
+            var versionParameter = operation.Parameters.Single(p => p.Name == "version");
+            operation.Parameters.Remove(versionParameter);
+
+        }
+    }
+    
+    internal class ReplaceVersionWithExactValueInPath : IDocumentFilter
+    {
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+        {
+            var oldPaths = swaggerDoc.Paths;
+            swaggerDoc.Paths = new OpenApiPaths();
+            foreach (var (key, value) in oldPaths)
+            {
+                swaggerDoc.Paths[key.Replace("v{version}", swaggerDoc.Info.Version)] = value;
+            }
+        }
     }
 }
