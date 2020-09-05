@@ -25,7 +25,7 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
             OperationAuthorizationRequirement requirement,
             Guid resource)
         {
-            var user = await _userRepository.GetUserByAut0Id(context.User.Identity.Name);
+            var user = await _userRepository.GetUserByAuth0Id(context.User.Identity.Name);
             if (user == null)
             {
                 context.Fail();

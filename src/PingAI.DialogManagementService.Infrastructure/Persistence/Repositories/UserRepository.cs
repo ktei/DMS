@@ -16,7 +16,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public Task<User?> GetUserByAut0Id(string auth0Id,
+        public Task<User?> GetUserByAuth0Id(string auth0Id,
             Func<IQueryable<User>, IQueryable<User>>? configureUser = default)
         {
             IQueryable<User> query = _context.Users

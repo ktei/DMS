@@ -7,6 +7,6 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
 {
     public interface IUserRepository
     {
-        Task<User?> GetUserByAut0Id(string auth0Id, Func<IQueryable<User>, IQueryable<User>>? configureQuery = default);
+        Task<User?> GetUserByAuth0Id(string auth0Id, Func<IQueryable<User>, IQueryable<User>>? configureQuery = default);
     }
 }

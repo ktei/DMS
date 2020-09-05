@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Projects;
+using PingAI.DialogManagementService.Application.Projects.GetIntegration;
 using PingAI.DialogManagementService.Application.Projects.GetProject;
 using PingAI.DialogManagementService.Application.Projects.ListProjects;
 using PingAI.DialogManagementService.Application.Projects.PublishProject;
@@ -30,6 +31,16 @@ namespace PingAI.DialogManagementService.Api.Controllers
         {
             var projects = await _mediator.Send(new ListProjectsQuery());
             return projects.Select(p => new ProjectListItemDto(p.Id.ToString(), p.Name)).ToList();
+        }
+
+        [HttpGet("{projectId}/integration")]
+        public async Task<ActionResult<IntegrationDto>> GetIntegration([FromRoute] Guid projectId)
+        {
+            var integration = await _mediator.Send(new GetIntegrationQuery(projectId));
+            var connections = new List<string>();
+            if (integration.SlackWorkspace != null)
+                connections.Add("slack");
+            return new IntegrationDto(connections.ToArray());
         }
         
         [HttpGet("{projectId}")]

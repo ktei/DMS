@@ -33,7 +33,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await context.SaveChangesAsync();
 
             // Act
-            var actual = await sut.GetUserByAut0Id(user.Auth0Id);
+            var actual = await sut.GetUserByAuth0Id(user.Auth0Id);
 
             // Assert
             

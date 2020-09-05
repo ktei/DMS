@@ -46,6 +46,16 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
         }
 
         [Fact]
+        public async Task GetIntegration()
+        {
+            var fixture = _testingFixture;
+            var projectId = fixture.Project.Id;
+            var response = await _client.GetFromJsonAsync<IntegrationDto>(
+                $"/dms/api/v1/projects/{projectId}/integration");
+            NotNull(response);
+        }
+
+        [Fact]
         public async Task UpdateProject()
         {
             var fixture = _testingFixture;
