@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
@@ -28,10 +28,27 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public async Task<User?> GetUserById(Guid userId)
         {
             var user = await _context.Users
-                .AsNoTracking()
                 .Include(x => x.OrganisationUsers)
                 .FirstOrDefaultAsync(x => x.Id == userId);
             return user;
+        }
+
+        public async Task<User?> GetUserByName(string name)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(x => x.Name == name);
+            return user;
+        }
+
+        public async Task<User> AddUser(User user)
+        {
+            var result = await _context.Users.AddAsync(user);
+            return result.Entity;
+        }
+
+        public Task<List<User>> GetAllUsers()
+        {
+            return _context.Users.ToListAsync();
         }
     }
 }

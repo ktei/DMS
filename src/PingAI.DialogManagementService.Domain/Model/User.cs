@@ -10,6 +10,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Auth0Id { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
         private readonly List<OrganisationUser> _organisationUsers;
         public IReadOnlyList<OrganisationUser> OrganisationUsers => _organisationUsers.ToImmutableList();
