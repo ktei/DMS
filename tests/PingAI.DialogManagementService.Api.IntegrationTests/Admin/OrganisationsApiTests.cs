@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Api.IntegrationTests.Utils;
 using PingAI.DialogManagementService.Api.Models.Organisations;
 using Xunit;
+using static Xunit.Assert;
 
 namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
 {
@@ -20,6 +22,14 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
         {
             _factory = factory;
             _client = _factory.CreateAdminAuthenticatedClient();
+        }
+
+        [Fact]
+        public async Task ListOrganisations()
+        {
+            var response = await _client.GetFromJsonAsync<List<OrganisationListItemDto>>(
+                "/dms/api/admin/v1/organisations");
+            True(response.Count > 1);
         }
         
         [Fact]

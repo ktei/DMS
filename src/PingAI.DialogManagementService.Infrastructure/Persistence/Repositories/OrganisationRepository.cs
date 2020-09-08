@@ -41,5 +41,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             var result = await _context.AddAsync(organisation);
             return result.Entity;
         }
+
+        public Task<List<Organisation>> GetAllOrganisations()
+        {
+            return _context.Organisations.ToListAsync();
+        }
     }
 }

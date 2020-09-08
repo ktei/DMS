@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +16,13 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
         public OrganisationsController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<List<OrganisationListItemDto>> ListOrganisations()
+        {
+            var organisations = await _mediator.Send(new ListOrganisationsQuery());
+            return organisations.Select(o => new OrganisationListItemDto(o)).ToList();
         }
 
         [HttpPost]

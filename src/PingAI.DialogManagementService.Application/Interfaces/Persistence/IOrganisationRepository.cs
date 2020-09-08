@@ -10,5 +10,9 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
         Task<Organisation?> FindOrganisationByName(string name);
         Task<List<Organisation>> GetOrganisationsByIds(IEnumerable<Guid> ids);
         Task<Organisation> AddOrganisation(Organisation organisation);
+
+        // TODO: if we really take off, we need to paginate this,
+        // but we're far from that right now
+        Task<List<Organisation>> GetAllOrganisations();
     }
 }
