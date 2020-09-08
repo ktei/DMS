@@ -7,6 +7,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
 {
     public interface IOrganisationRepository
     {
+        Task<Organisation?> FindOrganisationByName(string name);
         Task<List<Organisation>> GetOrganisationsByIds(IEnumerable<Guid> ids);
         Task<Organisation> AddOrganisation(Organisation organisation);
     }

@@ -16,15 +16,22 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public Task<User?> GetUserByAuth0Id(string auth0Id,
-            Func<IQueryable<User>, IQueryable<User>>? configureUser = default)
+        public async Task<User?> GetUserByAuth0Id(string auth0Id)
         {
-            IQueryable<User> query = _context.Users
+            var user = await _context.Users
                 .AsNoTracking()
-                .Include(x => x.OrganisationUsers);
+                .Include(x => x.OrganisationUsers)
+                .FirstOrDefaultAsync(x => x.Auth0Id == auth0Id);
+            return user;
+        }
 
-            query = configureUser?.Invoke(query) ?? query;
-            return query.FirstOrDefaultAsync(x => x.Auth0Id == auth0Id);
+        public async Task<User?> GetUserById(Guid userId)
+        {
+            var user = await _context.Users
+                .AsNoTracking()
+                .Include(x => x.OrganisationUsers)
+                .FirstOrDefaultAsync(x => x.Id == userId);
+            return user;
         }
     }
 }
