@@ -1,22 +1,22 @@
-using System;
 using FluentValidation;
+using PingAI.DialogManagementService.Api.Validations;
 using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Queries
 {
-    public class UpdateQueryRequest
+    public class UpdateQueryRequestV1_1
     {
         public string Name { get; set; }
         public string? Description { get; set; }
         public string[]? Tags { get; set; }
         public int DisplayOrder { get; set; }
         public CreateIntentDto Intent { get; set; }
-        public CreateResponseDto Response { get; set; }
+        public CreateResponseDto[] Responses { get; set; }
     }
-
-    public class UpdateQueryRequestValidator : AbstractValidator<UpdateQueryRequest>
+    
+    public class UpdateQueryRequestV1_1Validator : AbstractValidator<UpdateQueryRequestV1_1>
     {
-        public UpdateQueryRequestValidator()
+        public UpdateQueryRequestV1_1Validator()
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
@@ -27,10 +27,10 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
                 .Cascade(CascadeMode.StopOnFirstFailure)
                 .NotNull()
                 .SetValidator(new CreateIntentDtoValidator());
-            RuleFor(x => x.Response)
-                .Cascade(CascadeMode.StopOnFirstFailure)
-                .NotNull()
+            RuleFor(x => x.Responses)
+                .NotNull();
+            RuleForEach(x => x.Responses)
                 .SetValidator(new CreateResponseDtoValidator());
-        } 
+        }
     }
 }

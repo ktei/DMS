@@ -28,7 +28,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
         {
             _mediator = mediator;
         }
-        
+
         [HttpGet]
         public async Task<ActionResult<List<QueryListItemDto>>> ListQueries([FromQuery] Guid? projectId,
             [FromQuery] string? queryType)
@@ -50,11 +50,11 @@ namespace PingAI.DialogManagementService.Api.Controllers
                         return false;
                 }
             }
-            
+
             if (!CheckQueryType(queryType))
                 throw new BadRequestException($"{nameof(queryType)} is invalid. Accepted types are " +
                                               $"{QueryTypes.Faq}, {QueryTypes.Handover}");
-            
+
             var query = new ListQueriesQuery(projectId.Value, queryType);
             var queries = await _mediator.Send(query);
             return new ListQueriesResponse(queries.Select(q => new QueryListItemDto(q)));
@@ -82,7 +82,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 request.DisplayOrder, null, intent, null, new[] {response}, request.Response.RteText));
             return new QueryDto(query);
         }
-        
+
         [MapToApiVersion("1.1")]
         [HttpPost]
         public async Task<ActionResult<QueryDto>> CreateQueryV1_1([FromBody] CreateQueryRequestV1_1 request)
@@ -90,16 +90,17 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var projectId = Guid.Parse(request.ProjectId);
             var phraseParts = FlattenPhraseParts(projectId, Guid.Empty, request.Intent.PhraseParts);
             var intent = new Intent(request.Intent.Name, projectId, IntentType.STANDARD, phraseParts);
-            var responses = request.Responses.Select(r => 
+            var responses = request.Responses.Select(r =>
                 new Response(projectId, Enum.Parse<ResponseType>(r.Type), r.Order)).ToArray();
             var query = await _mediator.Send(new CreateQueryCommand(
                 request.Name, Guid.Parse(request.ProjectId),
                 new Expression[0], request.Description ?? request.Name, request.Tags,
-                request.DisplayOrder, null, intent, null, responses, 
+                request.DisplayOrder, null, intent, null, responses,
                 request.Responses.FirstOrDefault(r => r.Type == ResponseType.RTE.ToString())?.RteText));
             return new QueryDto(query);
         }
 
+        [MapToApiVersion("1")]
         [HttpPut("{queryId}")]
         public async Task<ActionResult<UpdateQueryResponse>> UpdateQuery(
             [FromRoute] Guid queryId,
@@ -110,9 +111,28 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var response = new Response(ResponseType.RTE, request.Response.Order);
             var query = await _mediator.Send(new UpdateQueryCommand(
                 queryId,
-                request.Name, 
+                request.Name,
                 new Expression[0], request.Description ?? request.Name, request.Tags,
-                request.DisplayOrder, null, intent, null, response, request.Response.RteText));
+                request.DisplayOrder, null, intent, null, new[] {response}, request.Response.RteText));
+            return new UpdateQueryResponse(query);
+        }
+
+        [MapToApiVersion("1.1")]
+        [HttpPut("{queryId}")]
+        public async Task<ActionResult<UpdateQueryResponse>> UpdateQueryV1_1(
+            [FromRoute] Guid queryId,
+            [FromBody] UpdateQueryRequestV1_1 request)
+        {
+            var phraseParts = FlattenPhraseParts(Guid.Empty, Guid.Empty, request.Intent.PhraseParts);
+            var intent = new Intent(request.Intent.Name, Guid.Empty, IntentType.STANDARD, phraseParts);
+            var responses = request.Responses.Select(r =>
+                new Response(Guid.Empty, Enum.Parse<ResponseType>(r.Type), r.Order)).ToArray();
+            var query = await _mediator.Send(new UpdateQueryCommand(
+                queryId,
+                request.Name,
+                new Expression[0], request.Description ?? request.Name, request.Tags,
+                request.DisplayOrder, null, intent, null, responses,
+                request.Responses.FirstOrDefault(r => r.Type == ResponseType.RTE.ToString())?.RteText));
             return new UpdateQueryResponse(query);
         }
 

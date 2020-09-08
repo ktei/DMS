@@ -15,11 +15,11 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
         public Guid? IntentId { get; set; }
         public Intent? Intent { get; set; }
         public Guid? ResponseId { get; set; }
-        public Response? Response { get; set; }
+        public Response[]? Responses { get; set; }
         public string? RteText { get; set; } 
         
         public UpdateQueryCommand(Guid queryId, string name, Expression[] expressions, string description,
-            string[]? tags, int displayOrder, Guid? intentId, Intent? intent, Guid? responseId, Response? response,
+            string[]? tags, int displayOrder, Guid? intentId, Intent? intent, Guid? responseId, Response[]? responses,
             string? rteText)
         {
             QueryId = queryId;
@@ -31,7 +31,7 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
             IntentId = intentId;
             Intent = intent;
             ResponseId = responseId;
-            Response = response;
+            Responses = responses;
             RteText = rteText;
         }
 

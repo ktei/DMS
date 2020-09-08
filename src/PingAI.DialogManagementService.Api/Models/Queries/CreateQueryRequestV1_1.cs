@@ -31,6 +31,8 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
                 .Cascade(CascadeMode.StopOnFirstFailure)
                 .NotNull()
                 .SetValidator(new CreateIntentDtoValidator());
+            RuleFor(x => x.Responses)
+                .NotNull();
             RuleForEach(x => x.Responses)
                 .SetValidator(new CreateResponseDtoValidator());
         }
