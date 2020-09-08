@@ -29,6 +29,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
             var response = await _client.GetFromJsonAsync<List<UserListItemDto>>(
                 "/dms/api/admin/v1/users");
             True(response.Count > 1);
+            Contains(response, u => 
+                string.CompareOrdinal(u.UserId, _testingFixture.UserId.ToString()) == 0);
         }
         
         public async Task InitializeAsync()

@@ -16,6 +16,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         public IReadOnlyList<OrganisationUser> OrganisationUsers => _organisationUsers.ToImmutableList();
 
         public IReadOnlyList<Guid> OrganisationIds => GetOrganisationIds();
+
+        public const int MaxNameLength = 250;
         
         public User(string name, string auth0Id)
         {

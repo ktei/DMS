@@ -17,9 +17,16 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
         {
             _mediator = mediator;
         }
+        
+        [HttpPost]
+        public async Task<UserDto> CreateUser([FromBody] CreateUserRequest request)
+        {
+            var user = await _mediator.Send(new CreateUserCommand(request.Name, request.Auth0Id));
+            return new UserDto(user);
+        }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserListItemDto>>> ListUsers()
+        public async Task<List<UserListItemDto>> ListUsers()
         {
             var users = await _mediator.Send(new ListUsersQuery());
             return users.Select(u => new UserListItemDto(u)).ToList();
