@@ -20,12 +20,12 @@ namespace PingAI.DialogManagementService.Application.Admin.Users
         
         public async Task<User> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var existingUser = await _userRepository.GetUserByName(request.Name);
+            // var existingUser = await _userRepository.GetUserByName(request.Name);
+            // if (existingUser != null)
+            //     throw new BadRequestException($"User {request.Name} already exists");
+            var existingUser = await _userRepository.GetUserByAuth0Id(request.Auth0Id);
             if (existingUser != null)
-                throw new BadRequestException($"User {request.Name} already exists");
-            existingUser = await _userRepository.GetUserByAuth0Id(request.Auth0Id);
-            if (existingUser != null)
-                throw new BadRequestException($"User {request.Name} already exists");
+                throw new BadRequestException($"User {request.Name} already exists", ErrorCodes.UserExists);
 
             var user = new User(request.Name, request.Auth0Id);
             user = await _userRepository.AddUser(user);

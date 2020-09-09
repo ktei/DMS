@@ -26,7 +26,7 @@ namespace PingAI.DialogManagementService.Api.Filters
             
             if (context.Exception is DomainException domainException)
             {
-                context.Result = new ObjectResult(new ErrorsDto(domainException.Message))
+                context.Result = new ObjectResult(new ErrorsDto(domainException.Message, domainException.ErrorCode))
                 {
                     StatusCode = domainException.StatusCode
                 };

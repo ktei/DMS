@@ -25,7 +25,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Utils
                 HttpStatusCode.Unauthorized => new UnauthorizedException(message),
                 HttpStatusCode.NotFound => new NotFoundException(message),
                 HttpStatusCode.InternalServerError => new InternalErrorException(message),
-                _ => new DomainException((int)httpResponse.StatusCode, message)
+                _ => new DomainException((int)httpResponse.StatusCode, message, null)
             };
         }
     }
