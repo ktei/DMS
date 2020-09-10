@@ -30,19 +30,13 @@ namespace PingAI.DialogManagementService.Application.Queries.ListQueries
             if (!canRead)
                 throw new ForbiddenException(ProjectReadDenied);
 
-            Expression<Func<Query, bool>>? filter = request.QueryType switch
+            var responseType = request.QueryType switch
             {
-                // TODO: we shouldn't compare enums with "ToString", but
-                // without it the code throws runtime exception complaining
-                // it can't find enum_Response_type
-                QueryTypes.Faq => q => q.QueryResponses.Any(
-                    qr => qr.Response.Type.ToString() == ResponseType.RTE.ToString()),
-                QueryTypes.Handover => q => q.QueryResponses.Any(
-                    qr => qr.Response.Type.ToString() == ResponseType.HANDOVER.ToString()),
-                _ => null
+                QueryTypes.Faq => ResponseType.RTE,
+                QueryTypes.Handover => ResponseType.HANDOVER
             };
             
-            var queries = await _queryRepository.GetQueriesByProjectId(request.ProjectId, filter);
+            var queries = await _queryRepository.GetQueriesByProjectId(request.ProjectId, responseType);
             return queries;
         }
     }

@@ -40,8 +40,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             return result.Entity;
         }
 
-        public async Task<List<Query>> GetQueriesByProjectId(Guid projectId,
-            Expression<Func<Query, bool>>? filter = null)
+        public async Task<List<Query>> GetQueriesByProjectId(Guid projectId, ResponseType? responseType)
         {
             var query = _context.Queries
                 .Include(x => x.QueryIntents)
@@ -57,10 +56,25 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .Include(x => x.QueryResponses)
                 .ThenInclude(x => x.Response)
                 .Where(x => x.ProjectId == projectId);
+
+            // TODO: we shouldn't compare enums with "ToString", but
+            // without it the code throws runtime exception complaining
+            // it can't find enum_Response_type
             
-            if (filter != null)
-                query = query.Where(filter!);
-            
+            // TODO: this logic is not gonna hold soon
+            if (responseType == ResponseType.RTE)
+            {
+                // RTE query means all responses should be RTE
+                query = query.Where(x => x.QueryResponses.All(
+                    qr => qr.Response.Type.ToString() == responseType.ToString()));
+            }
+            else
+            {
+                // otherwise, it's HANDOVER, which will have RTE and HANDOVER
+                query = query.Where(x => x.QueryResponses.Any(
+                    qr => qr.Response.Type.ToString() == responseType.ToString()));
+            }
+
             var results = await query.OrderBy(x => x.DisplayOrder)
                 .ToListAsync();
 

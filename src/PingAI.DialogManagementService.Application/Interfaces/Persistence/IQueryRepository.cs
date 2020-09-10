@@ -10,7 +10,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
     {
         Task<Query?> GetQueryById(Guid queryId);
         Task<Query> AddQuery(Query query);
-        Task<List<Query>> GetQueriesByProjectId(Guid projectId, Expression<Func<Query, bool>>? filter = null);
+        Task<List<Query>> GetQueriesByProjectId(Guid projectId, ResponseType? responseType);
         void RemoveQuery(Query query);
         Task<int> GetMaxDisplayOrder(Guid projectId);
     }

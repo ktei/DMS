@@ -43,7 +43,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
             Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
-        [Fact]
+        [Fact(Skip = "Put this back after we bring back auth")]
         public async Task GetRuntimeProjectByDesignTimeProjectId()
         {
             var response = await _client.GetFromJsonAsync<ProjectDto>(
