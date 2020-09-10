@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Projects;
 using PingAI.DialogManagementService.Application.Admin.Projects;
+using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 
 namespace PingAI.DialogManagementService.Api.Controllers.Admin
@@ -29,6 +30,20 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
             }
             var projects = await _mediator.Send(new ListProjectsQuery(organisationId.Value));
             return projects.Select(p => new ProjectListItemDto(p.Id.ToString(), p.Name)).ToList();
+        }
+
+        // TODO: fix me - use mediatR
+        [HttpGet("{projectId}")]
+        public async Task<ActionResult<ProjectDto>> GetProject([FromRoute] Guid projectId,
+            [FromServices] IProjectRepository projectRepository)
+        {
+            var project = await projectRepository.GetProjectById(projectId);
+            if (project == null)
+            {
+                throw new NotFoundException($"Project {projectId} does not exist");
+            }
+
+            return new ProjectDto(project);
         }
 
         [HttpGet("{designTimeProjectId}/runtime")]
