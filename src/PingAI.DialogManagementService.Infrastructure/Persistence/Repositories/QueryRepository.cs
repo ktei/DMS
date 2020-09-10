@@ -68,7 +68,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 query = query.Where(x => x.QueryResponses.All(
                     qr => qr.Response.Type.ToString() == responseType.ToString()));
             }
-            else
+            else if (responseType == ResponseType.HANDOVER)
             {
                 // otherwise, it's HANDOVER, which will have RTE and HANDOVER
                 query = query.Where(x => x.QueryResponses.Any(
