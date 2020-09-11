@@ -21,6 +21,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string[]? Enquiries { get; private set; }
         public ApiKey? ApiKey { get; private set; }
         public string[]? Domains { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
         private readonly List<Intent> _intents;
         public IReadOnlyList<Intent> Intents => _intents.ToImmutableList();

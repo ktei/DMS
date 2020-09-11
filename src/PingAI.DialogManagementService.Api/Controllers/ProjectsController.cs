@@ -30,7 +30,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public async Task<ActionResult<List<ProjectListItemDto>>> ListProjects()
         {
             var projects = await _mediator.Send(new ListProjectsQuery());
-            return projects.Select(p => new ProjectListItemDto(p.Id.ToString(), p.Name)).ToList();
+            return projects.Select(p => new ProjectListItemDto(p)).ToList();
         }
 
         [HttpGet("{projectId}/integration")]

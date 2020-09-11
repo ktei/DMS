@@ -23,7 +23,10 @@ namespace PingAI.DialogManagementService.Application.Admin.Projects
         public async Task<List<Project>> Handle(ListProjectsQuery request, CancellationToken cancellationToken)
         {
             var projectVersions =
-                await _projectVersionRepository.GetDesignTimeVersionsByOrganisationId(request.OrganisationId);
+                request.OrganisationId.HasValue
+                    ? await _projectVersionRepository.GetDesignTimeVersionsByOrganisationId(
+                        request.OrganisationId.Value)
+                    : await _projectVersionRepository.GetDesignTimeVersions();
 
             if (!projectVersions.Any())
                 return new List<Project>(0);

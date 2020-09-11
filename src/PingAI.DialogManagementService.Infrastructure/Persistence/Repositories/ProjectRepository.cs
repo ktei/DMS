@@ -20,18 +20,22 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public Task<List<Project>> GetProjectsByIds(IEnumerable<Guid> projectIds)
         {
             _ = projectIds ?? throw new ArgumentNullException(nameof(projectIds));
-            var projects = _context.Projects.Where(p => projectIds.Contains(p.Id));
+            var projects = _context.Projects
+                .Include(p => p.Organisation)
+                .Where(p => projectIds.Contains(p.Id))
+                .OrderBy(p => p.Name);
             return projects.ToListAsync();
         }
 
-        public Task<Project?> GetProjectById(Guid id)
+        public async Task<Project?> GetProjectById(Guid id)
         {
-            return _context.Projects.FirstOrDefaultAsync(x => x.Id == id);
+            var project = await _context.Projects.FirstOrDefaultAsync(x => x.Id == id);
+            return project;
         }
         
-        public Task<Project?> GetFullProjectById(Guid id)
+        public async Task<Project?> GetFullProjectById(Guid id)
         {
-            return _context.Projects
+            var project = await _context.Projects
                 .Include(p => p.EntityNames)
                 .Include(p => p.EntityTypes).ThenInclude(x => x.Values)
                 .Include(p => p.Intents)
@@ -58,6 +62,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .ThenInclude(q => q.QueryResponses).ThenInclude(q => q.Response)
 
                 .FirstOrDefaultAsync(x => x.Id == id);
+
+            return project;
         }
 
         public Task<bool> ProjectNameExists(Guid organisationId, string name)

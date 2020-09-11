@@ -33,6 +33,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .Include(x => x.Projects)
                 .Include(x => x.ProjectVersions)
                 .Where(x => organisationIds.Contains(x.Id))
+                .OrderBy(o => o.Name)
                 .ToListAsync();
         }
 
@@ -44,7 +45,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
 
         public Task<List<Organisation>> GetAllOrganisations()
         {
-            return _context.Organisations.ToListAsync();
+            return _context.Organisations
+                .OrderBy(o => o.Name)
+                .ToListAsync();
         }
     }
 }

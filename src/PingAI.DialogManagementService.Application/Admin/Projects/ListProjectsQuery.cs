@@ -7,9 +7,9 @@ namespace PingAI.DialogManagementService.Application.Admin.Projects
 {
     public class ListProjectsQuery : IRequest<List<Project>>
     {
-        public Guid OrganisationId { get; set; }
+        public Guid? OrganisationId { get; set; }
 
-        public ListProjectsQuery(Guid organisationId)
+        public ListProjectsQuery(Guid? organisationId)
         {
             OrganisationId = organisationId;
         }

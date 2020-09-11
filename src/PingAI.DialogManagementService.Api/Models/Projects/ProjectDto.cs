@@ -7,6 +7,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
     public class ProjectDto
     {
         public string ProjectId { get; set; }
+        public string Name { get; set; }
         public string? WidgetTitle { get; set; }
         public string WidgetColor { get; set; }
         public string? WidgetDescription { get; set; }
@@ -16,10 +17,11 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
         public string? ApiKey { get; set; }
         public string[] Domains { get; set; }
 
-        public ProjectDto(string projectId, string? widgetTitle, string widgetColor, string? widgetDescription,
+        public ProjectDto(string projectId, string name, string? widgetTitle, string widgetColor, string? widgetDescription,
             string? fallbackMessage, string? greetingMessage, string[] enquiries, string? apiKey, string[] domains)
         {
             ProjectId = projectId;
+            Name = name;
             WidgetTitle = widgetTitle;
             WidgetColor = widgetColor;
             WidgetDescription = widgetDescription;
@@ -34,6 +36,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
         {
             _ = project ?? throw new ArgumentNullException(nameof(project));
             ProjectId = project.Id.ToString();
+            Name = project.Name;
             WidgetTitle = project.WidgetTitle;
             WidgetColor = project.WidgetColor ?? string.Empty;
             WidgetDescription = project.WidgetDescription;

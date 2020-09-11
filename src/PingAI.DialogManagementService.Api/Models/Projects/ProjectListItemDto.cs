@@ -1,4 +1,5 @@
 using System;
+using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Projects
 {
@@ -6,16 +7,39 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
     {
         public string ProjectId { get; set; }
         public string Name { get; set; }
+        public OrganisationDto Organisation { get; set; }
+        public string[] Domains { get; set; }
+        public string CreatedAt { get; set; }
 
-        public ProjectListItemDto(string projectId, string name)
+        public ProjectListItemDto(Project project)
         {
-            ProjectId = projectId;
-            Name = name;
+            ProjectId = project.Id.ToString();
+            Name = project.Name;
+            Organisation = new OrganisationDto(project.Organisation!.Id.ToString(), project.Organisation.Name);
+            Domains = project.Domains ?? new string[0];
+            CreatedAt = project.CreatedAt.ToString("o");
         }
 
         public ProjectListItemDto()
         {
             
+        }
+
+        public class OrganisationDto
+        {
+            public string OrganisationId { get; set; }
+            public string Name { get; set; }
+
+            public OrganisationDto(string organisationId, string name)
+            {
+                OrganisationId = organisationId;
+                Name = name;
+            }
+
+            public OrganisationDto()
+            {
+                
+            }
         }
     }
 }

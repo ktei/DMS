@@ -24,12 +24,8 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult<List<ProjectListItemDto>>> ListProjects([FromQuery] Guid? organisationId)
         {
-            if (!organisationId.HasValue)
-            {
-                throw new BadRequestException($"Must provide {nameof(organisationId)}");
-            }
-            var projects = await _mediator.Send(new ListProjectsQuery(organisationId.Value));
-            return projects.Select(p => new ProjectListItemDto(p.Id.ToString(), p.Name)).ToList();
+            var projects = await _mediator.Send(new ListProjectsQuery(organisationId));
+            return projects.Select(p => new ProjectListItemDto(p)).ToList();
         }
 
         // TODO: fix me - use mediatR
