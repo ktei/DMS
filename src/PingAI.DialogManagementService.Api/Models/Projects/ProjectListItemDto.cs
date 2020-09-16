@@ -7,7 +7,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
     {
         public string ProjectId { get; set; }
         public string Name { get; set; }
-        public OrganisationDto Organisation { get; set; }
+        public ProjectListItemOrganisation Organisation { get; set; }
         public string[] Domains { get; set; }
         public string CreatedAt { get; set; }
 
@@ -15,7 +15,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
         {
             ProjectId = project.Id.ToString();
             Name = project.Name;
-            Organisation = new OrganisationDto(project.Organisation!.Id.ToString(), project.Organisation.Name);
+            Organisation = new ProjectListItemOrganisation(project.Organisation!.Id.ToString(), project.Organisation.Name);
             Domains = project.Domains ?? new string[0];
             CreatedAt = project.CreatedAt.ToString("o");
         }
@@ -25,18 +25,18 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
             
         }
 
-        public class OrganisationDto
+        public class ProjectListItemOrganisation
         {
             public string OrganisationId { get; set; }
             public string Name { get; set; }
 
-            public OrganisationDto(string organisationId, string name)
+            public ProjectListItemOrganisation(string organisationId, string name)
             {
                 OrganisationId = organisationId;
                 Name = name;
             }
 
-            public OrganisationDto()
+            public ProjectListItemOrganisation()
             {
                 
             }
