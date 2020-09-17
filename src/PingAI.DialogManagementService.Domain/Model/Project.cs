@@ -201,9 +201,13 @@ namespace PingAI.DialogManagementService.Domain.Model
                     p.Text, p.Value, p.Type, p.EntityNameId.HasValue ? entityNamesCopy[p.EntityNameId.Value] : default,
                     p.EntityTypeId.HasValue ? entityTypesCopy[p.EntityTypeId.Value] : default);
 
-            Intent CopyIntent(Intent i) =>
-                new Intent(i.Name, Guid.Empty, i.Type, i.PhraseParts.Select(p => CopyPhrasePart(i, p)))
-                    .WithDesignTimeProjectId(Id);
+            Intent CopyIntent(Intent i)
+            {
+                var intent = new Intent(i.Name, Guid.Empty, i.Type, i.PhraseParts.Select(p => CopyPhrasePart(i, p)));
+                intent.ClearDomainEvents(); // we don't want to trigger IntentUpdatedEvent;
+                                            // we only want to copy intents to a different DMS project
+                return intent;
+            }
 
             static Response CopyResponse(Response r) =>
                 new Response(r.Resolution.ToArray(), Guid.Empty, r.Type, r.Order);
