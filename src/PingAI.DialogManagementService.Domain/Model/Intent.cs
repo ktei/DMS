@@ -89,7 +89,19 @@ namespace PingAI.DialogManagementService.Domain.Model
             // Deduplicate
             var oldUpdateEvent = DomainEvents.FirstOrDefault(e => e is IntentUpdatedEvent);
             RemoveDomainEvent(oldUpdateEvent);
-            AddDomainEvent(new IntentUpdatedEvent(this));
+            AddDomainEvent(new IntentUpdatedEvent(this, null));
+        }
+
+        public Intent WithDesignTimeProjectId(Guid designTimeProjectId)
+        {
+            foreach (var de in DomainEvents.Where(e => e is IntentUpdatedEvent))
+            {
+                var updatedEvent = (IntentUpdatedEvent) de;
+                RemoveDomainEvent(de);
+                AddDomainEvent(new IntentUpdatedEvent(updatedEvent.Intent, designTimeProjectId));
+            }
+
+            return this;
         }
 
         public IEnumerable<string> GetPhrases()

@@ -202,7 +202,8 @@ namespace PingAI.DialogManagementService.Domain.Model
                     p.EntityTypeId.HasValue ? entityTypesCopy[p.EntityTypeId.Value] : default);
 
             Intent CopyIntent(Intent i) =>
-                new Intent(i.Name, Guid.Empty, i.Type, i.PhraseParts.Select(p => CopyPhrasePart(i, p)));
+                new Intent(i.Name, Guid.Empty, i.Type, i.PhraseParts.Select(p => CopyPhrasePart(i, p)))
+                    .WithDesignTimeProjectId(Id);
 
             static Response CopyResponse(Response r) =>
                 new Response(r.Resolution.ToArray(), Guid.Empty, r.Type, r.Order);

@@ -26,7 +26,7 @@ namespace PingAI.DialogManagementService.Application.Intents.Handlers
             {
                 IntentId = intent.Id,
                 Name = intent.Name,
-                ProjectId = intent.ProjectId,
+                ProjectId = notification.DesignTimeProjectId ?? intent.ProjectId,
                 TrainingPhrases = intent.PhraseParts.GroupBy(p => p.PhraseId)
                     .Select(g => new TrainingPhrase
                     {
