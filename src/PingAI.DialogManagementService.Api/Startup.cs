@@ -18,6 +18,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Npgsql.Logging;
 using PingAI.DialogManagementService.Api.Authorization;
 using PingAI.DialogManagementService.Api.Authorization.Handlers;
 using PingAI.DialogManagementService.Api.Authorization.Requirements;

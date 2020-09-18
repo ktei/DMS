@@ -20,7 +20,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public async Task<Organisation?> FindOrganisationByName(string name)
         {
             var organisation = await _context.Organisations
-                .FirstOrDefaultAsync(x => x.Name == name);
+                .FirstOrDefaultAsync(o => o.Name == name);
             return organisation;
         }
 
@@ -47,6 +47,13 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         {
             return _context.Organisations
                 .OrderBy(o => o.Name)
+                .ToListAsync();
+        }
+
+        public Task<List<Organisation>> GetOrganisationsByUserId(Guid userId)
+        {
+            return _context.Organisations
+                .Where(o => o.OrganisationUsers.Select(x => x.UserId).Contains(userId))
                 .ToListAsync();
         }
     }

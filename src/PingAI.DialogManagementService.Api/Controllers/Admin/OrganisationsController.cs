@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,9 +20,9 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<List<OrganisationListItemDto>> ListOrganisations()
+        public async Task<List<OrganisationListItemDto>> ListOrganisations([FromQuery] Guid? userId)
         {
-            var organisations = await _mediator.Send(new ListOrganisationsQuery());
+            var organisations = await _mediator.Send(new ListOrganisationsQuery(userId));
             return organisations.Select(o => new OrganisationListItemDto(o)).ToList();
         }
 

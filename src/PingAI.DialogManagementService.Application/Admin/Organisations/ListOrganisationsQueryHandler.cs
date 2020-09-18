@@ -18,6 +18,8 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
         
         public Task<List<Organisation>> Handle(ListOrganisationsQuery request, CancellationToken cancellationToken)
         {
+            if (request.UserId.HasValue)
+                return _organisationRepository.GetOrganisationsByUserId(request.UserId.Value);
             return _organisationRepository.GetAllOrganisations();
         }
     }

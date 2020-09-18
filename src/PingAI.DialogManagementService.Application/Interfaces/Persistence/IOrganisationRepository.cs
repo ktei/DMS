@@ -14,5 +14,6 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
         // TODO: if we really take off, we need to paginate this,
         // but we're far from that right now
         Task<List<Organisation>> GetAllOrganisations();
+        Task<List<Organisation>> GetOrganisationsByUserId(Guid userId);
     }
 }

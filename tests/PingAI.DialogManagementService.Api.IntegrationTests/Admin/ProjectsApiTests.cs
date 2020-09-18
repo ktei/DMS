@@ -33,7 +33,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
             True(response.Count > 0);
         }
 
-        [Fact]
+        [Fact(Skip = "Put this back after we bring back auth")]
         public async Task NonAdminShouldBeRejected()
         {
             var client = _factory.CreateUserAuthenticatedClient();

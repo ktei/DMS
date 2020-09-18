@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -11,14 +12,17 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
     {
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public CreateOrganisationCommandHandler(
-            IOrganisationRepository organisationRepository, IUnitOfWork unitOfWork, IUserRepository userRepository)
+            IOrganisationRepository organisationRepository, IUnitOfWork unitOfWork, IUserRepository userRepository,
+            IProjectRepository projectRepository)
         {
             _organisationRepository = organisationRepository;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
+            _projectRepository = projectRepository;
         }
 
         public async Task<Organisation> Handle(CreateOrganisationCommand request, CancellationToken cancellationToken)
@@ -28,18 +32,31 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
             if (organisationWithSameName != null)
                 throw new BadRequestException($"Organisation with name '{request.Name}' already exists. " +
                                               "Please use a different name.");
-            var organisation = await _organisationRepository.AddOrganisation(
+            var organisationToCreate = await _organisationRepository.AddOrganisation(
                 new Organisation(request.Name, string.Empty, null));
             if (request.AdminUserId.HasValue)
             {
                 var adminUser = await _userRepository.GetUserById(request.AdminUserId.Value);
                 if (adminUser == null)
                     throw new BadRequestException("User does not exist");
-                organisation.AddUser(adminUser!);
-
+                organisationToCreate.AddUser(adminUser!);
             }
+            CreateDefaultProject(organisationToCreate);
+            
             await _unitOfWork.SaveChanges();
-            return organisation;
+            return organisationToCreate;
+        }
+
+        private void CreateDefaultProject(Organisation organisation) 
+        {
+            var defaultProject = new Project("Default project", organisation.Id,
+                Defaults.WidgetTitle, Defaults.WidgetColor, Defaults.WidgetDescription,
+                null, Defaults.GreetingMessage, null, ApiKey.GenerateNew(), null);
+            foreach (var enquiryEntityName in Defaults.EnquiryEntityNames)
+            {
+                defaultProject.AddEntityName(new EntityName(enquiryEntityName, Guid.Empty, true));
+            }
+            organisation.AddProject(defaultProject);
         }
     }
 }
