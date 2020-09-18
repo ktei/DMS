@@ -246,14 +246,14 @@ namespace PingAI.DialogManagementService.Domain.Model
                 var q = new Query(query.Name, Guid.Empty,
                     query.Expressions.ToArray(), query.Description,
                     query.Tags?.ToArray(), query.DisplayOrder);
-                foreach (var i in query.Intents)
+                foreach (var qi in query.QueryIntents)
                 {
-                    q.AddIntent(intentsCopy[i.Id]);
+                    q.AddIntent(intentsCopy[qi.IntentId]);
                 }
 
-                foreach (var r in query.Responses)
+                foreach (var qr in query.QueryResponses)
                 {
-                    q.AddResponse(responsesCopy[r.Id]);
+                    q.AddResponse(responsesCopy[qr.ResponseId]);
                 }
                 projectToPublish.AddQuery(q);
             }

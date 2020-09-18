@@ -38,24 +38,13 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             var project = await _context.Projects
                 .Include(p => p.EntityNames)
                 .Include(p => p.EntityTypes).ThenInclude(x => x.Values)
-                
                 .Include(p => p.Intents)
-                .ThenInclude(i => i.PhraseParts).ThenInclude(p => p.EntityName)
-
-                .Include(p => p.Intents)
-                .ThenInclude(i => i.PhraseParts).ThenInclude(p => p.EntityType)
-                .ThenInclude(x => x!.Values)
-
+                .ThenInclude(i => i.PhraseParts)
                 .Include(p => p.Responses)
-
                 .Include(p => p.Queries)
-                .ThenInclude(q => q.QueryIntents).ThenInclude(q => q.Intent)
-                .ThenInclude(i => i!.PhraseParts).ThenInclude(p => p.EntityType)
-                .ThenInclude(x => x!.Values)
-
+                .ThenInclude(q => q.QueryIntents)
                 .Include(p => p.Queries)
-                .ThenInclude(q => q.QueryResponses).ThenInclude(q => q.Response)
-
+                .ThenInclude(q => q.QueryResponses)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return project;

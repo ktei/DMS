@@ -158,36 +158,23 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var actual = await context.Projects.AsNoTracking()
                 .Include(p => p.EntityNames)
                 .Include(p => p.EntityTypes).ThenInclude(x => x.Values)
-                
                 .Include(p => p.Intents)
-                .ThenInclude(i => i.PhraseParts).ThenInclude(p => p.EntityName)
-
-                .Include(p => p.Intents)
-                .ThenInclude(i => i.PhraseParts).ThenInclude(p => p.EntityType)
-                .ThenInclude(x => x!.Values)
-
+                .ThenInclude(i => i.PhraseParts)
                 .Include(p => p.Responses)
-
                 .Include(p => p.Queries)
-                .ThenInclude(q => q.QueryIntents).ThenInclude(q => q.Intent)
-                .ThenInclude(i => i!.PhraseParts).ThenInclude(p => p.EntityName)
-
+                .ThenInclude(q => q.QueryIntents)
                 .Include(p => p.Queries)
-                .ThenInclude(q => q.QueryIntents).ThenInclude(q => q.Intent)
-                .ThenInclude(i => i!.PhraseParts).ThenInclude(p => p.EntityType)
-                .ThenInclude(x => x!.Values)
-
-                .Include(p => p.Queries)
-                .ThenInclude(q => q.QueryResponses).ThenInclude(q => q.Response)
+                .ThenInclude(q => q.QueryResponses)
                 
                 .SingleAsync(x => x.Id == exportedProject.Id);
 
             try
             {
-                actual.Should().BeEquivalentTo(exportedProject, options =>
-                    options.IgnoringCyclicReferences().Excluding(x => x.Organisation)
-                        .Excluding(x => x.Intents[0].QueryIntents)
-                        .Excluding(x => x.Responses[0].QueryResponses));
+                actual.EntityNames.Should().HaveSameCount(exportedProject.EntityNames);
+                actual.EntityTypes.Should().HaveSameCount(exportedProject.EntityTypes);
+                actual.Queries.Should().HaveSameCount(exportedProject.Queries);
+                actual.Responses.Should().HaveSameCount(exportedProject.Responses);
+                actual.Intents.Should().HaveSameCount(exportedProject.Intents);
             }
             finally
             {

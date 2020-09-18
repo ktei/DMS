@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,7 +35,14 @@ namespace PingAI.DialogManagementService.Application.Projects.PublishProject
             var canWrite = await _authorizationService.UserCanWriteProject(request.ProjectId);
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
+            var sw = new Stopwatch();
+            
+            // TODO: we can abstract the perf monitoring logic away
+            sw.Start();
             var project = await _projectRepository.GetFullProjectById(request.ProjectId);
+            sw.Stop();
+            // TODO: use logger
+            Console.WriteLine($"Took {sw.Elapsed.TotalSeconds} seconds to {nameof(_projectRepository.GetFullProjectById)}");
             if (project == null)
                 throw new ForbiddenException(ProjectReadDenied);
             var user = await _requestContext.GetUser();
