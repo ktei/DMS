@@ -49,7 +49,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
                 $"/dms/api/admin/v1/organisations",
                 new CreateOrganisationRequest
                 {
-                    AdminUserId = _testingFixture.UserId,
+                    Auth0UserId = _testingFixture.Auth0UserId,
                     Name = Guid.NewGuid().ToString()
                 });
             await response.IsOk();

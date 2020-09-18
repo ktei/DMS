@@ -34,12 +34,12 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
                                               "Please use a different name.");
             var organisationToCreate = await _organisationRepository.AddOrganisation(
                 new Organisation(request.Name, string.Empty, null));
-            if (request.AdminUserId.HasValue)
+            if (!string.IsNullOrEmpty(request.Auth0UserId))
             {
-                var adminUser = await _userRepository.GetUserById(request.AdminUserId.Value);
-                if (adminUser == null)
+                var user = await _userRepository.GetUserByAuth0Id(request.Auth0UserId!);
+                if (user == null)
                     throw new BadRequestException("User does not exist");
-                organisationToCreate.AddUser(adminUser!);
+                organisationToCreate.AddUser(user!);
             }
             CreateDefaultProject(organisationToCreate);
             

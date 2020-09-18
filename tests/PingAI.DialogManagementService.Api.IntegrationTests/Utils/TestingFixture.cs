@@ -9,6 +9,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
         public Organisation Organisation { get; set; }
         public Project Project { get; set; }
         public Guid UserId { get; set; }
+        public string Auth0UserId { get; set; }
         
         private static readonly Random Random = new Random();
         public static string RandomString(int length)

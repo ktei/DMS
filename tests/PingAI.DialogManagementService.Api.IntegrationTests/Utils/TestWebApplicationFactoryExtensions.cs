@@ -83,7 +83,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
             {
                 Organisation = organisation,
                 Project = project,
-                UserId = Guid.Parse("3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f")
+                UserId = Guid.Parse("3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f"),
+                Auth0UserId = "auth0|5ea7f465a370110bd9c6e838",
             };
 
             return (testingFixture, async () =>

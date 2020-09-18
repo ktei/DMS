@@ -7,12 +7,12 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
     public class CreateOrganisationCommand : IRequest<Organisation>
     {
         public string Name { get; set; }
-        public Guid? AdminUserId { get; set; }
+        public string? Auth0UserId { get; set; }
 
-        public CreateOrganisationCommand(string name, Guid? adminUserId)
+        public CreateOrganisationCommand(string name, string? auth0UserId)
         {
             Name = name;
-            AdminUserId = adminUserId;
+            Auth0UserId = auth0UserId;
         }
 
         public CreateOrganisationCommand()
