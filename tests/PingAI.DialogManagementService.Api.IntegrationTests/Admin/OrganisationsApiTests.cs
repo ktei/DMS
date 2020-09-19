@@ -35,7 +35,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
         }
         
         [Fact]
-        public async Task ListOrganisationsWithUserId()
+        public async Task ListOrganisationsWithAuth0UserId()
         {
             var response = await _client.GetFromJsonAsync<List<OrganisationListItemDto>>(
                 "/dms/api/admin/v1/organisations?auth0UserId=auth0|5ea7f465a370110bd9c6e838");
