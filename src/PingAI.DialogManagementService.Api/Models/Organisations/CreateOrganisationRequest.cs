@@ -8,6 +8,7 @@ namespace PingAI.DialogManagementService.Api.Models.Organisations
     {
         public string Name { get; set; }
         public string? Auth0UserId { get; set; }
+        public string? Description { get; set; }
     }
 
     public class CreateOrganisationRequestValidator : AbstractValidator<CreateOrganisationRequest>

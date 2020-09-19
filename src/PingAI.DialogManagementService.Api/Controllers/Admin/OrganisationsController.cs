@@ -30,7 +30,7 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
         public async Task<OrganisationDto> CreateOrganisation([FromBody] CreateOrganisationRequest request)
         {
             var organisation = await _mediator.Send(
-                new CreateOrganisationCommand(request.Name, request.Auth0UserId));
+                new CreateOrganisationCommand(request.Name, request.Auth0UserId, request.Description));
             return new OrganisationDto(organisation);
         }
     }

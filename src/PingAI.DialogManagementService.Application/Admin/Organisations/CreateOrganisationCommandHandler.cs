@@ -33,7 +33,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
                 throw new BadRequestException($"Organisation with name '{request.Name}' already exists. " +
                                               "Please use a different name.");
             var organisationToCreate = await _organisationRepository.AddOrganisation(
-                new Organisation(request.Name, string.Empty, null));
+                new Organisation(request.Name, request.Description ?? string.Empty, null));
             if (!string.IsNullOrEmpty(request.Auth0UserId))
             {
                 var user = await _userRepository.GetUserByAuth0Id(request.Auth0UserId!);
