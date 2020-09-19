@@ -20,9 +20,9 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<List<OrganisationListItemDto>> ListOrganisations([FromQuery] Guid? userId)
+        public async Task<List<OrganisationListItemDto>> ListOrganisations([FromQuery] string? auth0UserId)
         {
-            var organisations = await _mediator.Send(new ListOrganisationsQuery(userId));
+            var organisations = await _mediator.Send(new ListOrganisationsQuery(auth0UserId));
             return organisations.Select(o => new OrganisationListItemDto(o)).ToList();
         }
 

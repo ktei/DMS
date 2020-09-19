@@ -7,11 +7,11 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
 {
     public class ListOrganisationsQuery : IRequest<List<Organisation>>
     {
-        public Guid? UserId { get; set; }
+        public string? Auth0UserId { get; set; }
 
-        public ListOrganisationsQuery(Guid? userId)
+        public ListOrganisationsQuery(string? auth0UserId)
         {
-            UserId = userId;
+            Auth0UserId = auth0UserId;
         }
 
         public ListOrganisationsQuery()

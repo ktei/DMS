@@ -38,7 +38,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
         public async Task ListOrganisationsWithUserId()
         {
             var response = await _client.GetFromJsonAsync<List<OrganisationListItemDto>>(
-                "/dms/api/admin/v1/organisations?userId=3ec1b42a-aada-4487-8ac1-ee2c5ef4cc7f");
+                "/dms/api/admin/v1/organisations?auth0UserId=auth0|5ea7f465a370110bd9c6e838");
             True(response.Count > 0);
         }
         
