@@ -60,8 +60,11 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
                 var defaultProject = await context.Projects
                     .Include(p => p.EntityNames)
                     .FirstOrDefaultAsync(p => p.OrganisationId == Guid.Parse(organisationCreated.OrganisationId));
+                var projectVersion =
+                    await context.ProjectVersions.FirstOrDefaultAsync(v => v.ProjectId == defaultProject.Id);
                 // assert a default project exists for this new organisation
                 NotNull(defaultProject);
+                NotNull(projectVersion);
                 Equal(Defaults.EnquiryEntityNames.Length, defaultProject.EntityNames.Count);
             });
 
@@ -72,6 +75,10 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
                     .Include(o => o.Projects)
                     .ThenInclude(p => p.EntityNames)
                     .FirstAsync(x => x.Id == Guid.Parse(organisationCreated.OrganisationId));
+                var projectIds = organisation.Projects.Select(x => x.Id);
+                var projectVersions =
+                    await context.ProjectVersions.Where(v => projectIds.Contains(v.ProjectId)).ToListAsync();
+                context.RemoveRange(projectVersions);
                 context.RemoveRange(organisation.Projects.SelectMany(p => p.EntityNames));
                 context.RemoveRange(organisation.Projects);
                 context.Remove(organisation);

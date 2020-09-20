@@ -13,16 +13,18 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IUserRepository _userRepository;
         private readonly IProjectRepository _projectRepository;
+        private readonly IProjectVersionRepository _projectVersionRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public CreateOrganisationCommandHandler(
             IOrganisationRepository organisationRepository, IUnitOfWork unitOfWork, IUserRepository userRepository,
-            IProjectRepository projectRepository)
+            IProjectRepository projectRepository, IProjectVersionRepository projectVersionRepository)
         {
             _organisationRepository = organisationRepository;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _projectRepository = projectRepository;
+            _projectVersionRepository = projectVersionRepository;
         }
 
         public async Task<Organisation> Handle(CreateOrganisationCommand request, CancellationToken cancellationToken)
@@ -41,13 +43,16 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
                     throw new BadRequestException("User does not exist");
                 organisationToCreate.AddUser(user!);
             }
-            CreateDefaultProject(organisationToCreate);
+            var defaultProject = CreateDefaultProject(organisationToCreate);
+            defaultProject = await _projectRepository.AddProject(defaultProject);
+            await _projectVersionRepository.AddProjectVersion(new ProjectVersion(defaultProject,
+                organisationToCreate.Id, defaultProject.Id, ProjectVersionNumber.NewDesignTime()));
             
             await _unitOfWork.SaveChanges();
             return organisationToCreate;
         }
 
-        private static void CreateDefaultProject(Organisation organisation) 
+        private static Project CreateDefaultProject(Organisation organisation) 
         {
             var defaultProject = new Project("Default project", organisation.Id,
                 Defaults.WidgetTitle, Defaults.WidgetColor, Defaults.WidgetDescription,
@@ -57,7 +62,8 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
             {
                 defaultProject.AddEntityName(new EntityName(enquiryEntityName, Guid.Empty, true));
             }
-            organisation.AddProject(defaultProject);
+
+            return defaultProject;
         }
     }
 }
