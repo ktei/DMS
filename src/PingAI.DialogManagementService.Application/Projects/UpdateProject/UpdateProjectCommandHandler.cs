@@ -41,6 +41,20 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
             project.UpdateFallbackMessage(request.FallbackMessage);
             project.UpdateGreetingMessage(request.GreetingMessage);
             project.UpdateDomains(request.Domains);
+            if (request.BusinessTimeStartUtc.HasValue)
+            {
+                if (!request.BusinessTimeEndUtc.HasValue)
+                    throw new BadRequestException($"{nameof(request.BusinessTimeEndUtc)} cannot be null, " +
+                                                  $"given {nameof(request.BusinessTimeStartUtc)} is not null");
+                project.UpdateBusinessHours(request.BusinessTimeStartUtc.Value,
+                    request.BusinessTimeEndUtc.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.BusinessEmail))
+            {
+                project.UpdateBusinessEmail(request.BusinessEmail!);
+            }
+
             await _unitOfWork.SaveChanges();
             return project;
         }

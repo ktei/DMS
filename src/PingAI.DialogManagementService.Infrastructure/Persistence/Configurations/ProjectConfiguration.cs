@@ -36,6 +36,14 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                     k => k == null ? ApiKey.Empty : (ApiKey)k);
             builder.Property(o => o.Domains)
                 .HasColumnName("domains");
+            builder.Property(o => o.BusinessTimezone)
+                .HasColumnName("businessTimezone");
+            builder.Property(o => o.BusinessTimeStartUtc)
+                .HasColumnName("businessTimeStartUtc");
+            builder.Property(o => o.BusinessTimeEndUtc)
+                .HasColumnName("businessTimeEndUtc");
+            builder.Property(o => o.BusinessEmail)
+                .HasColumnName("businessEmail");
 
             builder.AttachTimestamps();
             

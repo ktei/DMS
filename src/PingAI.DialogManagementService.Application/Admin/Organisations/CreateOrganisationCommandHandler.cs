@@ -47,11 +47,12 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
             return organisationToCreate;
         }
 
-        private void CreateDefaultProject(Organisation organisation) 
+        private static void CreateDefaultProject(Organisation organisation) 
         {
             var defaultProject = new Project("Default project", organisation.Id,
                 Defaults.WidgetTitle, Defaults.WidgetColor, Defaults.WidgetDescription,
-                null, Defaults.GreetingMessage, null, ApiKey.GenerateNew(), null);
+                null, Defaults.GreetingMessage, null, ApiKey.GenerateNew(), null,
+                Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc, Defaults.BusinessTimeEndUtc, null);
             foreach (var enquiryEntityName in Defaults.EnquiryEntityNames)
             {
                 defaultProject.AddEntityName(new EntityName(enquiryEntityName, Guid.Empty, true));

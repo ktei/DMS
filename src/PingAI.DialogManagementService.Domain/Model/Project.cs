@@ -21,6 +21,10 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string[]? Enquiries { get; private set; }
         public ApiKey? ApiKey { get; private set; }
         public string[]? Domains { get; private set; }
+        public string BusinessTimezone { get; private set; }
+        public DateTime? BusinessTimeStartUtc { get; private set; }
+        public DateTime? BusinessTimeEndUtc { get; private set; }
+        public string? BusinessEmail { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
         private readonly List<Intent> _intents;
@@ -42,7 +46,8 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public Project(string name, Guid organisationId, string? widgetTitle, string widgetColor,
             string? widgetDescription, string? fallbackMessage, string? greetingMessage, string[]? enquiries,
-            ApiKey? apiKey, string[]? domains)
+            ApiKey? apiKey, string[]? domains, string businessTimezone, DateTime? businessTimeStartUtc,
+            DateTime? businessTimeEndUtc, string? businessEmail)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException($"{nameof(name)} cannot be empty");
@@ -62,6 +67,10 @@ namespace PingAI.DialogManagementService.Domain.Model
             Enquiries = enquiries;
             ApiKey = apiKey;
             Domains = domains;
+            BusinessTimezone = businessTimezone;
+            BusinessTimeStartUtc = businessTimeStartUtc;
+            BusinessTimeEndUtc = businessTimeEndUtc;
+            BusinessEmail = businessEmail;
             _entityTypes = new List<EntityType>();
             _entityNames = new List<EntityName>();
             _intents = new List<Intent>();
@@ -122,6 +131,26 @@ namespace PingAI.DialogManagementService.Domain.Model
             Enquiries = (enquiries ?? new string[]{})
                 .OrderBy(e => e)
                 .Distinct().ToArray();
+        }
+
+        public void UpdateBusinessHours(DateTime businessTimeStartUtc, DateTime businessTimeEndUtc,
+            string businessTimezone = Defaults.BusinessTimezone)
+        {
+            if (string.IsNullOrWhiteSpace(businessTimezone))
+                throw new ArgumentException($"{nameof(businessTimezone)} cannot be empty");
+            if (businessTimeEndUtc <= businessTimeStartUtc)
+                throw new ArgumentException($"{nameof(businessTimeEndUtc)} " +
+                                            $"must be greater than {nameof(businessTimeStartUtc)}");
+            BusinessTimeStartUtc = businessTimeStartUtc;
+            BusinessTimeEndUtc = businessTimeEndUtc;
+            BusinessTimezone = businessTimezone;
+        }
+
+        public void UpdateBusinessEmail(string businessEmail)
+        {
+            if (string.IsNullOrWhiteSpace(businessEmail))
+                throw new ArgumentException($"{nameof(businessEmail)} cannot be empty");
+            BusinessEmail = businessEmail;
         }
 
         public void AddIntent(Intent intent)
@@ -216,7 +245,8 @@ namespace PingAI.DialogManagementService.Domain.Model
                 OrganisationId, 
                 WidgetTitle, WidgetColor!,
                 WidgetDescription, FallbackMessage, GreetingMessage, 
-                Enquiries, ApiKey, Domains?.ToArray());
+                Enquiries, ApiKey, Domains?.ToArray(), BusinessTimezone, BusinessTimeStartUtc,
+                BusinessTimeEndUtc, BusinessEmail);
 
             var intentsCopy = _intents.ToDictionary(i => i.Id, CopyIntent);
             var responsesCopy = _responses.ToDictionary(r => r.Id, CopyResponse);

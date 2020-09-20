@@ -13,9 +13,13 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
         public string FallbackMessage { get; set; }
         public string GreetingMessage { get; set; }
         public string[]? Domains { get; set; }
+        public DateTime? BusinessTimeStartUtc { get; set; }
+        public DateTime? BusinessTimeEndUtc { get; set; }
+        public string? BusinessEmail { get; set; }
 
         public UpdateProjectCommand(Guid projectId, string widgetTitle, string widgetColor, string widgetDescription,
-            string fallbackMessage, string greetingMessage, string[]? domains)
+            string fallbackMessage, string greetingMessage, string[]? domains, DateTime? businessTimeStartUtc,
+            DateTime? businessTimeEndUtc, string? businessEmail)
         {
             ProjectId = projectId;
             WidgetTitle = widgetTitle;
@@ -24,11 +28,9 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
             FallbackMessage = fallbackMessage;
             GreetingMessage = greetingMessage;
             Domains = domains;
-        }
-
-        public UpdateProjectCommand()
-        {
-            
+            BusinessTimeStartUtc = businessTimeStartUtc;
+            BusinessTimeEndUtc = businessTimeEndUtc;
+            BusinessEmail = businessEmail;
         }
     }
 }

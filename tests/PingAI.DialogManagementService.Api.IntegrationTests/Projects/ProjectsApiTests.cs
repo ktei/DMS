@@ -68,11 +68,17 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
                     WidgetDescription = "description",
                     GreetingMessage = "greeting",
                     FallbackMessage = "fallback",
+                    BusinessEmail = "support@iiiknow.com",
+                    BusinessTimeStart = "2020-09-19T09:30:00",
+                    BusinessTimeEnd = "2020-09-19T17:00:00"
                 });
             await httpResponse.IsOk();
             var response = await httpResponse.Content.ReadFromJsonAsync<ProjectDto>();
             NotNull(response);
             Equal(fixture.Project.Id.ToString(), response.ProjectId);
+            Equal("2020-09-19T09:30:00", response.BusinessTimeStart);
+            Equal("2020-09-19T17:00:00", response.BusinessTimeEnd);
+            Equal("support@iiiknow.com", response.BusinessEmail);
         }
 
         [Fact]

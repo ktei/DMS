@@ -27,7 +27,9 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
             Project = new Project(Guid.NewGuid().ToString(), Organisation.Id, 
                 "test widget title", Defaults.WidgetColor,
                 "test widget description", "test fallback message", 
-                "test greeting message", new string[] { }, ApiKey.Empty, null);
+                "test greeting message", new string[] { }, ApiKey.Empty, null,
+                Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc, Defaults.BusinessTimeEndUtc,
+                null);
             Organisation.AddProject(Project);
             await _context.AddRangeAsync(Organisation);
             EntityName = new EntityName("hometown", Project.Id, true);

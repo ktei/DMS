@@ -29,7 +29,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var project = new Project("test project", organisation.Id, 
                 "widget title", Defaults.WidgetColor, "widget description",
                 "fallback message", "greeting message", new string[]{},
-                ApiKey.Empty, null);
+                ApiKey.Empty, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
+                Defaults.BusinessTimeEndUtc, null);
             organisation.AddProject(project);
             
             // Act
@@ -61,7 +62,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var project = new Project("test project", organisation.Id, 
                 "widget title", Defaults.WidgetColor, "widget description",
                 "fallback message", "greeting message", new string[]{},
-                ApiKey.Empty, null);
+                ApiKey.Empty, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
+                Defaults.BusinessTimeEndUtc, null);
             organisation.AddProject(project);
             
             // Act

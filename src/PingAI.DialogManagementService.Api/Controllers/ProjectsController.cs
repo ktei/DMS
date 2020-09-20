@@ -54,10 +54,17 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public async Task<ActionResult<ProjectDto>> UpdateProject([FromRoute] Guid projectId,
             [FromBody] UpdateProjectRequest request)
         {
+            var businessTimeStartUtc = string.IsNullOrEmpty(request.BusinessTimeStart)
+                ? null
+                : ProjectDto.TryConvertStringToUtc(request.BusinessTimeStart);
+            var businessTimeEndUtc = string.IsNullOrEmpty(request.BusinessTimeEnd)
+                ? null
+                : ProjectDto.TryConvertStringToUtc(request.BusinessTimeEnd);
             var project = await _mediator.Send(new UpdateProjectCommand(projectId,
                 request.WidgetTitle, request.WidgetColor,
                 request.WidgetDescription, request.FallbackMessage,
-                request.GreetingMessage, request.Domains));
+                request.GreetingMessage, request.Domains,
+                businessTimeStartUtc, businessTimeEndUtc, request.BusinessEmail));
             return new ProjectDto(project);
         }
 
