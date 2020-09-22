@@ -239,7 +239,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             }
 
             static Response CopyResponse(Response r) =>
-                new Response(r.Resolution.ToArray(), Guid.Empty, r.Type, r.Order);
+                new Response(r.Resolution, Guid.Empty, r.Type, r.Order);
             
             var projectToPublish = new Project($"{Name}__{Guid.NewGuid()}",
                 OrganisationId, 

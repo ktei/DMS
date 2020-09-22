@@ -15,14 +15,14 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(new ResolutionPart[0],
+            var sut = new Response(default,
                 projectId, ResponseType.RTE, 0);
             
             // Act
             sut.SetRteText("Hello, World!", new Dictionary<string, EntityName>());
             
             // Assert
-            sut.Resolution.Should().BeEquivalentTo(
+            sut.Resolution!.Parts.Should().BeEquivalentTo(
                 TextPart("Hello, World!")
             );
         }
@@ -32,7 +32,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(new ResolutionPart[0],
+            var sut = new Response(default,
                 projectId, ResponseType.RTE, 0);
             var entityNames = new Dictionary<string, EntityName>
             {
@@ -43,7 +43,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
             sut.SetRteText("${foo}", entityNames);
             
             // Assert
-            sut.Resolution.Should().BeEquivalentTo(
+            sut.Resolution!.Parts.Should().BeEquivalentTo(
                 EntityNamePart(entityNames["foo"].Id)
             ); 
         }
@@ -53,7 +53,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(new ResolutionPart[0],
+            var sut = new Response(default,
                 projectId, ResponseType.RTE, 0);
             var entityNames = new Dictionary<string, EntityName>
             {
@@ -65,7 +65,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
             sut.SetRteText("Hello, I'm ${foo} from ${bar}!", entityNames);
             
             // Assert
-            sut.Resolution.Should().BeEquivalentTo(
+            sut.Resolution!.Parts.Should().BeEquivalentTo(
                 TextPart("Hello, I'm "), 
                 EntityNamePart(entityNames["foo"].Id),
                 TextPart(" from "), 
@@ -79,7 +79,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(new ResolutionPart[0],
+            var sut = new Response(default,
                 projectId, ResponseType.RTE, 0);
             var entityNames = new Dictionary<string, EntityName>
             {

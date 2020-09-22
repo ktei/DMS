@@ -138,10 +138,10 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                     new PhrasePart(Guid.Empty, Guid.NewGuid(), 0, "test", null,
                         PhrasePartType.ENTITY, entityName, entityType)
                 });
-            var response = new Response(new[]
+            var response = new Response(new Resolution(new[]
             {
                 new ResolutionPart("Test response", null, ResolutionPartType.RTE), 
-            }, project.Id, ResponseType.RTE, 0);
+            }), project.Id, ResponseType.RTE, 0);
             project.AddIntent(intent);
             project.AddResponse(response);
             var query = new Query(RandomString(10), project.Id, new Expression[0],

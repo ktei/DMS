@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
@@ -12,7 +11,7 @@ namespace PingAI.DialogManagementService.Domain.Model
     public class Response : DomainEntity, IHaveTimestamps
     {
         public Guid Id { get; private set; }
-        public ResolutionPart[] Resolution { get; private set; }
+        public Resolution? Resolution { get; private set; }
         public Guid ProjectId { get; private set; }
         public Project? Project { get; private set; }
         public ResponseType Type { get; private set; }
@@ -23,10 +22,10 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public const int MaxRteTextLength = 4000;
         
-        public Response(ResolutionPart[] resolution, Guid projectId, ResponseType type,
+        public Response(Resolution? resolution, Guid projectId, ResponseType type,
             int order)
         {
-            Resolution = (resolution ?? new ResolutionPart[0]).ToArray();
+            Resolution = resolution;
             ProjectId = projectId;
             Type = type;
             Order = order;
@@ -34,11 +33,11 @@ namespace PingAI.DialogManagementService.Domain.Model
         }
         
         public Response(Guid projectId, ResponseType type,
-            int order) : this(new ResolutionPart[0], projectId, type, order)
+            int order) : this(null, projectId, type, order)
         {
         }
 
-        public Response(ResponseType type, int order) : this(new ResolutionPart[0], Guid.Empty, type, order)
+        public Response(ResponseType type, int order) : this(null, Guid.Empty, type, order)
         {
 
         }
@@ -57,7 +56,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             if (rteText.Length > MaxRteTextLength)
                 throw new ArgumentException($"Max length of {nameof(rteText)} is {MaxRteTextLength}");
                 
-            var resolution = new List<ResolutionPart>();
+            var resolutionParts = new List<ResolutionPart>();
             var re = new Regex(@"\$\{([A-Za-z-_0-9]+)\}");
             var pos = 0;
             Match m;
@@ -69,13 +68,13 @@ namespace PingAI.DialogManagementService.Domain.Model
                 if (m.Index > pos)
                 {
                     // add plain text before current param
-                    resolution.Add(TextPart(rteText.Substring(pos, m.Index - pos)));
+                    resolutionParts.Add(TextPart(rteText.Substring(pos, m.Index - pos)));
                 }
                 
                 // add current param
                 if (entityNames.TryGetValue(m.Groups[1].Value, out var entityName))
                 {
-                    resolution.Add(EntityNamePart(entityName.Id));
+                    resolutionParts.Add(EntityNamePart(entityName.Id));
                 }
                 else
                 {
@@ -89,16 +88,19 @@ namespace PingAI.DialogManagementService.Domain.Model
             
             // add the rest of the plain text
             if (rteText.Length > pos) {
-                resolution.Add(TextPart(rteText.Substring(pos)));
+                resolutionParts.Add(TextPart(rteText.Substring(pos)));
             }
 
-            Resolution = resolution.ToArray();
+            Resolution = new Resolution(resolutionParts.ToArray());
+            Type = ResponseType.RTE;
         }
 
         public string GetDisplayText()
         {
             var sb = new StringBuilder();
-            foreach (var resolutionPart in Resolution)
+            if (Resolution == null)
+                return string.Empty;
+            foreach (var resolutionPart in Resolution.Parts ?? new ResolutionPart[0])
             {
                 sb.Append(resolutionPart.Text);
             }

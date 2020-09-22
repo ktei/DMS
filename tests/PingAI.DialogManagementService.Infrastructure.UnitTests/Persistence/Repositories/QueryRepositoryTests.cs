@@ -68,11 +68,11 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var project = _testDataFactory.Project;
             var sut = new QueryRepository(context);
-            var response = new Response(new[]
+            var response = new Response(new Resolution(new[]
             {
                 new ResolutionPart("Hello, ", null, ResolutionPartType.RTE),
                 new ResolutionPart("World!", null, ResolutionPartType.RTE)
-            }, project.Id, ResponseType.RTE, 0);
+            }), project.Id, ResponseType.RTE, 0);
             await context.AddAsync(response);
             await context.SaveChangesAsync();
             
@@ -95,7 +95,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             
             NotNull(actual);
             Single(actual.QueryResponses);
-            Equal(2, actual.QueryResponses[0]!.Response!.Resolution.Length);
+            Equal(2, actual.QueryResponses[0]!.Response!.Resolution!.Parts!.Length);
         }
         
         public Task InitializeAsync() => _testDataFactory.Setup();

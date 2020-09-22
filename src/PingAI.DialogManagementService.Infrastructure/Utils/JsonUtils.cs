@@ -16,8 +16,21 @@ namespace PingAI.DialogManagementService.Infrastructure.Utils
 
             return JsonSerializer.Serialize(o, options);
         }
-        
-        public static T Deserialize<T>(string s, Action<JsonSerializerOptions>? configureOptions = null)
+
+        public static T? TryDeserialize<T>(string s, Action<JsonSerializerOptions>? configureOptions = null)
+            where T : class
+        {
+            try
+            {
+                return Deserialize<T>(s, configureOptions);
+            }
+            catch
+            {
+                return default;
+            }
+        }
+
+        public static T Deserialize<T>(string s, Action<JsonSerializerOptions>? configureOptions = null) where T : class
         {
             var options = new JsonSerializerOptions
             {

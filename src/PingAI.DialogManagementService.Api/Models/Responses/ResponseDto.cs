@@ -1,4 +1,6 @@
 using System.Linq;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Responses
@@ -8,21 +10,29 @@ namespace PingAI.DialogManagementService.Api.Models.Responses
         public string ResponseId { get; set; }
         public string ProjectId { get; set; }
         public string Type { get; set; }
-        public ResolutionPartDto[] Resolution { get; set; }
+        
+        // TODO: choose one, either Json.Net or System.Text.Json
+        [JsonProperty("resolution")]
+        [JsonPropertyName("resolution")]
+        public ResolutionPartDto[]? Parts { get; set; }
+        
+        [JsonProperty("form")]
+        [JsonPropertyName("form")]
+        public FormResolutionDto? Form { get; set; }
 
-        public ResponseDto(string responseId, string projectId, string type, ResolutionPartDto[] resolution)
+        public ResponseDto(Response response)
         {
-            ResponseId = responseId;
-            ProjectId = projectId;
-            Type = type;
-            Resolution = resolution;
-        }
-
-        public ResponseDto(Response response) : this(response.Id.ToString(),
-            response.ProjectId.ToString(), response.Type.ToString(), 
-            response.Resolution.Select(p => new ResolutionPartDto(p)).ToArray())
-        {
-            
+            ResponseId = response.Id.ToString();
+            ProjectId = response.ProjectId.ToString();
+            Type = response.Type.ToString();
+            if (response.Resolution?.Type == ResolutionType.PARTS)
+            {
+                Parts = response.Resolution.Parts?.Select(p => new ResolutionPartDto(p)).ToArray();
+            }
+            else if (response.Resolution?.Type == ResolutionType.FORM)
+            {
+                Form = response.Resolution.Form == null ? default : new FormResolutionDto(response.Resolution.Form);
+            }
         }
 
         public ResponseDto()

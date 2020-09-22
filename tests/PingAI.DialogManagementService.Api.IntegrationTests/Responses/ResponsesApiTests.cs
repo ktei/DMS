@@ -46,6 +46,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Responses
                     Type = ResponseType.RTE.ToString()
                 });
             await httpResponse.IsOk();
+            var json = await httpResponse.Content.ReadAsStringAsync();
             var response = await httpResponse.Content.ReadFromJsonAsync<CreateResponseResponse>();
             
             // clean up
@@ -60,7 +61,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Responses
             });
             
             NotNull(response);
-            Contains(response.Resolution, p => p.EntityNameId == entityName.Id.ToString());
+            Contains(response.Parts!, p => p.EntityNameId == entityName.Id.ToString());
         }
 
         public async Task InitializeAsync()
