@@ -1,0 +1,67 @@
+[
+  {
+    "name": "prod-dms",
+    "image": "397977497739.dkr.ecr.ap-southeast-2.amazonaws.com/dev-dms:latest",
+    "cpu": 128,
+    "memory": 256,
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "portMappings": [
+      {
+        "containerPort": 5000
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "prod-dms",
+        "awslogs-region": "ap-southeast-2",
+        "awslogs-stream-prefix": "streaming"
+      }
+    },
+    "secrets": [
+      {
+        "valueFrom": "arn:aws:secretsmanager:ap-southeast-2:397977497739:secret:prod_application_rds-6XxZJF",
+        "name": "ConnectionStrings__DialogManagement"
+      }
+    ],
+    "environment": [
+      {
+        "name": "ASPNETCORE_ENVIRONMENT",
+        "value": "Production"
+      },
+      {
+        "name": "Logging__LogLevel__System",
+        "value": "Error"
+      },
+      {
+        "name": "Logging__LogLevel__Microsoft",
+        "value": "Error"
+      },
+      {
+        "name": "NluApiHost",
+        "value": "https://service.iiiknow.com"
+      },
+      {
+        "name": "OAuth__Authority",
+        "value": "https://dev-iiiknow.au.auth0.com/"
+      },
+      {
+        "name": "OAuth__Audience",
+        "value": "https://service-dev.iiiknow.com/dms/api"
+      },
+      {
+        "name": "OAuth__TokenIssuer",
+        "value": "https://dev-iiiknow.au.auth0.com/"
+      },
+      {
+        "name": "Slack__ClientId",
+        "value": "846070372340.1297562456692"
+      },
+      {
+        "name": "Slack__ClientSecret",
+        "value": "8fd014bd777d277fcda86f9f2749d2c7"
+      }
+    ]
+  }
+]

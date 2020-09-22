@@ -25,3 +25,11 @@ variable "lb_listener_arn" {
 variable "cluster_name" {
   type = string
 }
+
+variable "task_exec_policy_statements" {
+  type = list(object({
+    actions   = list(string)
+    resources = list(string)
+  }))
+  default = []
+}
