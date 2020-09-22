@@ -44,15 +44,15 @@
       },
       {
         "name": "OAuth__Authority",
-        "value": "https://dev-iiiknow.au.auth0.com/"
+        "value": "https://iiiknow.au.auth0.com/"
       },
       {
         "name": "OAuth__Audience",
-        "value": "https://service-dev.iiiknow.com/dms/api"
+        "value": "https://service.iiiknow.com/dms/api"
       },
       {
         "name": "OAuth__TokenIssuer",
-        "value": "https://dev-iiiknow.au.auth0.com/"
+        "value": "https://iiiknow.au.auth0.com/"
       },
       {
         "name": "Slack__ClientId",

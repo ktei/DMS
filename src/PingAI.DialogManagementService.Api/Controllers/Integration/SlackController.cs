@@ -32,11 +32,11 @@ namespace PingAI.DialogManagementService.Api.Controllers.Integration
                 throw new BadRequestException($"Missing {nameof(redirectUri)}");
             }
             var cookies = HttpContext.Request.Cookies;
-            var clientState = cookies["slack_auth_state"];
-            if (string.IsNullOrEmpty(clientState))
-                throw new BadRequestException("Missing cookie slack_auth_state");
+            // var clientState = cookies["slack_auth_state"];
+            // if (string.IsNullOrEmpty(clientState))
+            //     throw new BadRequestException("Missing cookie slack_auth_state");
 
-            await _mediator.Send(new ConnectSlackCommand(projectId.Value, clientState, redirectUri));
+            await _mediator.Send(new ConnectSlackCommand(projectId.Value, "", redirectUri));
             return Ok();
         }
     }

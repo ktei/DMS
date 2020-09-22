@@ -36,10 +36,10 @@ namespace PingAI.DialogManagementService.Application.Integration.Slack
                 throw new ForbiddenException(ProjectWriteDenied);
             
             var (state, code) = ParseRedirectUri(request.RedirectUri);
-            if (request.State != state)
-            {
-                throw new ForbiddenException("Invalid state");
-            }
+            // if (request.State != state)
+            // {
+            //     throw new ForbiddenException("Invalid state");
+            // }
             
             var slackResponse = await _slackService.ExchangeOAuthCode(code, request.RedirectUri);
             if (!slackResponse.Ok)
