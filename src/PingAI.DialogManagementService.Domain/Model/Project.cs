@@ -370,7 +370,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             public string? BusinessEmail { get; set; }
             public DateTime CreatedAt { get; set; }
 
-            public static string MakeKey(Guid projectId) => $"PROJECT_{projectId}";
+            public static string MakeKey(Guid projectId) => $"{nameof(Project)}_{projectId}";
 
             public Cache(Project project)
             {

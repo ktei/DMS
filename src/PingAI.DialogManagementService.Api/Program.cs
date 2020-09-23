@@ -22,6 +22,7 @@ namespace PingAI.DialogManagementService.Api
             //     .Database.GetDbConnection();
             // await conn.OpenAsync();
             // conn.ReloadTypes();
+            
             await host.RunAsync();
         }
 

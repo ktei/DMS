@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using PingAI.DialogManagementService.Application.Interfaces.Configuration;
@@ -17,10 +18,14 @@ namespace PingAI.DialogManagementService.Api.Services
             _appConfig = appConfig;
         }
 
-        public Task SetObject<T>(string key, T value) where T : class, new()
+        public Task SetObject<T>(string key, T value, TimeSpan? expiry = null) where T : class, new()
         {
             var json = JsonUtils.Serialize(value);
-            return _distributedCache.SetAsync(PrependGlobalKeyPrefix(key), System.Text.Encoding.UTF8.GetBytes(json));
+            return _distributedCache.SetAsync(PrependGlobalKeyPrefix(key),
+                System.Text.Encoding.UTF8.GetBytes(json),
+                new DistributedCacheEntryOptions()
+                    .SetSlidingExpiration(expiry ?? TimeSpan.FromMinutes(10))
+                );
         }
 
         public async Task<T?> GetObject<T>(string key, T? fallbackValue = default) where T : class, new()
@@ -32,9 +37,12 @@ namespace PingAI.DialogManagementService.Api.Services
             return JsonUtils.Deserialize<T>(json);
         }
 
-        public Task SetString(string key, string value)
+        public Task SetString(string key, string value, TimeSpan? expiry = null)
         {
-            return _distributedCache.SetStringAsync(PrependGlobalKeyPrefix(key), value);
+            return _distributedCache.SetStringAsync(PrependGlobalKeyPrefix(key), value,
+                new DistributedCacheEntryOptions()
+                    .SetSlidingExpiration(expiry ?? TimeSpan.FromMinutes(10))
+                );
         }
 
         public async Task<string?> GetString(string key, string? fallbackValue = null)
