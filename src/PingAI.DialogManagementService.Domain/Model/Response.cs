@@ -33,7 +33,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         }
         
         public Response(Guid projectId, ResponseType type,
-            int order) : this(null, projectId, type, order)
+            int order) : this(Resolution.Empty, projectId, type, order)
         {
         }
 

@@ -66,13 +66,13 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             {
                 // RTE query means all responses should be RTE
                 query = query.Where(x => x.QueryResponses.All(
-                    qr => qr.Response.Type.ToString() == responseType.ToString()));
+                    qr => qr.Response!.Type.ToString() == responseType.ToString()));
             }
             else if (responseType == ResponseType.HANDOVER)
             {
                 // otherwise, it's HANDOVER, which will have RTE and HANDOVER
                 query = query.Where(x => x.QueryResponses.Any(
-                    qr => qr.Response.Type.ToString() == responseType.ToString()));
+                    qr => qr.Response!.Type.ToString() == responseType.ToString()));
             }
 
             var results = await query.OrderBy(x => x.DisplayOrder)

@@ -14,6 +14,11 @@ namespace PingAI.DialogManagementService.Domain.Model
         [JsonPropertyName("form")]
         public FormResolution? Form { get; set; }
 
+        private Resolution(ResolutionType type)
+        {
+            Type = type;
+        }
+
         public Resolution(ResolutionPart[] parts)
         {
             Parts = parts ?? throw new ArgumentNullException(nameof(parts));
@@ -25,6 +30,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             Form = form ?? throw new ArgumentNullException(nameof(form));
             Type = ResolutionType.FORM;
         }
+        
+        public static Resolution Empty => new Resolution(ResolutionType.EMPTY);
 
         public Resolution()
         {
@@ -35,6 +42,7 @@ namespace PingAI.DialogManagementService.Domain.Model
     public enum ResolutionType
     {
         PARTS,
-        FORM
+        FORM,
+        EMPTY
     }
 }
