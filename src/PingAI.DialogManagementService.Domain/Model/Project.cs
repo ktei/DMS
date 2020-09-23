@@ -44,6 +44,15 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public const int MaxNameLength = 250;
 
+        public Project(Cache cache) : this(cache.Name, cache.OrganisationId,
+            cache.WidgetTitle, cache.WidgetColor!, cache.WidgetDescription, cache.FallbackMessage, 
+            cache.GreetingMessage, cache.Enquiries,
+            cache.ApiKey, cache.Domains, cache.BusinessTimezone, cache.BusinessTimeStartUtc,
+            cache.BusinessTimeEndUtc, cache.BusinessEmail)
+        {
+            Id = cache.Id;
+        }
+
         public Project(string name, Guid organisationId, string? widgetTitle, string widgetColor,
             string? widgetDescription, string? fallbackMessage, string? greetingMessage, string[]? enquiries,
             ApiKey? apiKey, string[]? domains, string businessTimezone, DateTime? businessTimeStartUtc,
@@ -92,45 +101,65 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             if (!string.IsNullOrEmpty(widgetTitle) && widgetTitle.Length > 255)
                 throw new BadRequestException($"{nameof(widgetTitle)}'s length cannot exceed 255");
+            if (WidgetTitle == widgetTitle) return;
             WidgetTitle = widgetTitle;
+            AddProjectUpdatedEvent();
         }
 
         public void UpdateWidgetColor(string widgetColor)
         {
             if (string.IsNullOrWhiteSpace(widgetColor))
                 throw new BadRequestException($"{nameof(widgetColor)} cannot be empty");
-            WidgetColor = widgetColor; 
+            if (WidgetColor == widgetColor) return;
+            WidgetColor = widgetColor;
+            AddProjectUpdatedEvent();
         }
 
         public void UpdateWidgetDescription(string widgetDescription)
         {
+            if (WidgetDescription == widgetDescription)
+                return;
             WidgetDescription = widgetDescription;
+            AddProjectUpdatedEvent();
         }
 
         public void UpdateFallbackMessage(string fallbackMessage)
         {
+            if (FallbackMessage == fallbackMessage)
+                return;
             FallbackMessage = fallbackMessage;
+            AddProjectUpdatedEvent();
         }
 
         public void UpdateGreetingMessage(string greetingMessage)
         {
+            if (GreetingMessage == greetingMessage)
+                return;
             GreetingMessage = greetingMessage;
+            AddProjectUpdatedEvent();
         }
 
         public void UpdateDomains(string[]? domains)
         {
+            if (Domains?.SequenceEqual(domains ?? new string[]{}) == true)
+                return;
             Domains = (domains ?? new string[] { })
                 .Select(x => (x ?? "").Trim())
                 .Where(x => !string.IsNullOrEmpty(x))
                 .Distinct()
                 .ToArray();
+            AddProjectUpdatedEvent();
         }
 
         public void UpdateEnquiries(string[]? enquiries)
         {
+            if (Domains?.SequenceEqual(enquiries ?? new string[]{}) == true)
+                return;
+
             Enquiries = (enquiries ?? new string[]{})
                 .OrderBy(e => e)
                 .Distinct().ToArray();
+            AddProjectUpdatedEvent();
         }
 
         public void UpdateBusinessHours(DateTime businessTimeStartUtc, DateTime businessTimeEndUtc,
@@ -141,16 +170,27 @@ namespace PingAI.DialogManagementService.Domain.Model
             if (businessTimeEndUtc <= businessTimeStartUtc)
                 throw new ArgumentException($"{nameof(businessTimeEndUtc)} " +
                                             $"must be greater than {nameof(businessTimeStartUtc)}");
+            if (BusinessTimeStartUtc == businessTimeStartUtc &&
+                BusinessTimeEndUtc == businessTimeEndUtc &&
+                BusinessTimezone == businessTimezone)
+                return;
+            
             BusinessTimeStartUtc = businessTimeStartUtc;
             BusinessTimeEndUtc = businessTimeEndUtc;
             BusinessTimezone = businessTimezone;
+            
+            AddProjectUpdatedEvent();
         }
 
         public void UpdateBusinessEmail(string businessEmail)
         {
             if (string.IsNullOrWhiteSpace(businessEmail))
                 throw new ArgumentException($"{nameof(businessEmail)} cannot be empty");
+            if (BusinessEmail == businessEmail)
+                return;
+            
             BusinessEmail = businessEmail;
+            AddProjectUpdatedEvent();
         }
 
         public void AddIntent(Intent intent)
@@ -300,7 +340,60 @@ namespace PingAI.DialogManagementService.Domain.Model
                 AddDomainEvent(new ProjectPublishedEvent(this, publishedProjectId));
             }
         }
+
+        private void AddProjectUpdatedEvent()
+        {
+            if (!DomainEvents.Any(e => e is ProjectUpdatedEvent))
+            {
+                AddDomainEvent(new ProjectUpdatedEvent(this));
+            }
+        }
         
         public override string ToString() => Name;
+        
+        public class Cache
+        {
+            public Guid Id { get; set; }
+            public string Name { get; set; }
+            public Guid OrganisationId { get; set; }
+            public string? WidgetTitle { get; set; }
+            public string? WidgetColor { get; set; }
+            public string? WidgetDescription { get; set; }
+            public string? FallbackMessage { get; set; }
+            public string? GreetingMessage { get; set; }
+            public string[]? Enquiries { get; set; }
+            public ApiKey? ApiKey { get; set; }
+            public string[]? Domains { get; set; }
+            public string BusinessTimezone { get; set; }
+            public DateTime? BusinessTimeStartUtc { get; set; }
+            public DateTime? BusinessTimeEndUtc { get; set; }
+            public string? BusinessEmail { get; set; }
+            public DateTime CreatedAt { get; set; }
+
+            public static string MakeKey(Guid projectId) => $"PROJECT_{projectId}";
+
+            public Cache(Project project)
+            {
+                Name = project.Name;
+                OrganisationId = project.OrganisationId;
+                WidgetTitle = project.WidgetTitle;
+                WidgetColor = project.WidgetColor;
+                WidgetDescription = project.WidgetDescription;
+                FallbackMessage = project.FallbackMessage;
+                GreetingMessage = project.GreetingMessage;
+                Enquiries = project.Enquiries;
+                ApiKey = project.ApiKey;
+                Domains = project.Domains;
+                BusinessTimezone = project.BusinessTimezone;
+                BusinessTimeStartUtc = project.BusinessTimeStartUtc;
+                BusinessTimeEndUtc = project.BusinessTimeEndUtc;
+                BusinessEmail = project.BusinessEmail;
+            }
+
+            public Cache()
+            {
+                
+            }
+        }
     }
 }

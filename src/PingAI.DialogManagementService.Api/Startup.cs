@@ -26,8 +26,11 @@ using PingAI.DialogManagementService.Api.Authorization.Services;
 using PingAI.DialogManagementService.Api.Behaviours;
 using PingAI.DialogManagementService.Api.Filters;
 using PingAI.DialogManagementService.Api.Models;
+using PingAI.DialogManagementService.Api.Services;
+using PingAI.DialogManagementService.Application.Interfaces.Configuration;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
+using PingAI.DialogManagementService.Application.Interfaces.Services.Caching;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Slack;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
@@ -36,6 +39,7 @@ using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
 using PingAI.DialogManagementService.Infrastructure.Services.Nlu;
 using PingAI.DialogManagementService.Infrastructure.Services.Slack;
+using PingAI.DialogManagementService.Infrastructure.Utils;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using IAuthorizationService = PingAI.DialogManagementService.Application.Interfaces.Services.IAuthorizationService;
 
@@ -73,12 +77,9 @@ namespace PingAI.DialogManagementService.Api
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                     fv.RegisterValidatorsFromAssemblyContaining<Startup>();
                 })
-                .AddJsonOptions(options => {
-                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.IgnoreReadOnlyProperties = false;
-                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                    options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+                .AddJsonOptions(options =>
+                {
+                    JsonUtils.UpdateToDefaultOptions(options.JsonSerializerOptions);
                 });
                 // .AddNewtonsoftJson(options =>
                 // {
@@ -91,6 +92,12 @@ namespace PingAI.DialogManagementService.Api
             
             services.AddHealthChecks();
             services.AddApiVersioning();
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+            });
+            services.AddTransient<ICacheService, CacheService>();
             
             // Authentication setup
             services.AddAuthentication(options =>
@@ -214,6 +221,7 @@ namespace PingAI.DialogManagementService.Api
             });
 
             services.AddSingleton<IConfigurationManager, ConfigurationManager>();
+            services.AddSingleton<IAppConfig, AppConfig>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -263,6 +271,18 @@ namespace PingAI.DialogManagementService.Api
 
         public string SlackClientId => _configuration["Slack:ClientId"];
         public string SlackClientSecret => _configuration["Slack:ClientSecret"];
+    }
+
+    internal class AppConfig : IAppConfig
+    {
+        private readonly IWebHostEnvironment _environment;
+
+        public AppConfig(IWebHostEnvironment environment)
+        {
+            _environment = environment;
+        }
+
+        public string GlobalCachePrefix => $"{_environment.EnvironmentName}__dms__";
     }
     
     public class DateTimeConverter : JsonConverter<DateTime>

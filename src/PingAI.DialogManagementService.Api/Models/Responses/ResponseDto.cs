@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Responses
