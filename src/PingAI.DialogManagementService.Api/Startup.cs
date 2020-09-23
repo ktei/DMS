@@ -1,6 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,9 +18,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using Npgsql.Logging;
 using PingAI.DialogManagementService.Api.Authorization;
 using PingAI.DialogManagementService.Api.Authorization.Handlers;
@@ -73,14 +73,21 @@ namespace PingAI.DialogManagementService.Api
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                     fv.RegisterValidatorsFromAssemblyContaining<Startup>();
                 })
-                .AddNewtonsoftJson(options =>
-                {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                    options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffzzz";
-                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                .AddJsonOptions(options => {
+                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.IgnoreReadOnlyProperties = false;
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
                 });
+                // .AddNewtonsoftJson(options =>
+                // {
+                //     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                //     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                //     options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                //     options.SerializerSettings.DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffzzz";
+                //     options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                // });
             
             services.AddHealthChecks();
             services.AddApiVersioning();
@@ -256,6 +263,20 @@ namespace PingAI.DialogManagementService.Api
 
         public string SlackClientId => _configuration["Slack:ClientId"];
         public string SlackClientSecret => _configuration["Slack:ClientSecret"];
+    }
+    
+    public class DateTimeConverter : JsonConverter<DateTime>
+    {
+        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            Debug.Assert(typeToConvert == typeof(DateTime));
+            return DateTime.Parse(reader.GetString());
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
+        }
     }
     
     internal class RemoveVersionFromParameter : IOperationFilter

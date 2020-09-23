@@ -28,6 +28,17 @@ namespace PingAI.DialogManagementService.Domain.Model
             
             [JsonPropertyName("defaultValue")]
             public string? DefaultValue { get; set; }
+
+            public Field(string displayName, string name)
+            {
+                DisplayName = displayName;
+                Name = name;
+            }
+
+            public Field()
+            {
+                
+            }
         }
     }
 }

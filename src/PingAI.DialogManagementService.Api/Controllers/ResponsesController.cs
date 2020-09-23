@@ -21,11 +21,11 @@ namespace PingAI.DialogManagementService.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreateResponseResponse>> CreateResponse([FromBody] CreateResponseRequest request)
+        public async Task<ActionResult<ResponseDto>> CreateResponse([FromBody] CreateResponseRequest request)
         {
             var response = await _mediator.Send(new CreateResponseCommand(Guid.Parse(request.ProjectId),
                 Enum.Parse<ResponseType>(request.Type, true), request.RteText, request.Order));
-            return new CreateResponseResponse(response);
+            return new ResponseDto(response);
         }
     }
 }

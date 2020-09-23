@@ -46,8 +46,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Responses
                     Type = ResponseType.RTE.ToString()
                 });
             await httpResponse.IsOk();
-            var json = await httpResponse.Content.ReadAsStringAsync();
-            var response = await httpResponse.Content.ReadFromJsonAsync<CreateResponseResponse>();
+            var response = await httpResponse.Content.ReadFromJsonAsync<ResponseDto>();
             
             // clean up
             await _factory.WithDbContext(async context =>

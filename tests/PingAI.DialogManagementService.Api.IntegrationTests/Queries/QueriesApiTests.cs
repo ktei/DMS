@@ -239,6 +239,22 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                     {
                         Order = 1,
                         Type = ResponseType.HANDOVER.ToString()
+                    },
+                    new CreateResponseDto
+                    {
+                        Order = 2,
+                        Type = ResponseType.FORM.ToString(),
+                        Form = new CreateResponseFormDto
+                        {
+                            Fields = new []
+                            {
+                                new CreateResponseFormDto.Field
+                                {
+                                    DisplayName = "Name",
+                                    Name = "NAME"
+                                }
+                            }
+                        }
                     }
                 }
             };
@@ -269,7 +285,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             Single(response.Intents);
             Equal(4, response.Intents.First().PhraseParts.Length);
             Contains(response.Intents.First().PhraseParts, p => p.EntityName == newEntityName);
-            Equal(2, response.Responses.Length);
+            Equal(3, response.Responses.Length);
         }
         
         [Fact]
@@ -397,6 +413,22 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                     {
                         Order = 1,
                         Type = ResponseType.HANDOVER.ToString()
+                    },
+                    new CreateResponseDto
+                    {
+                        Order = 2,
+                        Type = ResponseType.FORM.ToString(),
+                        Form = new CreateResponseFormDto
+                        {
+                            Fields = new []
+                            {
+                                new CreateResponseFormDto.Field
+                                {
+                                    DisplayName = "Name",
+                                    Name = "NAME"
+                                }
+                            }
+                        }
                     }
                 }
             };
@@ -427,7 +459,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             
             NotNull(response);
             Single(response.Intents);
-            Equal(2, response.Responses.Length);
+            Equal(3, response.Responses.Length);
         }
         
         [Fact]

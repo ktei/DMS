@@ -11,12 +11,9 @@ namespace PingAI.DialogManagementService.Api.Models.Responses
         public string ProjectId { get; set; }
         public string Type { get; set; }
         
-        // TODO: choose one, either Json.Net or System.Text.Json
-        [JsonProperty("resolution")]
         [JsonPropertyName("resolution")]
         public ResolutionPartDto[]? Parts { get; set; }
         
-        [JsonProperty("form")]
         [JsonPropertyName("form")]
         public FormResolutionDto? Form { get; set; }
 

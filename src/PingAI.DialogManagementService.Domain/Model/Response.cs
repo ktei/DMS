@@ -95,6 +95,12 @@ namespace PingAI.DialogManagementService.Domain.Model
             Type = ResponseType.RTE;
         }
 
+        public void SetForm(FormResolution form)
+        {
+            Resolution = new Resolution(form ?? throw new ArgumentNullException(nameof(form)));
+            Type = ResponseType.FORM;
+        }
+
         public string GetDisplayText()
         {
             var sb = new StringBuilder();

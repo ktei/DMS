@@ -103,9 +103,10 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             }
             else if (request.Responses?.Any() == true)
             {
-                // TODO: we only support 2 cases for now:
+                // TODO: we only support these cases for now:
                 // 1. 1 RTE
                 // 2. 1 RTE + 1 HANDOVER
+                // 3. 1 FORM
                 var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
                
                 Debug.Assert(!string.IsNullOrEmpty(request.RteText));
