@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Projects;
 using PingAI.DialogManagementService.Application.Admin.Projects;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
+using PingAI.DialogManagementService.Application.Interfaces.Services.Caching;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
+using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Controllers.Admin
 {
@@ -31,13 +33,21 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
         // TODO: fix me - use mediatR
         [HttpGet("{projectId}")]
         public async Task<ActionResult<ProjectDto>> GetProject([FromRoute] Guid projectId,
-            [FromServices] IProjectRepository projectRepository)
+            [FromServices] IProjectRepository projectRepository,
+            [FromServices] ICacheService cacheService)
         {
+            var cachedProject = await cacheService.GetObject<Project.Cache>(Project.Cache.MakeKey(projectId));
+            if (cachedProject != null)
+                return new ProjectDto(new Project(cachedProject));
             var project = await projectRepository.GetProjectById(projectId);
             if (project == null)
             {
                 throw new NotFoundException($"Project {projectId} does not exist");
             }
+            
+            var cache = new Project.Cache(project);
+            await cacheService.SetObject(Project.Cache.MakeKey(projectId), cache);
+
 
             return new ProjectDto(project);
         }
