@@ -374,6 +374,7 @@ namespace PingAI.DialogManagementService.Domain.Model
 
             public Cache(Project project)
             {
+                Id = project.Id;
                 Name = project.Name;
                 OrganisationId = project.OrganisationId;
                 WidgetTitle = project.WidgetTitle;
