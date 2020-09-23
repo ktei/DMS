@@ -33,7 +33,9 @@ namespace PingAI.DialogManagementService.Application.Queries.ListQueries
             var responseType = request.QueryType switch
             {
                 QueryTypes.Faq => ResponseType.RTE,
-                QueryTypes.Handover => ResponseType.HANDOVER
+                QueryTypes.Handover => ResponseType.HANDOVER,
+                QueryTypes.Enquiry => ResponseType.FORM,
+                _ => default(ResponseType?)
             };
             
             var queries = await _queryRepository.GetQueriesByProjectId(request.ProjectId, responseType);

@@ -31,6 +31,7 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
         }
 
         // TODO: fix me - use mediatR
+        // TODO: think - should cache be hidden under ProjectRepository?
         [HttpGet("{projectId}")]
         public async Task<ActionResult<ProjectDto>> GetProject([FromRoute] Guid projectId,
             [FromServices] IProjectRepository projectRepository,

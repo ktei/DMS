@@ -4,5 +4,6 @@ namespace PingAI.DialogManagementService.Application.Queries.ListQueries
     {
         public const string Faq = "faq";
         public const string Handover = "handover";
+        public const string Enquiry = "enquiry";
     }
 }

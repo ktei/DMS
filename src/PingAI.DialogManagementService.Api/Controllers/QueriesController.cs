@@ -45,6 +45,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                     case null:
                     case QueryTypes.Faq:
                     case QueryTypes.Handover:
+                    case QueryTypes.Enquiry:    
                         return true;
                     default:
                         return false;
