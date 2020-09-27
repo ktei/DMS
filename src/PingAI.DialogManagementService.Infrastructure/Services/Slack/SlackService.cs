@@ -34,8 +34,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Services.Slack
                 {"code", code},
                 {"client_id", _configurationManager.SlackClientId},
                 {"client_secret", _configurationManager.SlackClientSecret},
-                {"redirect_uri", redirectUri.Substring(0, 
-                    redirectUri.IndexOf("?", StringComparison.OrdinalIgnoreCase))}
+                {"redirect_uri", redirectUri}
             };
             var req = new HttpRequestMessage(HttpMethod.Post, "/api/oauth.v2.access")
             {
