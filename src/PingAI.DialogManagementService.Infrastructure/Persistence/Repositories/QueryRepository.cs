@@ -68,9 +68,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 query = query.Where(x => x.QueryResponses.All(
                     qr => qr.Response!.Type.ToString() == responseType.ToString()));
             }
-            else if (responseType == ResponseType.HANDOVER)
+            else if (responseType == ResponseType.HANDOVER || responseType == ResponseType.FORM)
             {
-                // otherwise, it's HANDOVER, which will have RTE and HANDOVER
+                // otherwise, we filter by response type
                 query = query.Where(x => x.QueryResponses.Any(
                     qr => qr.Response!.Type.ToString() == responseType.ToString()));
             }
