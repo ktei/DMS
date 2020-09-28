@@ -35,13 +35,13 @@ namespace PingAI.DialogManagementService.Application.Integration.Slack
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
             
-            var (state, code) = ParseRedirectUri(request.RedirectUri);
+            // var (state, code) = ParseRedirectUri(request.RedirectUri);
             // if (request.State != state)
             // {
             //     throw new ForbiddenException("Invalid state");
             // }
             
-            var slackResponse = await _slackService.ExchangeOAuthCode(code, request.RedirectUri);
+            var slackResponse = await _slackService.ExchangeOAuthCode(request.Code, request.RedirectUri);
             if (!slackResponse.Ok)
             {
                 throw new BadRequestException($"Failed to connect to Slack: {slackResponse.Error}");
