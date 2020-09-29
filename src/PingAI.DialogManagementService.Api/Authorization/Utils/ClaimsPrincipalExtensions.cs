@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 
 namespace PingAI.DialogManagementService.Api.Authorization.Utils
@@ -18,7 +19,7 @@ namespace PingAI.DialogManagementService.Api.Authorization.Utils
                     var grantedScopes = new HashSet<string>(
                         c.Value.Split(" ", StringSplitOptions.RemoveEmptyEntries));
                     var wantedScopes = new HashSet<string>();
-                    return wantedScopes.IsSubsetOf(grantedScopes);
+                    return wantedScopes.Any() && wantedScopes.IsSubsetOf(grantedScopes);
                 }
 
                 return false;
