@@ -18,7 +18,7 @@ namespace PingAI.DialogManagementService.Api.Authorization.Utils
                 {
                     var grantedScopes = new HashSet<string>(
                         c.Value.Split(" ", StringSplitOptions.RemoveEmptyEntries));
-                    var wantedScopes = new HashSet<string>();
+                    var wantedScopes = new HashSet<string>(scopes);
                     return wantedScopes.Any() && wantedScopes.IsSubsetOf(grantedScopes);
                 }
 
