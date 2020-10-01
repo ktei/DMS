@@ -17,16 +17,33 @@ namespace PingAI.DialogManagementService.Application.Queries.ListQueries
     {
         private readonly IQueryRepository _queryRepository;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IProjectVersionRepository _projectVersionRepository;
 
-        public ListQueriesQueryHandler(IQueryRepository queryRepository, IAuthorizationService authorizationService)
+        public ListQueriesQueryHandler(IQueryRepository queryRepository, IAuthorizationService authorizationService,
+            IProjectVersionRepository projectVersionRepository)
         {
             _queryRepository = queryRepository;
             _authorizationService = authorizationService;
+            _projectVersionRepository = projectVersionRepository;
         }
-        
+
         public async Task<List<Query>> Handle(ListQueriesQuery request, CancellationToken cancellationToken)
         {
-            var canRead = await _authorizationService.UserCanReadProject(request.ProjectId);
+            var projectId = request.ProjectId;
+            
+            // Some API consumer such as chatbot-runtime wants to query
+            // the latest published (runtime) project's queries
+            if (request.Runtime)
+            {
+                var latestProjectVersion =
+                    await _projectVersionRepository.GetLatestVersionByProjectId(projectId);
+                if (latestProjectVersion != null)
+                {
+                    projectId = latestProjectVersion.ProjectId;
+                }
+            }
+            
+            var canRead = await _authorizationService.UserCanReadProject(projectId);
             if (!canRead)
                 throw new ForbiddenException(ProjectReadDenied);
 

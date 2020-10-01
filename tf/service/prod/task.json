@@ -1,7 +1,7 @@
 [
   {
     "name": "prod-dms",
-    "image": "397977497739.dkr.ecr.ap-southeast-2.amazonaws.com/dev-dms:latest",
+    "image": "397977497739.dkr.ecr.ap-southeast-2.amazonaws.com/prod-dms:latest",
     "cpu": 128,
     "memory": 256,
     "networkMode": "awsvpc",

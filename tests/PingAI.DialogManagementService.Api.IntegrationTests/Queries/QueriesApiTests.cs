@@ -29,6 +29,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
         }
 
         [Fact]
+        // TODO: we need to test fetching runtime queries
         public async Task ListQueries()
         {
             var projectId = _testingFixture.Project.Id;
@@ -56,6 +57,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             var actual = response.FirstOrDefault(r => 
                 r.Intent.Name == q.Intents.First().Name);
             NotNull(actual);
+            Equal("Hello, World!", actual!.Response.Text);
             Equal("Hello, World!", actual.ResponseText);
         }
         

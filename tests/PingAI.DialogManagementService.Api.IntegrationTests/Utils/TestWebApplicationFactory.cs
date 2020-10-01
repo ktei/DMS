@@ -38,6 +38,11 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                 
                 // uncomment this if you want to mock NluService
                 services.AddTransient(_ => MockNluService());
+                
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = "localhost:6379";
+                });
             });
         }
 

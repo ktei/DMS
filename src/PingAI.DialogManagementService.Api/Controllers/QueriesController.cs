@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -31,35 +32,32 @@ namespace PingAI.DialogManagementService.Api.Controllers
 
         [HttpGet]
         public async Task<ActionResult<List<QueryListItemDto>>> ListQueries([FromQuery] Guid? projectId,
-            [FromQuery] string? queryType)
+            [FromQuery] string? queryType,
+            [FromQuery] bool? runtime)
         {
             if (!projectId.HasValue)
             {
                 throw new BadRequestException($"{nameof(projectId)} must be provided");
             }
 
-            static bool CheckQueryType(string? t)
-            {
-                switch (t)
-                {
-                    case null:
-                    case QueryTypes.Faq:
-                    case QueryTypes.Handover:
-                    case QueryTypes.Enquiry:    
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            if (!CheckQueryType(queryType))
+            if (!ValidateQueryType(queryType))
                 throw new BadRequestException($"{nameof(queryType)} is invalid. Accepted types are " +
                                               $"{QueryTypes.Faq}, {QueryTypes.Handover}");
 
-            var query = new ListQueriesQuery(projectId.Value, queryType);
+            var query = new ListQueriesQuery(projectId.Value, queryType, runtime == true);
             var queries = await _mediator.Send(query);
             return new ListQueriesResponse(queries.Select(q => new QueryListItemDto(q)));
         }
+
+        private static readonly string[] ValidQueryTypes =
+            typeof(QueryTypes).GetFields(BindingFlags.Public | BindingFlags.Static |
+                                         BindingFlags.FlattenHierarchy)
+                .Where(fi => fi.IsLiteral && !fi.IsInitOnly)
+                .Select(fi => Convert.ToString(fi.GetValue(null)) ?? string.Empty)
+                .ToArray();
+
+        private static bool ValidateQueryType(string? queryType) =>
+            queryType == null || ValidQueryTypes.Contains(queryType);
 
         [HttpGet("{queryId}")]
         public async Task<ActionResult<QueryDto>> GetQuery([FromRoute] Guid queryId)
