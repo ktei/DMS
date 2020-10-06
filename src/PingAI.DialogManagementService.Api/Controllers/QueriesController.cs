@@ -151,6 +151,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
         private static IEnumerable<PhrasePart> FlattenPhraseParts(Guid projectId, Guid intentId,
             CreatePhrasePartDto[][] partsGroups)
         {
+            var displayOrder = 1;
             foreach (var parts in partsGroups)
             {
                 var phraseId = Guid.NewGuid();
@@ -159,8 +160,10 @@ namespace PingAI.DialogManagementService.Api.Controllers
                     yield return new PhrasePart(intentId, phraseId, part.Position, part.Text,
                         part.Value, Enum.Parse<PhrasePartType>(part.Type),
                         string.IsNullOrEmpty(part.EntityName) ? null : new EntityName(part.EntityName, projectId, true),
-                        string.IsNullOrEmpty(part.EntityTypeId) ? default(Guid?) : Guid.Parse(part.EntityTypeId));
+                        string.IsNullOrEmpty(part.EntityTypeId) ? default(Guid?) : Guid.Parse(part.EntityTypeId), displayOrder);
                 }
+
+                displayOrder++;
             }
         }
 

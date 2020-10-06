@@ -49,10 +49,14 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var phraseParts = new List<PhrasePart>();
             if (request.Phrases != null)
             {
-                phraseParts.AddRange(from phrase in request.Phrases
-                    let phraseId = Guid.NewGuid()
-                    from part in phrase
-                    select MapCreatePhrasePartDto(Guid.Empty, intentId, phraseId, part));
+                var displayOrder = 1;
+                foreach (var phrase in request.Phrases)
+                {
+                    var phraseId = Guid.NewGuid();
+                    phraseParts.AddRange(phrase.Select(part => MapCreatePhrasePartDto(Guid.Empty,
+                        intentId, phraseId, part, displayOrder)));
+                    displayOrder++;
+                }
             }
             var intent = await _mediator.Send(new UpdateIntentCommand(intentId, request.Name, phraseParts));
             
@@ -66,10 +70,14 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var phraseParts = new List<PhrasePart>();
             if (request.Phrases != null)
             {
-                phraseParts.AddRange(from phrase in request.Phrases
-                    let phraseId = Guid.NewGuid()
-                    from part in phrase
-                    select MapCreatePhrasePartDto(Guid.Parse(request.ProjectId), intentId, phraseId, part));
+                var displayOrder = 1;
+                foreach (var phrase in request.Phrases)
+                {
+                    var phraseId = Guid.NewGuid();
+                    phraseParts.AddRange(phrase.Select(part => MapCreatePhrasePartDto(Guid.Parse(request.ProjectId),
+                        intentId, phraseId, part, displayOrder)));
+                    displayOrder++;
+                }
             }
 
             var intent = await _mediator.Send(
@@ -79,12 +87,12 @@ namespace PingAI.DialogManagementService.Api.Controllers
             return new CreateIntentResponse(intent);
         }
 
-        private static PhrasePart MapCreatePhrasePartDto(Guid projectId, Guid intentId, Guid phraseId, CreatePhrasePartDto p)
+        private static PhrasePart MapCreatePhrasePartDto(Guid projectId, Guid intentId, Guid phraseId, CreatePhrasePartDto p, int displayOrder)
         {
             var phrasePart = new PhrasePart(intentId, phraseId,
                 p.Position, p.Text, p.Value, Enum.Parse<PhrasePartType>(p.Type),
                 default(Guid?),
-                p.EntityTypeId == null ? default(Guid?) : Guid.Parse(p.EntityTypeId));
+                p.EntityTypeId == null ? default(Guid?) : Guid.Parse(p.EntityTypeId), displayOrder);
             if (p.EntityName != null)
             {
                 phrasePart.UpdateEntityName(new EntityName(p.EntityName, projectId, true));

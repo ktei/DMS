@@ -268,7 +268,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             PhrasePart CopyPhrasePart(Intent i, PhrasePart p) =>
                 new PhrasePart(i.Id, p.PhraseId, p.Position,
                     p.Text, p.Value, p.Type, p.EntityNameId.HasValue ? entityNamesCopy[p.EntityNameId.Value] : default,
-                    p.EntityTypeId.HasValue ? entityTypesCopy[p.EntityTypeId.Value] : default);
+                    p.EntityTypeId.HasValue ? entityTypesCopy[p.EntityTypeId.Value] : default, p.DisplayOrder);
 
             Intent CopyIntent(Intent i)
             {

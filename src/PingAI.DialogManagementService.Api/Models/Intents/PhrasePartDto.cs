@@ -13,9 +13,10 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
         public string Type { get; set; }
         public string? EntityName { get; set; }
         public string? EntityTypeId { get; set; }
+        public int DisplayOrder { get; set; }
 
         public PhrasePartDto(string id, string intentId, string phraseId, int? position, string? text, string? value,
-            string type, string? entityName, string? entityTypeId)
+            string type, string? entityName, string? entityTypeId, int displayOrder)
         {
             Id = id;
             IntentId = intentId;
@@ -26,6 +27,7 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
             Type = type;
             EntityName = entityName;
             EntityTypeId = entityTypeId;
+            DisplayOrder = displayOrder;
         }
 
         public PhrasePartDto(PhrasePart phrasePart) :
@@ -37,7 +39,8 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
                 phrasePart.Value,
                 phrasePart.Type.ToString(),
                 phrasePart.EntityName?.Name,
-                phrasePart.EntityTypeId?.ToString())
+                phrasePart.EntityTypeId?.ToString(),
+                phrasePart.DisplayOrder)
         {
             
         }

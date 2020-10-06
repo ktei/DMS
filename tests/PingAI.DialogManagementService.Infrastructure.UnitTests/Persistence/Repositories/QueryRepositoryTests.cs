@@ -32,7 +32,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var phraseParts = new []{
                 new PhrasePart(intent.Id,
                     Guid.NewGuid(), 0, "Welcome", null, 
-                    PhrasePartType.TEXT, default(Guid?), null),
+                    PhrasePartType.TEXT, default(Guid?), null, 1),
             };
             intent.UpdatePhrases(phraseParts);
             await context.AddAsync(intent);

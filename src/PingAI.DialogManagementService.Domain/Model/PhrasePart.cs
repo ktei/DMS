@@ -16,12 +16,13 @@ namespace PingAI.DialogManagementService.Domain.Model
         public EntityName? EntityName { get; private set; }
         public Guid? EntityTypeId { get; private set; }
         public EntityType? EntityType { get; private set; }
+        public int DisplayOrder { get; private set; }
 
         public const int MaxValueLength = 255;
         public const int MaxTextLength = 255;
         
         public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
-            PhrasePartType type, Guid? entityNameId, Guid? entityTypeId)
+            PhrasePartType type, Guid? entityNameId, Guid? entityTypeId, int displayOrder)
         {
             if (Text?.Length > MaxTextLength)
                 throw new ArgumentException($"Max length of {nameof(Text)} is {MaxTextLength}");
@@ -37,18 +38,19 @@ namespace PingAI.DialogManagementService.Domain.Model
             Type = type;
             EntityNameId = entityNameId;
             EntityTypeId = entityTypeId;
+            DisplayOrder = displayOrder;
         }
         
         public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
-            PhrasePartType type, EntityName? entityName, Guid? entityTypeId) : this(intentId,
-            phraseId, position, text, value, type, default(Guid?), entityTypeId)
+            PhrasePartType type, EntityName? entityName, Guid? entityTypeId, int displayOrder) : this(intentId,
+            phraseId, position, text, value, type, default(Guid?), entityTypeId, displayOrder)
         {
             EntityName = entityName;
         }
         
         public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
-            PhrasePartType type, EntityName? entityName, EntityType? entityType) : this(intentId,
-            phraseId, position, text, value, type, default(Guid?), default(Guid?))
+            PhrasePartType type, EntityName? entityName, EntityType? entityType, int displayOrder) : this(intentId,
+            phraseId, position, text, value, type, default(Guid?), default(Guid?), displayOrder)
         {
             EntityName = entityName;
             EntityType = entityType;

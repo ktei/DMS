@@ -134,9 +134,9 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 {
                     new PhrasePart(Guid.Empty, Guid.NewGuid(), 0, 
                         "Hello, World", null,
-                        PhrasePartType.TEXT, default(Guid?), default),
+                        PhrasePartType.TEXT, default(Guid?), default, 1),
                     new PhrasePart(Guid.Empty, Guid.NewGuid(), 0, "test", null,
-                        PhrasePartType.ENTITY, entityName, entityType)
+                        PhrasePartType.ENTITY, entityName, entityType, 2)
                 });
             var response = new Response(new Resolution(new[]
             {

@@ -62,7 +62,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 var intent = new Intent("i1", _testingFixture.Project.Id, IntentType.STANDARD);
                 var phrasePart = new PhrasePart(intent.Id,
                     Guid.NewGuid(), 0, "Hello, World!", null, PhrasePartType.TEXT,
-                    default(Guid?), null);
+                    default(Guid?), null, 1);
                 intent.UpdatePhrases(new []{phrasePart});
                 await context.AddRangeAsync(intent);
                 await context.SaveChangesAsync();
@@ -158,10 +158,10 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
             var phraseId = Guid.NewGuid();
             var phrasePart1 = new PhrasePart(intent.Id,
                 phraseId, 0, "hello world", null, PhrasePartType.TEXT,
-                default(Guid?), null);
+                default(Guid?), null, 1);
             var phrasePart2 = new PhrasePart(intent.Id,
                 phraseId, 0, null,"Beijing", PhrasePartType.CONSTANT_ENTITY,
-                entityName.Id, entityType.Id);
+                entityName.Id, entityType.Id, 1);
             intent.UpdatePhrases(new[]
             {
                 phrasePart1,
@@ -235,9 +235,9 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 Equal(intent.Id.ToString(), response.IntentId);
                 Equal("helloWorld", response.Name);
                 Contains(response.PhraseParts, p => 
-                    p.EntityName == entityName.Name && p.Value == "Shanghai");
+                    p.EntityName == entityName.Name && p.Value == "Shanghai" && p.DisplayOrder == 1);
                 Contains(response.PhraseParts, p => 
-                    p.EntityName == "TEST_departureCity" && p.Text == "Melbourne");
+                    p.EntityName == "TEST_departureCity" && p.Text == "Melbourne" && p.DisplayOrder == 2);
             });
         }
         

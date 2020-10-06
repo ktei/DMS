@@ -34,8 +34,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
 
             builder.Property(o => o.EntityTypeId)
                 .HasColumnName("entityTypeId");
-
             
+            builder.Property(o => o.DisplayOrder)
+                .HasColumnName("displayOrder");
+
             builder.AttachTimestamps();
             
             builder.HasOne(o => o.EntityName);
