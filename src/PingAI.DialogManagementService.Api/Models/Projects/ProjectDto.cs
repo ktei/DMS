@@ -61,7 +61,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
             BusinessTimeEnd = project.BusinessTimeEndUtc.HasValue
                 ? ConvertUtcToString(project.BusinessTimeEndUtc.Value)
                 : null;
-            BusinessTimezone = BusinessTimezone;
+            BusinessTimezone = project.BusinessTimezone;
             BusinessEmail = project.BusinessEmail;
         }
 
