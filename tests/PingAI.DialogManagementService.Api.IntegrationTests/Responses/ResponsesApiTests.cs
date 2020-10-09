@@ -60,7 +60,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Responses
             });
             
             NotNull(response);
-            Contains(response.Parts!, p => p.EntityNameId == entityName.Id.ToString());
+            Contains(response.Resolution.Parts!, p => p.EntityNameId == entityName.Id.ToString());
         }
 
         public async Task InitializeAsync()

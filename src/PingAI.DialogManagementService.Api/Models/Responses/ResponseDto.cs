@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Text.Json.Serialization;
 using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Responses
@@ -9,13 +8,8 @@ namespace PingAI.DialogManagementService.Api.Models.Responses
         public string ResponseId { get; set; }
         public string ProjectId { get; set; }
         public string Type { get; set; }
+        public ResolutionDto Resolution { get; set; }
         
-        [JsonPropertyName("resolution")]
-        public ResolutionPartDto[]? Parts { get; set; }
-        
-        [JsonPropertyName("form")]
-        public FormResolutionDto? Form { get; set; }
-
         public ResponseDto(Response response)
         {
             ResponseId = response.Id.ToString();
@@ -23,11 +17,18 @@ namespace PingAI.DialogManagementService.Api.Models.Responses
             Type = response.Type.ToString();
             if (response.Resolution?.Type == ResolutionType.PARTS)
             {
-                Parts = response.Resolution.Parts?.Select(p => new ResolutionPartDto(p)).ToArray();
+                var parts = response.Resolution.Parts?
+                    .Select(p => new ResolutionPartDto(p)).ToArray();
+                Resolution = new ResolutionDto(parts, null, ResolutionType.PARTS.ToString());
             }
             else if (response.Resolution?.Type == ResolutionType.FORM)
             {
-                Form = response.Resolution.Form == null ? default : new FormResolutionDto(response.Resolution.Form);
+                var form = response.Resolution.Form == null ? default : new FormResolutionDto(response.Resolution.Form);
+                Resolution = new ResolutionDto(null, form, ResolutionType.FORM.ToString());
+            }
+            else
+            {
+                Resolution = new ResolutionDto(null, null, ResolutionType.EMPTY.ToString());
             }
         }
 
