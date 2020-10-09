@@ -33,7 +33,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
             True(response.Count > 0);
         }
 
-        [Fact(Skip = "Put this back after we bring back auth")]
+        [Fact]
         public async Task NonAdminShouldBeRejected()
         {
             var client = _factory.CreateUserAuthenticatedClient();
@@ -43,7 +43,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
             Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
-        [Fact(Skip = "Put this back after we bring back auth")]
+        [Fact]
         public async Task GetRuntimeProjectByDesignTimeProjectId()
         {
             var response = await _client.GetFromJsonAsync<ProjectDto>(
