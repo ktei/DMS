@@ -276,13 +276,16 @@ namespace PingAI.DialogManagementService.Api
     internal class AppConfig : IAppConfig
     {
         private readonly IWebHostEnvironment _environment;
+        private readonly IConfiguration _configuration;
 
-        public AppConfig(IWebHostEnvironment environment)
+        public AppConfig(IWebHostEnvironment environment, IConfiguration configuration)
         {
             _environment = environment;
+            _configuration = configuration;
         }
 
         public string GlobalCachePrefix => $"{_environment.EnvironmentName}__dms__";
+        public string AdminClientId => _configuration["AdminClientId"];
     }
     
     public class DateTimeConverter : JsonConverter<DateTime>

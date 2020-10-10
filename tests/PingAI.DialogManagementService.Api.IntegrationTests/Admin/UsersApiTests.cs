@@ -22,7 +22,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
         public UsersApiTests(TestWebApplicationFactory factory)
         {
             _factory = factory;
-            _client = _factory.CreateAdminAuthenticatedClient();
+            _client = _factory.CreateAdminUserAuthenticatedClient();
         }
 
         [Fact]

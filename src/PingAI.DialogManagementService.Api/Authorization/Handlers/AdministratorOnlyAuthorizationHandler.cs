@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using PingAI.DialogManagementService.Api.Authorization.Requirements;
 using PingAI.DialogManagementService.Api.Authorization.Utils;
+using PingAI.DialogManagementService.Application.Interfaces.Configuration;
 
 namespace PingAI.DialogManagementService.Api.Authorization.Handlers
 {
@@ -9,16 +10,24 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
         AuthorizationHandler<AdministratorOnlyRequirement>
 
     {
+        private readonly IAppConfig _appConfig;
+
+        public AdministratorOnlyAuthorizationHandler(IAppConfig appConfig)
+        {
+            _appConfig = appConfig;
+        }
+        
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
             AdministratorOnlyRequirement requirement)
         {
-            if (!context.User.HasScope("admin"))
+            if (context.User.IsClient(_appConfig.AdminClientId) ||
+                context.User.HasAdminScope())
             {
-                context.Fail();
+                context.Succeed(requirement);
                 return Task.CompletedTask;
             }
-
-            context.Succeed(requirement);
+            
+            context.Fail();
             return Task.CompletedTask;
         }
     }

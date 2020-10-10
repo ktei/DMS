@@ -7,9 +7,9 @@ using Microsoft.Extensions.Options;
 
 namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
 {
-    public class TestAdminAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
+    public class TestAdminUserAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
-        public TestAdminAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger,
+        public TestAdminUserAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger,
             UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
         {
         }

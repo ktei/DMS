@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
         public ProjectsApiTests(TestWebApplicationFactory factory)
         {
             _factory = factory;
-            _client = _factory.CreateAdminAuthenticatedClient();
+            _client = _factory.CreateAdminUserAuthenticatedClient();
         }
         
         [Fact]
@@ -31,16 +30,6 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
                 $"/dms/api/admin/v1/projects?organisationId={_testingFixture.Organisation.Id}");
             NotNull(response);
             True(response.Count > 0);
-        }
-
-        [Fact]
-        public async Task NonAdminShouldBeRejected()
-        {
-            var client = _factory.CreateUserAuthenticatedClient();
-            var response = await client.SendAsync(
-                new HttpRequestMessage(HttpMethod.Get,
-                    $"/dms/api/admin/v1/projects?organisationId={_testingFixture.Organisation.Id}"));
-            Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
         [Fact]

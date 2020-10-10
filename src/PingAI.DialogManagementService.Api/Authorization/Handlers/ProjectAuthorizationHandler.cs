@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using PingAI.DialogManagementService.Api.Authorization.Utils;
+using PingAI.DialogManagementService.Application.Interfaces.Configuration;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 
 namespace PingAI.DialogManagementService.Api.Authorization.Handlers
@@ -13,12 +14,14 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
     {
         private readonly IUserRepository _userRepository;
         private readonly IOrganisationRepository _organisationRepository;
+        private readonly IAppConfig _appConfig;
 
         public ProjectAuthorizationHandler(IUserRepository userRepository,
-            IOrganisationRepository organisationRepository)
+            IOrganisationRepository organisationRepository, IAppConfig appConfig)
         {
             _userRepository = userRepository;
             _organisationRepository = organisationRepository;
+            _appConfig = appConfig;
         }
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
@@ -38,7 +41,7 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
                 return;
             }
             
-            if (context.User.IsAdmin())
+            if (context.User.HasAdminScope() || context.User.IsClient(_appConfig.AdminClientId))
             {
                 context.Succeed(requirement);
                 return;
