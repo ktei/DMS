@@ -1,6 +1,3 @@
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PingAI.DialogManagementService.Domain.Model;
@@ -31,13 +28,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
 
         private static string? SerializeResolution(Resolution? resolution)
         {
-            if (resolution == null)
-                return null;
-            return resolution.Type switch
-            {
-                ResolutionType.PARTS => JsonUtils.Serialize(resolution.Parts!),
-                _ => JsonUtils.Serialize(resolution)
-            };
+            return resolution == null ? null : JsonUtils.Serialize(resolution);
         }
 
         private static Resolution? ConvertToResolution(string? json)
