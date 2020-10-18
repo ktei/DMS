@@ -56,7 +56,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
         {
             var defaultProject = new Project("Default project", organisation.Id,
                 Defaults.WidgetTitle, Defaults.WidgetColor, Defaults.WidgetDescription,
-                null, Defaults.GreetingMessage, null, ApiKey.GenerateNew(), null,
+                Defaults.FallbackMessage, Defaults.GreetingMessage, null, ApiKey.GenerateNew(), null,
                 Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc, Defaults.BusinessTimeEndUtc, null);
             foreach (var enquiryEntityName in Defaults.EnquiryEntityNames)
             {
