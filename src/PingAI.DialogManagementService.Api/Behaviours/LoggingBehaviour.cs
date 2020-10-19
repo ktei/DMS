@@ -20,9 +20,9 @@ namespace PingAI.DialogManagementService.Api.Behaviours
         {
             var requestId = Guid.NewGuid();
             using var _ = _logger.BeginScope("Received new request {requestId}", requestId);
-            _logger.LogInformation($"Handling {typeof(TRequest).Name} {{@request}}", request);
+            _logger.LogDebug($"Handling {typeof(TRequest).Name} {{@request}}", request);
             var response = await next();
-            _logger.LogInformation($"Handled {typeof(TRequest).Name}");
+            _logger.LogDebug($"Handled {typeof(TRequest).Name}");
 
             return response;
         }
