@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using PingAI.DialogManagementService.Application.Interfaces.Configuration;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Caching;
-using PingAI.DialogManagementService.Infrastructure.Utils;
+using PingAI.DialogManagementService.Domain.Utils;
 
 namespace PingAI.DialogManagementService.Api.Services
 {

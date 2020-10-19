@@ -33,7 +33,7 @@ namespace PingAI.DialogManagementService.Application.Responses.CreateResponse
             if (!canWrite)
                 throw new ForbiddenException(ErrorDescriptions.ProjectWriteDenied);
             var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
-            var response = new Response(default, request.ProjectId,
+            var response = new Response(default(Resolution), request.ProjectId,
                 request.Type, request.Order);
             
             // TODO: remove this assert after we support more types of responses

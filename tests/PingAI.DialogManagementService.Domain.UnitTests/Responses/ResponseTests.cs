@@ -15,7 +15,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(default,
+            var sut = new Response(default(Resolution),
                 projectId, ResponseType.RTE, 0);
             
             // Act
@@ -32,7 +32,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(default,
+            var sut = new Response(default(Resolution),
                 projectId, ResponseType.RTE, 0);
             var entityNames = new Dictionary<string, EntityName>
             {
@@ -53,7 +53,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(default,
+            var sut = new Response(default(Resolution),
                 projectId, ResponseType.RTE, 0);
             var entityNames = new Dictionary<string, EntityName>
             {
@@ -79,7 +79,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Responses
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var sut = new Response(default,
+            var sut = new Response(default(Resolution),
                 projectId, ResponseType.RTE, 0);
             var entityNames = new Dictionary<string, EntityName>
             {

@@ -10,4 +10,10 @@
     <PackageReference Include="System.Text.Json" Version="4.7.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="PingAI.DialogManagementService.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\tests\PingAI.DialogManagementService.Api.IntegrationTests\bin\Debug\netcoreapp3.1\PingAI.DialogManagementService.Infrastructure.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PingAI.DialogManagementService.Infrastructure.Utils
+namespace PingAI.DialogManagementService.Domain.Utils
 {
     public static class JsonUtils
     {

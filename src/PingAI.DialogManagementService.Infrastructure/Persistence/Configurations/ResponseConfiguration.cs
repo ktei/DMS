@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Domain.Utils;
 using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
@@ -11,11 +12,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
         {
             builder.ToTable("Responses", "chatbot");
             builder.ConfigureId();
-            builder.Property(o => o.Resolution)
+            builder.Ignore(o => o.Resolution);
+            builder.Property(o => o.ResolutionJson)
                 .HasColumnName("resolution")
-                .HasColumnType("jsonb")
-                .HasConversion(x => SerializeResolution(x),
-                    x => ConvertToResolution(x));
+                .HasColumnType("jsonb");
+                // .HasConversion(x => SerializeResolution(x),
+                //     x => ConvertToResolution(x));
             builder.Property(o => o.ProjectId)
                 .HasColumnName("projectId");
             builder.Property(o => o.Type)

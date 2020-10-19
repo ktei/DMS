@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Text;
 using System.Text.RegularExpressions;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
+using PingAI.DialogManagementService.Domain.Utils;
 using static PingAI.DialogManagementService.Domain.Model.ResolutionPart;
 
 namespace PingAI.DialogManagementService.Domain.Model
@@ -11,7 +12,10 @@ namespace PingAI.DialogManagementService.Domain.Model
     public class Response : DomainEntity, IHaveTimestamps
     {
         public Guid Id { get; private set; }
-        public Resolution? Resolution { get; private set; }
+        public string? ResolutionJson { get; private set; }
+
+        public Resolution? Resolution =>
+            ResolutionJson == null ? null : JsonUtils.TryDeserialize<Resolution>(ResolutionJson);
         public Guid ProjectId { get; private set; }
         public Project? Project { get; private set; }
         public ResponseType Type { get; private set; }
@@ -23,13 +27,19 @@ namespace PingAI.DialogManagementService.Domain.Model
         public const int MaxRteTextLength = 4000;
         
         public Response(Resolution? resolution, Guid projectId, ResponseType type,
+            int order) : this(JsonUtils.Serialize(resolution ?? Resolution.Empty),
+            projectId, type, order)
+        {
+        }
+
+        public Response(string? resolutionJson, Guid projectId, ResponseType type,
             int order)
         {
-            Resolution = resolution;
+            ResolutionJson = resolutionJson;
             ProjectId = projectId;
             Type = type;
             Order = order;
-            _queryResponses = new List<QueryResponse>();
+            _queryResponses = new List<QueryResponse>(); 
         }
         
         public Response(Guid projectId, ResponseType type,
@@ -37,7 +47,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
         }
 
-        public Response(ResponseType type, int order) : this(null, Guid.Empty, type, order)
+        public Response(ResponseType type, int order) : this(Resolution.Empty, Guid.Empty, type, order)
         {
 
         }
@@ -91,13 +101,13 @@ namespace PingAI.DialogManagementService.Domain.Model
                 resolutionParts.Add(TextPart(rteText.Substring(pos)));
             }
 
-            Resolution = new Resolution(resolutionParts.ToArray());
+            ResolutionJson = JsonUtils.Serialize(new Resolution(resolutionParts.ToArray()));
             Type = ResponseType.RTE;
         }
 
         public void SetForm(FormResolution form)
         {
-            Resolution = new Resolution(form ?? throw new ArgumentNullException(nameof(form)));
+            ResolutionJson = JsonUtils.Serialize(new Resolution(form ?? throw new ArgumentNullException(nameof(form))));
             Type = ResponseType.FORM;
         }
 
