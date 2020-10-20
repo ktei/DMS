@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -36,12 +37,16 @@ namespace PingAI.DialogManagementService.Application.Projects.PublishProject
             var canWrite = await _authorizationService.UserCanWriteProject(request.ProjectId);
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
-            var sw = new Stopwatch();
             
             var project = await PerformanceLogger.Monitor(_projectRepository.GetFullProjectById(request.ProjectId),
                 nameof(_projectRepository.GetFullProjectById));
             if (project == null)
                 throw new ForbiddenException(ProjectReadDenied);
+
+            var validationErrors = Validate(project);
+            if (validationErrors.Any())
+                throw new BadRequestException($"Publish failed. {string.Join(" ", validationErrors)}");
+            
             var user = await _requestContext.GetUser();
             var organisationId = user.OrganisationIds.First();
             var latestVersion = await _projectVersionRepository.GetLatestVersionByProjectId(request.ProjectId);
@@ -53,6 +58,26 @@ namespace PingAI.DialogManagementService.Application.Projects.PublishProject
             await _projectVersionRepository.AddProjectVersion(versionToPublish);
             await _uow.SaveChanges();
             return projectToPublish;
+        }
+
+        /// <summary>
+        /// Validate if the project can be published
+        /// </summary>
+        /// <param name="project"></param>
+        private string[] Validate(Project project)
+        {
+            var errors = new List<string>();
+            if (project.Domains == null || !project.Domains.Any())
+            {
+                errors.Add("Please configure a domain.");
+            }
+
+            if (string.IsNullOrEmpty(project.BusinessEmail))
+            {
+                errors.Add("Please configure business email.");
+            }
+
+            return errors.ToArray();
         }
     }
 }
