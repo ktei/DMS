@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
+using PingAI.DialogManagementService.Application.Utils;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
 using static PingAI.DialogManagementService.Domain.ErrorHandling.ErrorDescriptions;
@@ -37,12 +38,8 @@ namespace PingAI.DialogManagementService.Application.Projects.PublishProject
                 throw new ForbiddenException(ProjectWriteDenied);
             var sw = new Stopwatch();
             
-            // TODO: we can abstract the perf monitoring logic away
-            sw.Start();
-            var project = await _projectRepository.GetFullProjectById(request.ProjectId);
-            sw.Stop();
-            // TODO: use logger
-            Console.WriteLine($"Took {sw.Elapsed.TotalSeconds} seconds to {nameof(_projectRepository.GetFullProjectById)}");
+            var project = await PerformanceLogger.Monitor(_projectRepository.GetFullProjectById(request.ProjectId),
+                nameof(_projectRepository.GetFullProjectById));
             if (project == null)
                 throw new ForbiddenException(ProjectReadDenied);
             var user = await _requestContext.GetUser();
