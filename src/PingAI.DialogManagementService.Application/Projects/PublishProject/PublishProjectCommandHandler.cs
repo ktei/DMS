@@ -64,7 +64,7 @@ namespace PingAI.DialogManagementService.Application.Projects.PublishProject
         /// Validate if the project can be published
         /// </summary>
         /// <param name="project"></param>
-        private string[] Validate(Project project)
+        private static string[] Validate(Project project)
         {
             var errors = new List<string>();
             if (project.Domains == null || !project.Domains.Any())
