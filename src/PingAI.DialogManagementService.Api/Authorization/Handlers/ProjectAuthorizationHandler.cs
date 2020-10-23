@@ -34,6 +34,12 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
                 return;
             }
             
+            if (context.User.HasAdminScope() || context.User.IsClient(_appConfig.AdminClientId))
+            {
+                context.Succeed(requirement);
+                return;
+            }
+            
             var user = await _userRepository.GetUserByAuth0Id(context.User.Identity.Name!);
             if (user == null)
             {
@@ -41,12 +47,6 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
                 return;
             }
             
-            if (context.User.HasAdminScope() || context.User.IsClient(_appConfig.AdminClientId))
-            {
-                context.Succeed(requirement);
-                return;
-            }
-
             // get IDs of organisations this user belongs to
             var organisationIds = user.OrganisationUsers.Select(o => o.OrganisationId).ToArray();
             var organisations = await _organisationRepository.GetOrganisationsByIds(organisationIds);
