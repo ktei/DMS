@@ -9,12 +9,14 @@ namespace PingAI.DialogManagementService.Api.Models.Responses
         public string ProjectId { get; set; }
         public string Type { get; set; }
         public ResolutionDto Resolution { get; set; }
+        public int Order { get; set; }
         
         public ResponseDto(Response response)
         {
             ResponseId = response.Id.ToString();
             ProjectId = response.ProjectId.ToString();
             Type = response.Type.ToString();
+            Order = response.Order;
             if (response.Resolution?.Type == ResolutionType.PARTS)
             {
                 var parts = response.Resolution.Parts?

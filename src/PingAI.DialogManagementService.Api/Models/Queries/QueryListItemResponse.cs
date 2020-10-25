@@ -11,13 +11,15 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         public string? Text { get; set; }
         public string Type { get; set; }
         public ResolutionDto Resolution { get; set; }
+        public int Order { get; set; }
 
-        public QueryListItemResponse(string responseId, string type, string? text, ResolutionDto resolution)
+        public QueryListItemResponse(string responseId, string type, string? text, ResolutionDto resolution, int order)
         {
             ResponseId = responseId;
             Type = type;
             Text = text;
             Resolution = resolution;
+            Order = order;
         }
 
         public QueryListItemResponse(Response response)
@@ -40,6 +42,8 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
             {
                 Resolution = new ResolutionDto(null, null, ResolutionType.EMPTY.ToString());
             }
+
+            Order = response.Order;
         }
 
         public QueryListItemResponse()
