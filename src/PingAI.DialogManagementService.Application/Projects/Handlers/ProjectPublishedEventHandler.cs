@@ -15,11 +15,18 @@ namespace PingAI.DialogManagementService.Application.Projects.Handlers
         {
             _nluService = nluService;
         }
-        
+
         public async Task Handle(ProjectPublishedEvent notification, CancellationToken cancellationToken)
         {
-            await PerformanceLogger.Monitor(_nluService.Export(notification.SourceProject.Id, 
+            await PerformanceLogger.Monitor(_nluService.Export(notification.SourceProject.Id,
                 notification.PublishedProject.Id), "NluService.Export");
+            
+            // We just exported source project's data and saved that using
+            // published project's ID. Next, 
+            await PerformanceLogger.Monitor(
+                _nluService.Import(notification.PublishedProject.Id, 
+                    notification.SourceProject.Id),
+                "NluService.Import");
         }
     }
 }

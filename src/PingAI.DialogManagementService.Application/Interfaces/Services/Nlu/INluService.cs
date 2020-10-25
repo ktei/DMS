@@ -8,5 +8,6 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Services.Nlu
         Task<SaveIntentResponse> SaveIntent(SaveIntentRequest request);
         Task DeleteIntent(Guid projectId, Guid intentId);
         Task Export(Guid sourceProjectId, Guid targetProjectId);
+        Task Import(Guid sourceProjectId, Guid targetProjectId, bool runtime = true);
     }
 }

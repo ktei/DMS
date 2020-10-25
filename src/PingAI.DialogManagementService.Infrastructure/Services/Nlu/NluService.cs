@@ -15,6 +15,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Services.Nlu
         {
             _httpClient = httpClient;
         }
+        
         public async Task<SaveIntentResponse> SaveIntent(SaveIntentRequest request)
         {
             var httpResponse = await _httpClient.PutAsJsonAsync(
@@ -55,6 +56,23 @@ namespace PingAI.DialogManagementService.Infrastructure.Services.Nlu
                 return;
             }
             
+            throw await httpResponse.AsDomainException();
+        }
+
+        public async Task Import(Guid sourceProjectId, Guid targetProjectId, bool runtime = true)
+        {
+            var httpResponse =
+                await _httpClient.PostAsJsonAsync(BuildApiPath("Projects", "import"),
+                    new
+                    {
+                        sourceProjectId,
+                        targetProjectId,
+                        projectVersion = runtime ? "Runtime" : "DesignTime"
+                    });
+            
+            if (httpResponse.IsSuccessStatusCode)
+                return;
+
             throw await httpResponse.AsDomainException();
         }
 

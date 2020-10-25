@@ -10,17 +10,14 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         public string ResponseId { get; set; }
         public string? Text { get; set; }
         public string Type { get; set; }
-        public ResolutionPartDto[]? Parts { get; set; }
-        public FormResolutionDto? Form { get; set; }
+        public ResolutionDto Resolution { get; set; }
 
-        public QueryListItemResponse(string responseId, string type, string? text,
-            ResolutionPartDto[]? parts, FormResolutionDto? form)
+        public QueryListItemResponse(string responseId, string type, string? text, ResolutionDto resolution)
         {
             ResponseId = responseId;
             Type = type;
             Text = text;
-            Parts = parts;
-            Form = form;
+            Resolution = resolution;
         }
 
         public QueryListItemResponse(Response response)
@@ -30,11 +27,18 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
             Text = GetResponseText(response);
             if (response.Resolution?.Type == ResolutionType.PARTS)
             {
-                Parts = response.Resolution.Parts?.Select(p => new ResolutionPartDto(p)).ToArray();
+                var parts = response.Resolution.Parts?
+                    .Select(p => new ResolutionPartDto(p)).ToArray();
+                Resolution = new ResolutionDto(parts, null, ResolutionType.PARTS.ToString());
             }
             else if (response.Resolution?.Type == ResolutionType.FORM)
             {
-                Form = response.Resolution.Form == null ? default : new FormResolutionDto(response.Resolution.Form);
+                var form = response.Resolution.Form == null ? default : new FormResolutionDto(response.Resolution.Form);
+                Resolution = new ResolutionDto(null, form, ResolutionType.FORM.ToString());
+            }
+            else
+            {
+                Resolution = new ResolutionDto(null, null, ResolutionType.EMPTY.ToString());
             }
         }
 

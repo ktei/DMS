@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -87,6 +88,10 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
             var organisation =
                 await context.Organisations.FindAsync(Guid.Parse("6b95c285-363c-4b2a-a322-54fe3cad9698"));
             var project = await context.Projects.FindAsync(Guid.Parse("3932f12d-ed9e-441a-8a13-8c4ca88b2e4c"));
+            if (project.Domains?.Any() != true)
+            {
+                project.UpdateDomains(new[] {"http://localhost:3000"});
+            }
             var entityType = await context.EntityTypes.FirstOrDefaultAsync(e => e.Name == "TEST_city");
             var entityName = await context.EntityNames.FirstOrDefaultAsync(e => e.Name == "TEST_favouriteCity");
             entityType ??= (await context.AddAsync(new EntityType( 

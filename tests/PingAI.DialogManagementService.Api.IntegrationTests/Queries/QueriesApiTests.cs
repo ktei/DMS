@@ -59,7 +59,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             NotNull(actual);
             Equal("Hello, World!", actual!.Response.Text);
             Equal("Hello, World!", actual.ResponseText);
-            Single(actual.Response.Parts!);
+            Single(actual.Response.Resolution.Parts!);
         }
         
 
