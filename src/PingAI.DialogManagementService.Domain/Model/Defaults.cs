@@ -15,7 +15,7 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public static readonly string[] EnquiryEntityNames = new []
         {
-            "NAME", "PHONE", "EMAIL", "JOB_TITLE", "ORGANISATION_NAME"
+            "NAME", "PHONE", "EMAIL", "JOB_TITLE", "ORGANISATION_NAME", "DETAILS"
         };
     }
 }
