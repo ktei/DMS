@@ -9,18 +9,18 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         public string QueryId { get; set; }
         
         public QueryListItemIntent Intent { get; set; }
-        public QueryListItemResponse Response { get; set; }
+        public QueryListItemResponse[] Responses { get; set; }
         
         [Obsolete("Deprecated. Front-end should use Response.Text")]
         public string ResponseText { get; set; }
 
         public QueryListItemDto(string queryId, QueryListItemIntent intent,
-            QueryListItemResponse response,
+            QueryListItemResponse[] responses,
             string responseText)
         {
             QueryId = queryId;
             Intent = intent;
-            Response = response;
+            Responses = responses;
             ResponseText = responseText;
         }
 
@@ -28,8 +28,8 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         {
             QueryId = query.Id.ToString();
             Intent = new QueryListItemIntent(query.Intents.First());
-            Response = new QueryListItemResponse(query.Responses.First());
-            ResponseText = Response.Text ?? string.Empty;
+            Responses = query.Responses.Select(r => new QueryListItemResponse(r)).ToArray();
+            ResponseText = Responses.FirstOrDefault()?.Text ?? string.Empty;
         }
 
         public QueryListItemDto()

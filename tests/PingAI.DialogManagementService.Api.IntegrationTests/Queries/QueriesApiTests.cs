@@ -57,9 +57,9 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             var actual = response.FirstOrDefault(r => 
                 r.Intent.Name == q.Intents.First().Name);
             NotNull(actual);
-            Equal("Hello, World!", actual!.Response.Text);
+            Equal("Hello, World!", actual!.Responses.First().Text);
             Equal("Hello, World!", actual.ResponseText);
-            Single(actual.Response.Resolution.Parts!);
+            Single(actual.Responses.First().Resolution.Parts!);
         }
         
 
