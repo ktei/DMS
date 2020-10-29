@@ -61,6 +61,18 @@
       {
         "name": "Slack__ClientSecret",
         "value": "8fd014bd777d277fcda86f9f2749d2c7"
+      },
+      {
+        "name": "AdminPortalClientId",
+        "value": "D1aMmpYca47Tvbyr9EJDt5GyGwn5pv9I"
+      },
+      {
+        "name": "ChatbotRuntimeClientId",
+        "value": "gYy9KGIC6XTv71U7dmeYgpB4E6IjhW9a"
+      },
+      {
+        "name": "ConnectionStrings:Redis",
+        "value": "prod-application.h3pngf.0001.apse2.cache.amazonaws.com:6379"
       }
     ]
   }
