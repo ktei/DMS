@@ -14,11 +14,11 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
         {
         }
 
-        public const string AdminClientId = "abcdefg";
+        public const string AdminPortalClientId = "abcdefg";
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var claims = new[] {new Claim(ClaimsIdentity.DefaultNameClaimType, $"{AdminClientId}@clients")};
+            var claims = new[] {new Claim(ClaimsIdentity.DefaultNameClaimType, $"{AdminPortalClientId}@clients")};
             var identity = new ClaimsIdentity(claims, "Test");
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, "Test");

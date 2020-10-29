@@ -285,7 +285,8 @@ namespace PingAI.DialogManagementService.Api
         }
 
         public string GlobalCachePrefix => $"{_environment.EnvironmentName}__dms__";
-        public string AdminClientId => _configuration["AdminClientId"];
+        public string AdminPortalClientId => _configuration["AdminPortalClientId"];
+        public string ChatbotRuntimeClientId => _configuration["ChatbotRuntimeClientId"];
     }
     
     public class DateTimeConverter : JsonConverter<DateTime>

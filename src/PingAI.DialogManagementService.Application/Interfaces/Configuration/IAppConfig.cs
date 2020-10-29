@@ -10,6 +10,11 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Configuration
         /// <summary>
         /// OAuth client_id of DialogManagementAdminClient
         /// </summary>
-        string AdminClientId { get; }
+        string AdminPortalClientId { get; }
+        
+        /// <summary>
+        /// OAuth client_id of ChatbotRuntime
+        /// </summary>
+        string ChatbotRuntimeClientId { get; }
     }
 }

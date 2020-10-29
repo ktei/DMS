@@ -20,7 +20,8 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
             AdministratorOnlyRequirement requirement)
         {
-            if (context.User.IsClient(_appConfig.AdminClientId) ||
+            if (context.User.IsClient(_appConfig.AdminPortalClientId) ||
+                context.User.IsClient(_appConfig.ChatbotRuntimeClientId) ||
                 context.User.HasAdminScope())
             {
                 context.Succeed(requirement);

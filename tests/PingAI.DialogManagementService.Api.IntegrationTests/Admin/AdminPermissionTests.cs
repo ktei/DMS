@@ -38,7 +38,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
             var config = new ConfigurationBuilder()
                 .AddInMemoryCollection(new[]
                 {
-                    new KeyValuePair<string, string>("AdminClientId", TestAdminClientAuthHandler.AdminClientId)
+                    new KeyValuePair<string, string>("AdminPortalClientId", TestAdminClientAuthHandler.AdminPortalClientId)
                 }).Build();
             var client = _factory.CreateAdminClientAuthenticatedClient(services =>
                 services.AddSingleton<IConfiguration>(config));
