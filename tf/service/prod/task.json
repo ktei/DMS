@@ -44,7 +44,7 @@
       },
       {
         "name": "OAuth__Authority",
-        "value": "https://iiiknow.au.auth0.com/"
+        "value": "https://auth.iiiknow.com"
       },
       {
         "name": "OAuth__Audience",
@@ -52,7 +52,7 @@
       },
       {
         "name": "OAuth__TokenIssuer",
-        "value": "https://iiiknow.au.auth0.com/"
+        "value": "https://auth.iiiknow.com"
       },
       {
         "name": "Slack__ClientId",
