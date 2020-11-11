@@ -34,8 +34,10 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
                 return;
             }
             
-            if (context.User.HasAdminScope() || context.User.IsClient(_appConfig.AdminPortalClientId) ||
-                context.User.IsClient(_appConfig.ChatbotRuntimeClientId))
+            if (context.User.HasAdminScope() || 
+                context.User.IsClient(_appConfig.AdminPortalClientId) ||
+                context.User.IsClient(_appConfig.ChatbotRuntimeClientId) ||
+                context.User.IsClient(_appConfig.Auth0RulesClientId))
             {
                 context.Succeed(requirement);
                 return;

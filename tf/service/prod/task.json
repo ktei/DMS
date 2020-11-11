@@ -71,6 +71,10 @@
         "value": "gYy9KGIC6XTv71U7dmeYgpB4E6IjhW9a"
       },
       {
+        "name": "Auth0RulesClientId",
+        "value": "1To661KNCe37PUCeNHTCGVqL8ZHOWDkk"
+      },
+      {
         "name": "ConnectionStrings:Redis",
         "value": "prod-application.h3pngf.0001.apse2.cache.amazonaws.com:6379"
       }

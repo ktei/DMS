@@ -16,5 +16,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Configuration
         /// OAuth client_id of ChatbotRuntime
         /// </summary>
         string ChatbotRuntimeClientId { get; }
+        
+        string Auth0RulesClientId { get; }
     }
 }
