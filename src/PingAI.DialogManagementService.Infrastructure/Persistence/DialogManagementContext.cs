@@ -32,6 +32,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
             modelBuilder.HasPostgresEnum<IntentType>("chatbot");
             modelBuilder.HasPostgresEnum<PhrasePartType>("chatbot");
             modelBuilder.HasPostgresEnum<ResponseType>("chatbot");
+            modelBuilder.HasPostgresEnum<SessionStatus>("chatbot");
             
             modelBuilder.Ignore<DomainEvent>();
             
@@ -43,6 +44,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
             NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type", new NpgsqlNullNameTranslator());
             NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type", new NpgsqlNullNameTranslator());
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type", new NpgsqlNullNameTranslator());
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<SessionStatus>("enum_ChatHistories_session_status",
+                new NpgsqlNullNameTranslator());
         }
 
         public DbSet<Organisation> Organisations { get; set; }
@@ -60,6 +63,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<QueryIntent> QueryIntents { get; set; }
         public DbSet<QueryResponse> QueryResponses { get; set; }
         public DbSet<SlackWorkspace> SlackWorkspaces { get; set; }
+        
+        public DbSet<ChatHistory> ChatHistories { get; set; }
         
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

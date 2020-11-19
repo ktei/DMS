@@ -42,7 +42,10 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
         {
             var slackWorkspaces = await _context.SlackWorkspaces
                 .Where(x => x.ProjectId == Project.Id).ToListAsync();
+            var chatHistories = await _context.ChatHistories
+                .Where(x => x.ProjectId == Project.Id).ToListAsync();
             _context.RemoveRange(slackWorkspaces);
+            _context.RemoveRange(chatHistories);
             _context.RemoveRange(Project, Organisation, EntityName, EntityType);
             await _context.SaveChangesAsync();
         }
