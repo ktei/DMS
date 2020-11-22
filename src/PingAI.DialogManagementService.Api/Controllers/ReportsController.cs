@@ -23,7 +23,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ContentResult> ListQueries([FromQuery] Guid? projectId,
+        public async Task<ContentResult> GenerateReport([FromQuery] Guid? projectId,
             [FromQuery] int? days)
         {
             if (!projectId.HasValue)
