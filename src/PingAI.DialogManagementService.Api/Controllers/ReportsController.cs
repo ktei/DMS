@@ -32,6 +32,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 throw new BadRequestException($"{nameof(days)} must not be empty.");
             if (days <= 0)
                 throw new BadRequestException($"{nameof(days)} must be greater than 0.");
+            if (days > 90)
+                throw new BadRequestException($"{nameof(days)} must be less or equal to 90");
 
             var sydneyLocalTimeNow = DateTime.UtcNow.ConvertToLocal("Australia/Sydney");
             var sydneyLocalTimeStart = sydneyLocalTimeNow.Date.AddDays(-(days.Value - 1));
