@@ -36,7 +36,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 throw new BadRequestException($"{nameof(days)} must be less or equal to 90");
 
             var sydneyLocalTimeNow = DateTime.UtcNow.ConvertToLocal("Australia/Sydney");
-            var sydneyLocalTimeStart = sydneyLocalTimeNow.Date.AddDays(-(days.Value - 1));
+            var sydneyLocalTimeStart = sydneyLocalTimeNow.Date.AddDays(-days.Value);
             var report = await _mediator.Send(new GenerateReportCommand(projectId.Value,
                 sydneyLocalTimeStart.ToUniversalTime()));
 
