@@ -10,8 +10,14 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string Name { get; private set; }
         public string Description { get; private set; }
         public string[]? Tags { get; private set; }
-        public DateTime CreatedAt { get; private set; }
 
+        private DateTime _createdAt;
+        public DateTime CreatedAt
+        {
+            get => DateTime.SpecifyKind(_createdAt, DateTimeKind.Utc);
+            private set => _createdAt = value;
+        }
+        
         private readonly List<Project> _projects;
         public IReadOnlyList<Project> Projects => _projects.ToImmutableList();
 
