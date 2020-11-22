@@ -51,13 +51,13 @@ namespace PingAI.DialogManagementService.Api.Controllers
             // Unmatched phrases
             
             sb.Append("<div>");
-            sb.Append("<h2>Unmatched intents</h2>");
+            sb.Append("<h2>Unmatched phrases</h2>");
             sb.Append("<table>");
 
             sb.Append("<thead>");
             sb.Append("<tr>");
             sb.Append("<td>User phrases</td>");
-            sb.Append("<td>Reason</td>");
+            sb.Append("<td>Error reason</td>");
             sb.Append("<td>Timestamp</td>");
             sb.Append("</tr>");
             sb.Append("</thead>");
@@ -76,7 +76,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
 
             sb.Append("</table>");
             sb.Append("</div>");
-           
+            
+            sb.Append("<br />");
             
             // Dialogs
             
