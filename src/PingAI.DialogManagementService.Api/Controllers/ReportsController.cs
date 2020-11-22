@@ -51,7 +51,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
             // Unmatched phrases
             
             sb.Append("<div>");
-            sb.Append("<h2 class="unmatched-phrases">Unmatched phrases</h2>");
+            sb.Append("<h2 class=\"unmatched-phrases\">Unmatched phrases</h2>");
             sb.Append("<table>");
 
             sb.Append("<thead>");
