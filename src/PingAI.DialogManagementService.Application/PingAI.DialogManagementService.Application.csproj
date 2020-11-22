@@ -10,10 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="8.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Reporting" />
+    <PackageReference Include="NodaTime" Version="3.0.3" />
   </ItemGroup>
 
 </Project>

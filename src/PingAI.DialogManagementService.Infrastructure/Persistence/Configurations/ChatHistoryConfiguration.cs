@@ -26,6 +26,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("requestId");
             builder.Property(o => o.SessionStatus)
                 .HasColumnName("sessionStatus");
+            builder.Ignore(o => o.ChatHistoryInput);
+            builder.Ignore(o => o.ChatHistoryOutput);
             
             builder.AttachTimestamps();
         }

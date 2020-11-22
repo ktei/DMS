@@ -210,6 +210,7 @@ namespace PingAI.DialogManagementService.Api
             services.AddTransient<IQueryRepository, QueryRepository>();
             services.AddTransient<IProjectVersionRepository, ProjectVersionRepository>();
             services.AddTransient<ISlackWorkspaceRepository, SlackWorkspaceRepository>();
+            services.AddTransient<IChatHistoryRepository, ChatHistoryRepository>();
 
             services.AddHttpClient<INluService, NluService>(client =>
             {

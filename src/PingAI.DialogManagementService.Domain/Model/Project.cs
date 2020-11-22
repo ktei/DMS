@@ -25,7 +25,13 @@ namespace PingAI.DialogManagementService.Domain.Model
         public DateTime? BusinessTimeStartUtc { get; private set; }
         public DateTime? BusinessTimeEndUtc { get; private set; }
         public string? BusinessEmail { get; private set; }
-        public DateTime CreatedAt { get; private set; }
+        
+        private DateTime _createdAt;
+        public DateTime CreatedAt
+        {
+            get => DateTime.SpecifyKind(_createdAt, DateTimeKind.Utc);
+            private set => _createdAt = value;
+        }
 
         private readonly List<Intent> _intents;
         public IReadOnlyList<Intent> Intents => _intents.ToImmutableList();
