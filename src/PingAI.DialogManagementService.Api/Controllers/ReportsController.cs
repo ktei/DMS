@@ -54,7 +54,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
 
             sb.Append("<thead>");
             sb.Append("<tr>");
-            sb.Append("<td>Phrases</td>");
+            sb.Append("<td>User phrases</td>");
             sb.Append("<td>Reason</td>");
             sb.Append("<td>Timestamp</td>");
             sb.Append("</tr>");
@@ -84,7 +84,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
 
             sb.Append("<thead>");
             sb.Append("<tr>");
-            sb.Append("<td>User says</td>");
+            sb.Append("<td>User phrases</td>");
             sb.Append("<td>Matched FAQ</td>");
             sb.Append("<td>Matching result</td>");
             sb.Append("<td>Timestamp</td>");

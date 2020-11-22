@@ -1,6 +1,4 @@
 using System;
-using System.Dynamic;
-using System.Text.Json;
 using PingAI.DialogManagementService.Domain.Utils;
 
 namespace PingAI.DialogManagementService.Domain.Model
@@ -71,7 +69,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             get
             {
-                if (Intent == null)
+                if (Intent == null || Intent.Name == "Default Fallback Intent")
                 {
                     return MatchingResult.MissingIntent;
                 }
