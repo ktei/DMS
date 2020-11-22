@@ -57,7 +57,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
             sb.Append("<thead>");
             sb.Append("<tr>");
             sb.Append("<td>User phrases</td>");
-            sb.Append("<td>Reason</td>");
+            sb.Append("<td>Error reason</td>");
             sb.Append("<td>Timestamp</td>");
             sb.Append("</tr>");
             sb.Append("</thead>");
