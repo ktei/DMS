@@ -4,12 +4,10 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using PingAI.DialogManagementService.Application.Reporting.GenerateHtmlReport;
 using PingAI.DialogManagementService.Application.Utils;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
-using PingAI.DialogManagementService.Domain.Utils;
 
 namespace PingAI.DialogManagementService.Api.Controllers
 {
