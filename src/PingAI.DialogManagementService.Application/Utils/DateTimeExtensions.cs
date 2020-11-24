@@ -12,5 +12,13 @@ namespace PingAI.DialogManagementService.Application.Utils
             var zonedDateTime = instant.InZone(timeZone);
             return zonedDateTime.ToDateTimeUnspecified();
         }
+        
+        public static DateTime ConvertToUtc(this DateTime dateTime, string timezoneName)
+        {
+            var localTime = LocalDateTime.FromDateTime(dateTime);
+            var timeZone = DateTimeZoneProviders.Tzdb[timezoneName];
+            var zonedTime = localTime.InZoneLeniently(timeZone);
+            return zonedTime.ToDateTimeUtc();
+        }
     }
 }

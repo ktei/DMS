@@ -32,7 +32,7 @@ namespace PingAI.DialogManagementService.Application.Reporting.GenerateHtmlRepor
             var sydneyLocalTime = DateTime.UtcNow.ConvertToLocal("Australia/Sydney");
             var sydneyEndOfToday = sydneyLocalTime.Date.AddDays(1).AddSeconds(-1); // end of today local
             var chatHistories = await _chatHistoryRepository.GetChatHistories(request.DesignTimeProjectId,
-                request.TimeRangeStartUtc, sydneyEndOfToday.ToUniversalTime());
+                request.TimeRangeStartUtc, sydneyEndOfToday.ConvertToUtc("Australia/Sydney"));
 
             var report = new Report("Dialog report since " +
                                     $"{request.TimeRangeStartUtc.ConvertToLocal("Australia/Sydney"):yyyy MMMM dd}");

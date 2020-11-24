@@ -38,7 +38,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var sydneyLocalTimeNow = DateTime.UtcNow.ConvertToLocal("Australia/Sydney");
             var sydneyLocalTimeStart = sydneyLocalTimeNow.Date.AddDays(-days.Value);
             var report = await _mediator.Send(new GenerateReportCommand(projectId.Value,
-                sydneyLocalTimeStart.ToUniversalTime()));
+                sydneyLocalTimeStart.ConvertToUtc("Australia/Sydney")));
 
             var reportHtml = GenerateReportHtml(report);
             return Content(reportHtml, "text/plain");
