@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
@@ -16,6 +15,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public QueryRepository(DialogManagementContext context)
         {
             _context = context;
+        }
+
+        public async Task<Query?> GetQueryByIdWithoutJoins(Guid queryId)
+        {
+            var query = await _context.Queries.FirstOrDefaultAsync(q => q.Id == queryId);
+            return query;
         }
 
         public Task<Query?> GetQueryById(Guid queryId) =>
@@ -38,6 +43,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         {
             var result = await _context.Queries.AddAsync(query);
             return result.Entity;
+        }
+
+        public Task<List<Query>> GetQueriesByProjectId(Guid projectId)
+        {
+            return _context.Queries.Where(q => q.ProjectId == projectId)
+                .ToListAsync();
         }
 
         public async Task<List<Query>> GetQueriesByProjectId(Guid projectId, ResponseType? responseType)

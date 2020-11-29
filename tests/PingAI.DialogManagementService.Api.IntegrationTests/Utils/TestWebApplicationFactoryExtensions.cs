@@ -120,7 +120,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
 
             return (testingFixture, async () =>
             {
-                // we don't h ave anything to dispose of yet
+                // we don't have anything to dispose of yet
                 scope.Dispose();
             });
         }

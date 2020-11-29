@@ -97,6 +97,35 @@ namespace PingAI.DialogManagementService.Domain.Model
             }
         }
 
+        public void IncreaseDisplayOrder() => DisplayOrder += 1;
+        
+        /// <summary>
+        /// Insert a query with a given DisplayOrder into a list of queries, updating
+        /// DisplayOrders of the existing queries
+        /// </summary>
+        public void Insert(IEnumerable<Query> existingQueries)
+        {
+            var nextDisplayOrder = DisplayOrder;
+            foreach (var query in existingQueries.OrderBy(x => x.DisplayOrder))
+            {
+                if (query.DisplayOrder == nextDisplayOrder)
+                {
+                    query.IncreaseDisplayOrder();
+                    nextDisplayOrder = query.DisplayOrder;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Swap the DisplayOrder with another query
+        /// </summary>
+        public void Swap(Query query)
+        {
+            var thisDisplayOrder = DisplayOrder;
+            DisplayOrder = query.DisplayOrder;
+            query.DisplayOrder = thisDisplayOrder;
+        }
+        
         private IReadOnlyList<Intent> GetIntents()
         {
             if (_queryIntents == null)
