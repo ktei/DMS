@@ -12,6 +12,7 @@ using PingAI.DialogManagementService.Application.Queries.CreateQuery;
 using PingAI.DialogManagementService.Application.Queries.DeleteQuery;
 using PingAI.DialogManagementService.Application.Queries.GetQuery;
 using PingAI.DialogManagementService.Application.Queries.ListQueries;
+using PingAI.DialogManagementService.Application.Queries.SwapDisplayOrder;
 using PingAI.DialogManagementService.Application.Queries.UpdateQuery;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
@@ -119,6 +120,15 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 new Expression[0], request.Description ?? request.Name, request.Tags,
                 request.DisplayOrder, null, intent, null, new[] {response}, request.Response.RteText));
             return new UpdateQueryResponse(query);
+        }
+
+        [HttpPost("SwapDisplayOrder")]
+        public async Task<IActionResult> SwapDisplayOrder([FromBody] SwapDisplayOrderRequest request)
+        {
+            var command = new SwapDisplayOrderCommand(
+                Guid.Parse(request.QueryId), Guid.Parse(request.TargetQueryId));
+            await _mediator.Send(command);
+            return Ok();
         }
 
         [MapToApiVersion("1.1")]

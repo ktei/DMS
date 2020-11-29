@@ -101,10 +101,12 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             var projectId = _testingFixture.Project.Id;
             var (entityName, entityType) = await SetupEntityNamesAndTypes(projectId);
             var newEntityName = TestingFixture.RandomString(15);
+            var q1 = await SetupQuery(projectId, 0);
+            var q2 = await SetupQuery(projectId, 1);
             var payload = new CreateQueryRequest
             {
                 Name = "TEST_query",
-                DisplayOrder = 0,
+                DisplayOrder = 1,
                 ProjectId = projectId.ToString(),
                 Tags = new[] {"t1", "t2"},
                 Intent = new CreateIntentDto
@@ -157,9 +159,15 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             await httpResponse.IsOk();
             var response = await httpResponse.Content.ReadFromJsonAsync<QueryDto>();
             
-            // clean up
+            // assert and clean up
             await _factory.WithDbContext(async context =>
             {
+                q1 = await context.Queries.FirstAsync(x => x.Id == q1.Id);
+                q2 = await context.Queries.FirstAsync(x => x.Id == q2.Id);
+                var insertedQuery = await context.Queries.FirstAsync(x => x.Id == Guid.Parse(response.QueryId));
+                Equal(0, q1.DisplayOrder);
+                Equal(1, insertedQuery.DisplayOrder);
+                Equal(2, q2.DisplayOrder);
                 var query = await context.Queries
                     .Include(x => x.QueryIntents).ThenInclude(x => x.Intent)
                     .Include(x => x.QueryResponses).ThenInclude(x => x.Response)
@@ -171,6 +179,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                 context.AttachRange(entityName, entityType);
                 context.RemoveRange(entityName, entityType);
                 context.Remove(newEntity);
+                context.RemoveRange(q1, q2);
                 await context.SaveChangesAsync();
             });
             
@@ -484,14 +493,40 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             });
         }
 
-        private async Task<Query> SetupQuery(Guid projectId)
+        [Fact]
+        public async Task SwapDisplayOrder()
+        {
+            var projectId = _testingFixture.Project.Id;
+            var q1 = await SetupQuery(projectId, 0);
+            var q2 = await SetupQuery(projectId, 1);
+
+            var httpResponse = await _client.PostAsJsonAsync($"/dms/api/v1/queries/SwapDisplayOrder",
+                new SwapDisplayOrderRequest(q1.Id.ToString(), q2.Id.ToString()));
+            await httpResponse.IsOk();
+
+            await _factory.WithDbContext(async context =>
+            {
+                q1 = await context.Queries
+                    .FirstOrDefaultAsync(x => x.Id == q1.Id);
+                q2 = await context.Queries
+                    .FirstOrDefaultAsync(x => x.Id == q2.Id);
+                Equal(1, q1.DisplayOrder);
+                Equal(0, q2.DisplayOrder);
+                
+                // cleanup
+                context.RemoveRange(q1, q2);
+                await context.SaveChangesAsync();
+            }); 
+        }
+
+        private async Task<Query> SetupQuery(Guid projectId, int displayOrder = 0)
         {
             Query? query = null;
             await _factory.WithDbContext(async context =>
             {
                 query = new Query(Guid.NewGuid().ToString(),
                     projectId, new Expression[0], Guid.NewGuid().ToString(),
-                    new[]{"t1", "t2"}, 0);
+                    new[]{"t1", "t2"}, displayOrder);
                 var resp = new Response(projectId, ResponseType.RTE, 0);
                 resp.SetRteText("Hello, World!", new Dictionary<string, EntityName>(0));
                 query.AddResponse(resp);

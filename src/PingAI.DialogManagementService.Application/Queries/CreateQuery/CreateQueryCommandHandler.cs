@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -41,9 +40,18 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             if (!canWrite)
                 throw new ForbiddenException(ErrorDescriptions.ProjectWriteDenied);
 
-            var nextDisplayOrder = (await _queryRepository.GetMaxDisplayOrder(request.ProjectId)) + 1;
+            var nextDisplayOrder = request.DisplayOrder ?? 
+                                   (await _queryRepository.GetMaxDisplayOrder(request.ProjectId)) + 1;
             var query = new Query(request.Name, request.ProjectId, request.Expressions,
                 request.Description, request.Tags, nextDisplayOrder);
+            
+            // If request.DisplayOrder does have a value, it means
+            // we may need to update the DisplayOrders of other queries as well
+            if (request.DisplayOrder.HasValue)
+            {
+                var existingQueries = await _queryRepository.GetQueriesByProjectId(request.ProjectId);
+                query.Insert(existingQueries);
+            }
             if (request.IntentId.HasValue)
             {
                 var intent = await _intentRepository.GetIntentById(request.IntentId.Value);
