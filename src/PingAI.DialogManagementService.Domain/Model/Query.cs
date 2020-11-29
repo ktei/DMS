@@ -98,6 +98,13 @@ namespace PingAI.DialogManagementService.Domain.Model
         }
 
         public void IncreaseDisplayOrder() => DisplayOrder += 1;
+
+        public void UpdateDisplayOrder(int displayOrder)
+        {
+            if (displayOrder < 0)
+                throw new ArgumentException($"{nameof(displayOrder)} should >= 0");
+            DisplayOrder = displayOrder;
+        }
         
         /// <summary>
         /// Insert a query with a given DisplayOrder into a list of queries, updating
