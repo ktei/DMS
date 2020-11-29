@@ -6,17 +6,15 @@ using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using static PingAI.DialogManagementService.Domain.ErrorHandling.ErrorDescriptions;
 
-
-namespace PingAI.DialogManagementService.Application.Queries.SwapDisplayOrder
+namespace PingAI.DialogManagementService.Application.Queries.Insert
 {
-    public class SwapDisplayOrderCommandHandler : AsyncRequestHandler<SwapDisplayOrderCommand>
+    public class InsertCommandHandler : AsyncRequestHandler<InsertCommand>
     {
         private readonly IQueryRepository _queryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthorizationService _authorizationService;
 
-
-        public SwapDisplayOrderCommandHandler(IQueryRepository queryRepository, IUnitOfWork unitOfWork,
+        public InsertCommandHandler(IQueryRepository queryRepository, IUnitOfWork unitOfWork,
             IAuthorizationService authorizationService)
         {
             _queryRepository = queryRepository;
@@ -24,19 +22,20 @@ namespace PingAI.DialogManagementService.Application.Queries.SwapDisplayOrder
             _authorizationService = authorizationService;
         }
 
-        protected override async Task Handle(SwapDisplayOrderCommand request, CancellationToken cancellationToken)
+
+        protected override async Task Handle(InsertCommand request, CancellationToken cancellationToken)
         {
             var query = await _queryRepository.GetQueryByIdWithoutJoins(request.QueryId);
-            var targetQuery = await _queryRepository.GetQueryByIdWithoutJoins(request.TargetQueryId);
-            if (query == null || targetQuery == null)
+            if (query == null)
                 throw new BadRequestException(QueryNotFound);
-            
+
             var canWrite = await _authorizationService.UserCanWriteProject(query.ProjectId);
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
-            
-            query.Swap(targetQuery);
 
+            var queries = await _queryRepository.GetQueriesByProjectId(query.ProjectId);
+            query.Insert(queries, request.DisplayOrder);
+            
             await _unitOfWork.SaveChanges();
         }
     }
