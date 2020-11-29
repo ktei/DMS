@@ -494,27 +494,40 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
         }
 
         [Fact]
-        public async Task SwapDisplayOrder()
+        public async Task Insert()
         {
             var projectId = _testingFixture.Project.Id;
             var q1 = await SetupQuery(projectId, 0);
             var q2 = await SetupQuery(projectId, 1);
+            var q3 = await SetupQuery(projectId, 2);
+            var q4 = await SetupQuery(projectId, 3);
+            var q5 = await SetupQuery(projectId, 4);
 
-            var httpResponse = await _client.PostAsJsonAsync($"/dms/api/v1/queries/SwapDisplayOrder",
-                new SwapDisplayOrderRequest(q1.Id.ToString(), q2.Id.ToString()));
+            var httpResponse = await _client.PostAsJsonAsync($"/dms/api/v1/queries/insert",
+                new InsertRequest(q4.Id.ToString(), 1));
             await httpResponse.IsOk();
 
             await _factory.WithDbContext(async context =>
             {
                 q1 = await context.Queries
-                    .FirstOrDefaultAsync(x => x.Id == q1.Id);
+                    .FirstAsync(x => x.Id == q1.Id);
                 q2 = await context.Queries
-                    .FirstOrDefaultAsync(x => x.Id == q2.Id);
-                Equal(1, q1.DisplayOrder);
-                Equal(0, q2.DisplayOrder);
-                
+                    .FirstAsync(x => x.Id == q2.Id);
+                q3 = await context.Queries
+                    .FirstAsync(x => x.Id == q3.Id);
+                q4 = await context.Queries
+                    .FirstAsync(x => x.Id == q4.Id);
+                q5 = await context.Queries
+                    .FirstAsync(x => x.Id == q5.Id);
+
+                Equal(0, q1.DisplayOrder);
+                Equal(2, q2.DisplayOrder);
+                Equal(3, q3.DisplayOrder);
+                Equal(1, q4.DisplayOrder);
+                Equal(4, q5.DisplayOrder);
+
                 // cleanup
-                context.RemoveRange(q1, q2);
+                context.RemoveRange(q1, q2, q3, q4, q5);
                 await context.SaveChangesAsync();
             }); 
         }

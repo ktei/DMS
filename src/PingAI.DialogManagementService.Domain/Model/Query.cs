@@ -103,10 +103,16 @@ namespace PingAI.DialogManagementService.Domain.Model
         /// Insert a query with a given DisplayOrder into a list of queries, updating
         /// DisplayOrders of the existing queries
         /// </summary>
-        public void Insert(IEnumerable<Query> existingQueries)
+        public void Insert(IEnumerable<Query> existingQueries, int? displayOrder = null)
         {
+            if (displayOrder != null)
+            {
+                DisplayOrder = displayOrder.Value;
+            }
             var nextDisplayOrder = DisplayOrder;
-            foreach (var query in existingQueries.OrderBy(x => x.DisplayOrder))
+            var queriesToLoop = existingQueries.Where(q => q != this).ToList();
+            foreach (var query in queriesToLoop 
+                .OrderBy(x => x.DisplayOrder))
             {
                 if (query.DisplayOrder == nextDisplayOrder)
                 {
@@ -116,16 +122,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             }
         }
 
-        /// <summary>
-        /// Swap the DisplayOrder with another query
-        /// </summary>
-        public void Swap(Query query)
-        {
-            var thisDisplayOrder = DisplayOrder;
-            DisplayOrder = query.DisplayOrder;
-            query.DisplayOrder = thisDisplayOrder;
-        }
-        
         private IReadOnlyList<Intent> GetIntents()
         {
             if (_queryIntents == null)
