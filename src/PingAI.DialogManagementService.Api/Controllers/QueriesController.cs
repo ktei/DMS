@@ -13,6 +13,7 @@ using PingAI.DialogManagementService.Application.Queries.DeleteQuery;
 using PingAI.DialogManagementService.Application.Queries.GetQuery;
 using PingAI.DialogManagementService.Application.Queries.Insert;
 using PingAI.DialogManagementService.Application.Queries.ListQueries;
+using PingAI.DialogManagementService.Application.Queries.UpdateDisplayOrders;
 using PingAI.DialogManagementService.Application.Queries.UpdateQuery;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
@@ -127,6 +128,14 @@ namespace PingAI.DialogManagementService.Api.Controllers
         {
             var command = new InsertCommand(
                 Guid.Parse(request.QueryId), request.DisplayOrder);
+            await _mediator.Send(command);
+            return Ok();
+        }
+
+        [HttpPost("displayOrders")]
+        public async Task<IActionResult> UpdateDisplayOrders([FromBody] UpdateDisplayOrdersRequest request)
+        {
+            var command = new UpdateDisplayOrdersCommand(request.ProjectId, request.DisplayOrders);
             await _mediator.Send(command);
             return Ok();
         }
