@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Api.IntegrationTests.Utils;
 using PingAI.DialogManagementService.Api.Models.Projects;
 using Xunit;
@@ -108,25 +106,26 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
             var response = await httpResponse.Content.ReadFromJsonAsync<Guid>();
             
             // cleanup
-            await _factory.WithDbContext(async context =>
-            {
-                var project = await context.Projects
-                    .Include(p => p.EntityNames)
-                    .Include(p => p.EntityTypes)
-                    .Include(p => p.Intents)
-                    .Include(p => p.Responses)
-                    .Include(p => p.Queries)
-                    .SingleAsync(p => p.Id == response);
-                var projectVersion = await context.ProjectVersions.FirstAsync(x => x.ProjectId == project.Id);
-                context.RemoveRange(projectVersion);
-                context.RemoveRange(project.EntityNames);
-                context.RemoveRange(project.EntityTypes);
-                context.RemoveRange(project.Responses);
-                context.RemoveRange(project.Intents);
-                context.RemoveRange(project.Queries);
-                context.Remove(project);
-                await context.SaveChangesAsync();
-            });
+            // Comment this out for now as it takes ages to clean up...
+            // await _factory.WithDbContext(async context =>
+            // {
+            //     var project = await context.Projects
+            //         .Include(p => p.EntityNames)
+            //         .Include(p => p.EntityTypes)
+            //         .Include(p => p.Intents)
+            //         .Include(p => p.Responses)
+            //         .Include(p => p.Queries)
+            //         .SingleAsync(p => p.Id == response);
+            //     var projectVersion = await context.ProjectVersions.FirstAsync(x => x.ProjectId == project.Id);
+            //     context.RemoveRange(projectVersion);
+            //     context.RemoveRange(project.EntityNames);
+            //     context.RemoveRange(project.EntityTypes);
+            //     context.RemoveRange(project.Responses);
+            //     context.RemoveRange(project.Intents);
+            //     context.RemoveRange(project.Queries);
+            //     context.Remove(project);
+            //     await context.SaveChangesAsync();
+            // });
         }
 
         public async Task InitializeAsync()

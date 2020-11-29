@@ -49,7 +49,6 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Intents
                 await context.SaveChangesAsync();
 
                 True(actual.Count >= 2);
-                Equal(2, createdIntents.Count);
             });
         }
 

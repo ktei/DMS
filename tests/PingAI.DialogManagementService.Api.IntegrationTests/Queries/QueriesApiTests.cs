@@ -95,100 +95,100 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             Single(response.Responses); 
         }
 
-        [Fact]
-        public async Task CreateQuery()
-        {
-            var projectId = _testingFixture.Project.Id;
-            var (entityName, entityType) = await SetupEntityNamesAndTypes(projectId);
-            var newEntityName = TestingFixture.RandomString(15);
-            var q1 = await SetupQuery(projectId, 0);
-            var q2 = await SetupQuery(projectId, 1);
-            var payload = new CreateQueryRequest
-            {
-                Name = "TEST_query",
-                DisplayOrder = 1,
-                ProjectId = projectId.ToString(),
-                Tags = new[] {"t1", "t2"},
-                Intent = new CreateIntentDto
-                {
-                    Name = "TEST_query_intent",
-                    PhraseParts = new[]
-                    {
-                        new []
-                        {
-                            new CreatePhrasePartDto
-                            {
-                                Text = "Hello, ",
-                                Type = PhrasePartType.TEXT.ToString()
-                            },
-                            new CreatePhrasePartDto
-                            {
-                                Text = "World!",
-                                Type = PhrasePartType.ENTITY.ToString(),
-                                EntityName = entityName.Name,
-                                EntityTypeId = entityType.Id.ToString(),
-                            }
-                        },
-                        new []
-                        {
-                            new CreatePhrasePartDto
-                            {
-                                Text = "Hello ",
-                                Type = PhrasePartType.TEXT.ToString()
-                            },
-                            new CreatePhrasePartDto
-                            {
-                                Text = "World",
-                                Type = PhrasePartType.ENTITY.ToString(),
-                                EntityName = newEntityName,
-                                EntityTypeId = entityType.Id.ToString(),
-                            }
-                        }
-                    }
-                },
-                Response = new CreateResponseDto
-                {
-                    Order = 0,
-                    RteText = "Greetings!",
-                    Type = ResponseType.RTE.ToString()
-                }
-            };
-            var httpResponse = await _client.PostAsJsonAsync(
-                "/dms/api/v1/queries", payload
-            );
-            await httpResponse.IsOk();
-            var response = await httpResponse.Content.ReadFromJsonAsync<QueryDto>();
-            
-            // assert and clean up
-            await _factory.WithDbContext(async context =>
-            {
-                q1 = await context.Queries.FirstAsync(x => x.Id == q1.Id);
-                q2 = await context.Queries.FirstAsync(x => x.Id == q2.Id);
-                var insertedQuery = await context.Queries.FirstAsync(x => x.Id == Guid.Parse(response.QueryId));
-                Equal(0, q1.DisplayOrder);
-                Equal(1, insertedQuery.DisplayOrder);
-                Equal(2, q2.DisplayOrder);
-                var query = await context.Queries
-                    .Include(x => x.QueryIntents).ThenInclude(x => x.Intent)
-                    .Include(x => x.QueryResponses).ThenInclude(x => x.Response)
-                    .FirstOrDefaultAsync(resp => resp.Id == Guid.Parse(response.QueryId));
-                var newEntity = await context.EntityNames.FirstAsync(x => x.Name == newEntityName);
-                context.RemoveRange(query.Intents);
-                context.RemoveRange(query.Responses);
-                context.Remove(query);
-                context.AttachRange(entityName, entityType);
-                context.RemoveRange(entityName, entityType);
-                context.Remove(newEntity);
-                context.RemoveRange(q1, q2);
-                await context.SaveChangesAsync();
-            });
-            
-            NotNull(response);
-            Single(response.Intents);
-            Equal(4, response.Intents.First().PhraseParts.Length);
-            Contains(response.Intents.First().PhraseParts, p => p.EntityName == newEntityName);
-            Single(response.Responses);
-        }
+        // [Fact]
+        // public async Task CreateQuery()
+        // {
+        //     var projectId = _testingFixture.Project.Id;
+        //     var (entityName, entityType) = await SetupEntityNamesAndTypes(projectId);
+        //     var newEntityName = TestingFixture.RandomString(15);
+        //     var q1 = await SetupQuery(projectId, 0);
+        //     var q2 = await SetupQuery(projectId, 1);
+        //     var payload = new CreateQueryRequest
+        //     {
+        //         Name = "TEST_query",
+        //         DisplayOrder = 1,
+        //         ProjectId = projectId.ToString(),
+        //         Tags = new[] {"t1", "t2"},
+        //         Intent = new CreateIntentDto
+        //         {
+        //             Name = "TEST_query_intent",
+        //             PhraseParts = new[]
+        //             {
+        //                 new []
+        //                 {
+        //                     new CreatePhrasePartDto
+        //                     {
+        //                         Text = "Hello, ",
+        //                         Type = PhrasePartType.TEXT.ToString()
+        //                     },
+        //                     new CreatePhrasePartDto
+        //                     {
+        //                         Text = "World!",
+        //                         Type = PhrasePartType.ENTITY.ToString(),
+        //                         EntityName = entityName.Name,
+        //                         EntityTypeId = entityType.Id.ToString(),
+        //                     }
+        //                 },
+        //                 new []
+        //                 {
+        //                     new CreatePhrasePartDto
+        //                     {
+        //                         Text = "Hello ",
+        //                         Type = PhrasePartType.TEXT.ToString()
+        //                     },
+        //                     new CreatePhrasePartDto
+        //                     {
+        //                         Text = "World",
+        //                         Type = PhrasePartType.ENTITY.ToString(),
+        //                         EntityName = newEntityName,
+        //                         EntityTypeId = entityType.Id.ToString(),
+        //                     }
+        //                 }
+        //             }
+        //         },
+        //         Response = new CreateResponseDto
+        //         {
+        //             Order = 0,
+        //             RteText = "Greetings!",
+        //             Type = ResponseType.RTE.ToString()
+        //         }
+        //     };
+        //     var httpResponse = await _client.PostAsJsonAsync(
+        //         "/dms/api/v1/queries", payload
+        //     );
+        //     await httpResponse.IsOk();
+        //     var response = await httpResponse.Content.ReadFromJsonAsync<QueryDto>();
+        //     
+        //     // assert and clean up
+        //     await _factory.WithDbContext(async context =>
+        //     {
+        //         q1 = await context.Queries.FirstAsync(x => x.Id == q1.Id);
+        //         q2 = await context.Queries.FirstAsync(x => x.Id == q2.Id);
+        //         var insertedQuery = await context.Queries.FirstAsync(x => x.Id == Guid.Parse(response.QueryId));
+        //         Equal(0, q1.DisplayOrder);
+        //         Equal(1, insertedQuery.DisplayOrder);
+        //         Equal(2, q2.DisplayOrder);
+        //         var query = await context.Queries
+        //             .Include(x => x.QueryIntents).ThenInclude(x => x.Intent)
+        //             .Include(x => x.QueryResponses).ThenInclude(x => x.Response)
+        //             .FirstOrDefaultAsync(resp => resp.Id == Guid.Parse(response.QueryId));
+        //         var newEntity = await context.EntityNames.FirstAsync(x => x.Name == newEntityName);
+        //         context.RemoveRange(query.Intents);
+        //         context.RemoveRange(query.Responses);
+        //         context.Remove(query);
+        //         context.AttachRange(entityName, entityType);
+        //         context.RemoveRange(entityName, entityType);
+        //         context.Remove(newEntity);
+        //         context.RemoveRange(q1, q2);
+        //         await context.SaveChangesAsync();
+        //     });
+        //     
+        //     NotNull(response);
+        //     Single(response.Intents);
+        //     Equal(4, response.Intents.First().PhraseParts.Length);
+        //     Contains(response.Intents.First().PhraseParts, p => p.EntityName == newEntityName);
+        //     Single(response.Responses);
+        // }
         
         [Fact]
         public async Task CreateQueryV1_1()
@@ -198,13 +198,13 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             var newEntityName = TestingFixture.RandomString(15);
             var payload = new CreateQueryRequestV1_1
             {
-                Name = "TEST_query",
+                Name = Guid.NewGuid().ToString(),
                 DisplayOrder = 0,
                 ProjectId = projectId.ToString(),
                 Tags = new[] {"t1", "t2"},
                 Intent = new CreateIntentDto
                 {
-                    Name = "TEST_query_intent",
+                    Name = Guid.NewGuid().ToString(),
                     PhraseParts = new[]
                     {
                         new[]
@@ -300,80 +300,80 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             Equal(3, response.Responses.Length);
         }
         
-        [Fact]
-        public async Task UpdateQuery()
-        {
-            var projectId = _testingFixture.Project.Id;
-            
-            // insert a Query first
-            Query query = await SetupQuery(projectId);
-
-            var oldIntentIds = query.Intents.Select(x => x.Id).ToArray();
-            var oldResponseIds = query.Responses.Select(x => x.Id).ToArray();
-
-            
-            // now try to update the query we inserted
-            var payload = new UpdateQueryRequest
-            {
-                Name = "TEST_query",
-                DisplayOrder = 0,
-                Tags = new[] {"t1", "t2"},
-                Intent = new CreateIntentDto
-                {
-                    Name = query.Intents.First().Name, // "TEST_query_intent",
-                    PhraseParts = new[]
-                    {
-                        new[]
-                        {
-                            new CreatePhrasePartDto
-                            {
-                                Text = "Hello, ",
-                                Type = PhrasePartType.TEXT.ToString()
-                            },
-                            new CreatePhrasePartDto
-                            {
-                                Text = "World!",
-                                Type = PhrasePartType.TEXT.ToString()
-                            }
-                        }
-                    }
-                },
-                Response = new CreateResponseDto
-                {
-                    Order = 0,
-                    RteText = "Greetings!",
-                    Type = ResponseType.RTE.ToString()
-                }
-            };
-            var httpResponse = await _client.PutAsJsonAsync(
-                $"/dms/api/v1/queries/{query.Id}", payload
-            );
-            await httpResponse.IsOk();
-            var response = await httpResponse.Content.ReadFromJsonAsync<UpdateQueryResponse>();
-            
-            // clean up
-            await _factory.WithDbContext(async context =>
-            {
-                query = await context.Queries
-                    .Include(x => x.QueryIntents).ThenInclude(x => x.Intent)
-                    .Include(x => x.QueryResponses).ThenInclude(x => x.Response)
-                    .FirstOrDefaultAsync(resp => resp.Id == Guid.Parse(response.QueryId));
-                context.RemoveRange(query.Intents);
-                context.RemoveRange(query.Responses);
-
-                var oldIntents = await context.Intents.Where(x => oldIntentIds.Contains(x.Id)).ToListAsync();
-                var oldResponses = await context.Responses.Where(x => oldResponseIds.Contains(x.Id)).ToListAsync();
-                context.RemoveRange(oldIntents);
-                context.RemoveRange(oldResponses);
-                
-                context.Remove(query);
-                await context.SaveChangesAsync();
-            });
-            
-            NotNull(response);
-            Single(response.Intents);
-            Single(response.Responses);
-        }
+        // [Fact]
+        // public async Task UpdateQuery()
+        // {
+        //     var projectId = _testingFixture.Project.Id;
+        //     
+        //     // insert a Query first
+        //     Query query = await SetupQuery(projectId);
+        //
+        //     var oldIntentIds = query.Intents.Select(x => x.Id).ToArray();
+        //     var oldResponseIds = query.Responses.Select(x => x.Id).ToArray();
+        //
+        //     
+        //     // now try to update the query we inserted
+        //     var payload = new UpdateQueryRequest
+        //     {
+        //         Name = "TEST_query",
+        //         DisplayOrder = 0,
+        //         Tags = new[] {"t1", "t2"},
+        //         Intent = new CreateIntentDto
+        //         {
+        //             Name = query.Intents.First().Name,
+        //             PhraseParts = new[]
+        //             {
+        //                 new[]
+        //                 {
+        //                     new CreatePhrasePartDto
+        //                     {
+        //                         Text = "Hello, ",
+        //                         Type = PhrasePartType.TEXT.ToString()
+        //                     },
+        //                     new CreatePhrasePartDto
+        //                     {
+        //                         Text = "World!",
+        //                         Type = PhrasePartType.TEXT.ToString()
+        //                     }
+        //                 }
+        //             }
+        //         },
+        //         Response = new CreateResponseDto
+        //         {
+        //             Order = 0,
+        //             RteText = "Greetings!",
+        //             Type = ResponseType.RTE.ToString()
+        //         }
+        //     };
+        //     var httpResponse = await _client.PutAsJsonAsync(
+        //         $"/dms/api/v1/queries/{query.Id}", payload
+        //     );
+        //     await httpResponse.IsOk();
+        //     var response = await httpResponse.Content.ReadFromJsonAsync<UpdateQueryResponse>();
+        //     
+        //     // clean up
+        //     await _factory.WithDbContext(async context =>
+        //     {
+        //         query = await context.Queries
+        //             .Include(x => x.QueryIntents).ThenInclude(x => x.Intent)
+        //             .Include(x => x.QueryResponses).ThenInclude(x => x.Response)
+        //             .FirstOrDefaultAsync(resp => resp.Id == Guid.Parse(response.QueryId));
+        //         context.RemoveRange(query.Intents);
+        //         context.RemoveRange(query.Responses);
+        //
+        //         var oldIntents = await context.Intents.Where(x => oldIntentIds.Contains(x.Id)).ToListAsync();
+        //         var oldResponses = await context.Responses.Where(x => oldResponseIds.Contains(x.Id)).ToListAsync();
+        //         context.RemoveRange(oldIntents);
+        //         context.RemoveRange(oldResponses);
+        //         
+        //         context.Remove(query);
+        //         await context.SaveChangesAsync();
+        //     });
+        //     
+        //     NotNull(response);
+        //     Single(response.Intents);
+        //     Single(response.Responses);
+        // }
         
         [Fact]
         public async Task UpdateQueryV1_1()
@@ -494,17 +494,20 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
         }
 
         [Fact]
-        public async Task Insert()
+        public async Task UpdateDisplayOrders()
         {
             var projectId = _testingFixture.Project.Id;
             var q1 = await SetupQuery(projectId, 0);
             var q2 = await SetupQuery(projectId, 1);
             var q3 = await SetupQuery(projectId, 2);
-            var q4 = await SetupQuery(projectId, 3);
-            var q5 = await SetupQuery(projectId, 4);
 
-            var httpResponse = await _client.PostAsJsonAsync($"/dms/api/v1/queries/insert",
-                new InsertRequest(q4.Id.ToString(), 1));
+            var httpResponse = await _client.PostAsJsonAsync($"/dms/api/v1/queries/displayOrders",
+                new UpdateDisplayOrdersRequest(projectId, new Dictionary<Guid, int>
+                {
+                    [q1.Id] = 1,
+                    [q2.Id] = 2,
+                    [q3.Id] = 3,
+                }));
             await httpResponse.IsOk();
 
             await _factory.WithDbContext(async context =>
@@ -515,19 +518,13 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                     .FirstAsync(x => x.Id == q2.Id);
                 q3 = await context.Queries
                     .FirstAsync(x => x.Id == q3.Id);
-                q4 = await context.Queries
-                    .FirstAsync(x => x.Id == q4.Id);
-                q5 = await context.Queries
-                    .FirstAsync(x => x.Id == q5.Id);
 
-                Equal(0, q1.DisplayOrder);
+                Equal(1, q1.DisplayOrder);
                 Equal(2, q2.DisplayOrder);
                 Equal(3, q3.DisplayOrder);
-                Equal(1, q4.DisplayOrder);
-                Equal(4, q5.DisplayOrder);
 
                 // cleanup
-                context.RemoveRange(q1, q2, q3, q4, q5);
+                context.RemoveRange(q1, q2, q3);
                 await context.SaveChangesAsync();
             }); 
         }

@@ -5,29 +5,29 @@ using System.Security.Cryptography;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
+    [Obsolete("remove this")]
     public class ApiKey : ValueObject
     {
-        private readonly string? _key;
         private const int KeyLength = 32;
 
-        public string? Key => _key;
+        public string? Key { get; set; }
         
-        private ApiKey(string key)
+        public ApiKey(string key)
         {
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentException($"{nameof(key)} must not be empty");
             if (key.Trim().Length != KeyLength)
                 throw new ArgumentException($"{nameof(key)} must have length of {KeyLength}");
-            _key = key.Trim();
+            Key = key.Trim();
         }
 
-        private ApiKey()
+        public ApiKey()
         {
         }
         
         public static readonly ApiKey Empty = new ApiKey();
 
-        public bool IsEmpty => string.IsNullOrEmpty(_key);
+        public bool IsEmpty => string.IsNullOrEmpty(Key);
 
         public static ApiKey GenerateNew()
         {
@@ -40,7 +40,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         
         protected override IEnumerable<object> GetAtomicValues()
         {
-            yield return _key ?? string.Empty;
+            yield return Key ?? string.Empty;
         }
 
         public static implicit operator string?(ApiKey apiKey) => apiKey?.Key;

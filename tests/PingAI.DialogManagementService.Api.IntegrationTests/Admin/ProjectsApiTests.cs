@@ -38,7 +38,6 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Admin
             var response = await _client.GetFromJsonAsync<ProjectDto>(
                 $"/dms/api/admin/v1/projects/{_testingFixture.Project.Id}/runtime");
             NotNull(response);
-            Equal(_testingFixture.Project.Id, Guid.Parse(response.ProjectId));
         }
 
         public async Task InitializeAsync()
