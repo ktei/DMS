@@ -5,9 +5,9 @@ namespace PingAI.DialogManagementService.Application.Utils
 {
     public static class DateTimeExtensions
     {
-        public static DateTime ConvertToLocal(this DateTime timeUtc, string timezoneName)
+        public static DateTime ConvertToLocal(this DateTime dateTimeUtc, string timezoneName)
         {
-            var instant = Instant.FromDateTimeUtc(timeUtc);
+            var instant = Instant.FromDateTimeUtc(dateTimeUtc);
             var timeZone = DateTimeZoneProviders.Tzdb[timezoneName];
             var zonedDateTime = instant.InZone(timeZone);
             return zonedDateTime.ToDateTimeUnspecified();

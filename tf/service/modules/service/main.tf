@@ -1,6 +1,23 @@
 locals {
-  appname     = var.appname
-  environment = var.environment
+  appname             = var.appname
+  environment         = var.environment
+  prefixed_appname    = "${var.environment}-${var.appname}"
+  bucket_name         = "${local.prefixed_appname}-${data.aws_caller_identity.current.account_id}"
+}
+
+data "aws_caller_identity" "current" {}
+
+resource "aws_s3_bucket" "bucket" {
+  bucket = local.bucket_name
+  acl    = "private"
+  versioning {
+    enabled = true
+  }
+
+  tags = {
+    Name        = local.bucket_name
+    Environment = local.environment
+  }
 }
 
 module "service" {
@@ -15,4 +32,27 @@ module "service" {
   lb_path                     = "/dms"
   task_file                   = "task.json"
   task_exec_policy_statements = var.task_exec_policy_statements
+  policy_statements = [
+    {
+      actions = [
+        "s3:ListBucket"
+      ],
+      resources = [
+        aws_s3_bucket.bucket.arn
+      ]
+    },
+    {
+      actions = [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetBucketVersioning",
+        "s3:PutObject"
+      ],
+      resources = [
+        aws_s3_bucket.bucket.arn,
+        "${aws_s3_bucket.bucket.arn}/*"
+      ]
+    }
+  ]
 }
+

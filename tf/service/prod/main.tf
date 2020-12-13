@@ -3,6 +3,7 @@ provider "aws" {
 }
 
 terraform {
+  required_version = "= 0.13.5"
   backend "s3" {
     bucket = "terraform-state-397977497739"
     key    = "prod/dms/service/terraform.tfstate"
