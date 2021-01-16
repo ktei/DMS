@@ -14,6 +14,14 @@ resource "aws_s3_bucket" "bucket" {
     enabled = true
   }
 
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["PUT"]
+    allowed_origins = ["http://localhost:3000", "https://design-dev.iiikknow.com"]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+
   tags = {
     Name        = local.bucket_name
     Environment = local.environment

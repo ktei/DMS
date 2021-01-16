@@ -18,5 +18,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Configuration
         string ChatbotRuntimeClientId { get; }
         
         string Auth0RulesClientId { get; }
+        
+        string BucketName { get; }
     }
 }

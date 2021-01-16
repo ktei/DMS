@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Amazon.Runtime.Internal.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +12,7 @@ using PingAI.DialogManagementService.Api.Models.Projects;
 using PingAI.DialogManagementService.Application.Projects.GetIntegration;
 using PingAI.DialogManagementService.Application.Projects.GetProject;
 using PingAI.DialogManagementService.Application.Projects.ListProjects;
+using PingAI.DialogManagementService.Application.Projects.PrepareUpload;
 using PingAI.DialogManagementService.Application.Projects.PublishProject;
 using PingAI.DialogManagementService.Application.Projects.UpdateEnquiries;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
@@ -81,6 +85,37 @@ namespace PingAI.DialogManagementService.Api.Controllers
         {
             var projectPublished = await _mediator.Send(new PublishProjectCommand(projectId));
             return projectPublished.Id;
+        }
+
+        [HttpPost("{projectId}/upload")]
+        public async Task<ActionResult<UploadResponse>> Upload([FromRoute] Guid projectId,
+            [FromBody] UploadRequest request)
+        {
+            var result = await _mediator.Send(new PrepareUploadCommand(projectId, request.FileName));
+            // UploadObject(result.UploadUrl);
+            return new UploadResponse(result.UploadUrl);
+        }
+        
+        private static void UploadObject(string url)
+        {
+            HttpWebRequest httpRequest = WebRequest.Create(url) as HttpWebRequest;
+            httpRequest.Method = "PUT";
+            using (Stream dataStream = httpRequest.GetRequestStream())
+            {
+                var buffer = new byte[8000];
+                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    "SS architecture.png");
+                using (FileStream fileStream = new FileStream(path,
+                    FileMode.Open, FileAccess.Read))
+                {
+                    int bytesRead = 0;
+                    while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        dataStream.Write(buffer, 0, bytesRead);
+                    }
+                }
+            }
+            HttpWebResponse response = httpRequest.GetResponse() as HttpWebResponse;
         }
     }
 }

@@ -39,6 +39,10 @@
       {
         "name": "NluApiHost",
         "value": "https://service-dev.iiiknow.com"
+      },
+      {
+        "name": "BucketName",
+        "value": "dev-dms-397977497739"
       }
     ]
   }

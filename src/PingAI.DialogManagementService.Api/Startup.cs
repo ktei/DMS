@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Amazon.S3;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -33,6 +34,7 @@ using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Caching;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Slack;
+using PingAI.DialogManagementService.Application.Interfaces.Services.Storage;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
 using PingAI.DialogManagementService.Domain.Utils;
 using PingAI.DialogManagementService.Infrastructure.Configuration;
@@ -40,6 +42,7 @@ using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
 using PingAI.DialogManagementService.Infrastructure.Services.Nlu;
 using PingAI.DialogManagementService.Infrastructure.Services.Slack;
+using PingAI.DialogManagementService.Infrastructure.Services.Storage;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using IAuthorizationService = PingAI.DialogManagementService.Application.Interfaces.Services.IAuthorizationService;
 
@@ -198,6 +201,11 @@ namespace PingAI.DialogManagementService.Api
             services.AddDbContext<DialogManagementContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DialogManagement")));
             
+            // Amazon services
+            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+            services.AddAWSService<IAmazonS3>();
+
+            
             // TODO: DI these in a smarter way (Autofac for example)
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IProjectRepository, ProjectRepository>();
@@ -211,6 +219,7 @@ namespace PingAI.DialogManagementService.Api
             services.AddTransient<IProjectVersionRepository, ProjectVersionRepository>();
             services.AddTransient<ISlackWorkspaceRepository, SlackWorkspaceRepository>();
             services.AddTransient<IChatHistoryRepository, ChatHistoryRepository>();
+            services.AddTransient<IS3Service, S3Service>();
 
             services.AddHttpClient<INluService, NluService>(client =>
             {
@@ -289,6 +298,7 @@ namespace PingAI.DialogManagementService.Api
         public string AdminPortalClientId => _configuration["AdminPortalClientId"];
         public string ChatbotRuntimeClientId => _configuration["ChatbotRuntimeClientId"];
         public string Auth0RulesClientId => _configuration["Auth0RulesClientId"];
+        public string BucketName => _configuration["BucketName"];
     }
     
     public class DateTimeConverter : JsonConverter<DateTime>
