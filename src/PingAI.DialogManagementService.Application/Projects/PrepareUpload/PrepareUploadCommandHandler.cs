@@ -36,7 +36,8 @@ namespace PingAI.DialogManagementService.Application.Projects.PrepareUpload
                 throw new ForbiddenException(ProjectWriteDenied);
 
             var key = MakeObjectKey(request.ProjectId, request.FileName);
-            var uploadUrl = _s3Service.GetPreSignedUploadUrl(_appConfig.BucketName, key);
+            var uploadUrl = _s3Service.GetPreSignedUploadUrl(_appConfig.BucketName,
+                request.ContentType, key);
 
             return new PrepareUploadCommandResult(uploadUrl);
         }

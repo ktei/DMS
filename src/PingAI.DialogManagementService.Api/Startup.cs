@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Amazon;
 using Amazon.S3;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -202,6 +203,7 @@ namespace PingAI.DialogManagementService.Api
                 options.UseNpgsql(Configuration.GetConnectionString("DialogManagement")));
             
             // Amazon services
+            AWSConfigsS3.UseSignatureVersion4 = true;
             services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
             services.AddAWSService<IAmazonS3>();
 
