@@ -84,7 +84,7 @@
       },
       {
         "name": "PublicBaseUrl",
-        "value": "https://dev-dms-397977497739.s3.ap-southeast-2.amazonaws.com/public"
+        "value": "https://prod-dms-397977497739.s3.ap-southeast-2.amazonaws.com/public"
       }
     ]
   }
