@@ -91,8 +91,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public async Task<ActionResult<UploadResponse>> Upload([FromRoute] Guid projectId,
             [FromBody] UploadRequest request)
         {
-            var result = await _mediator.Send(new PrepareUploadCommand(projectId, request.FileName,
-                request.ContentType));
+            var result = await _mediator.Send(new PrepareUploadCommand(projectId, request.ContentType,
+                request.FileName));
             // UploadObject(result.UploadUrl);
             return new UploadResponse(result.UploadUrl, result.PublicUrl);
         }
