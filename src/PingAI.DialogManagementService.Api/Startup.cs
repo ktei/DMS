@@ -301,6 +301,7 @@ namespace PingAI.DialogManagementService.Api
         public string ChatbotRuntimeClientId => _configuration["ChatbotRuntimeClientId"];
         public string Auth0RulesClientId => _configuration["Auth0RulesClientId"];
         public string BucketName => _configuration["BucketName"];
+        public string PublicBaseUrl => _configuration["PublicBaseUrl"];
     }
     
     public class DateTimeConverter : JsonConverter<DateTime>

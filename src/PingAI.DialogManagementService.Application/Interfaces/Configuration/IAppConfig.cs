@@ -20,5 +20,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Configuration
         string Auth0RulesClientId { get; }
         
         string BucketName { get; }
+        
+        string PublicBaseUrl { get; }
     }
 }

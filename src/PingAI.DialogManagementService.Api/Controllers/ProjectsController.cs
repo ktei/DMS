@@ -94,7 +94,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var result = await _mediator.Send(new PrepareUploadCommand(projectId, request.FileName,
                 request.ContentType));
             // UploadObject(result.UploadUrl);
-            return new UploadResponse(result.UploadUrl);
+            return new UploadResponse(result.UploadUrl, result.PublicUrl);
         }
         
         private static void UploadObject(string url)

@@ -25,10 +25,12 @@ namespace PingAI.DialogManagementService.Application.Projects.PrepareUpload
     public class PrepareUploadCommandResult
     {
         public string UploadUrl { get; set; }
+        public string PublicUrl { get; set; }
 
-        public PrepareUploadCommandResult(string uploadUrl)
+        public PrepareUploadCommandResult(string uploadUrl, string publicUrl)
         {
             UploadUrl = uploadUrl;
+            PublicUrl = publicUrl;
         }
 
         public PrepareUploadCommandResult()
