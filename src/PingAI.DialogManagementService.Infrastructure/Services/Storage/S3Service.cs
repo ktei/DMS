@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -16,17 +17,27 @@ namespace PingAI.DialogManagementService.Infrastructure.Services.Storage
             _s3 = s3;
         }
         
-        public string GetPreSignedUploadUrl(string bucket, string contentType, string key)
+        public string GetPreSignedUploadUrl(string bucket, string contentType, string key,
+            Dictionary<string, string>? tags = null)
         {
             AWSConfigsS3.UseSignatureVersion4 = true;
-            var preSignedUrl = _s3.GetPreSignedURL(new GetPreSignedUrlRequest
+            var request = new GetPreSignedUrlRequest
             {
                 BucketName = bucket,
                 Key = key,
                 ContentType = contentType,
                 Verb = HttpVerb.PUT,
                 Expires = DateTime.UtcNow.Add(UploadTimeout)
-            });
+            };
+            if (tags != null)
+            {
+                foreach (var tag in tags)
+                {
+                    request.Metadata[tag.Key] = tag.Value;
+                }
+            }
+            var preSignedUrl = _s3.GetPreSignedURL(request);
+            
 
             return preSignedUrl;
         }
