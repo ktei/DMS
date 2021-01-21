@@ -30,4 +30,5 @@ module "service" {
   lb_listener_arn = data.terraform_remote_state.infra.outputs.public_lb_listener_https_arn
   cluster_name    = data.terraform_remote_state.infra.outputs.applications_cluster_name
   task_exec_policy_statements = []
+  s3_allowed_origins = ["http://localhost:3000", "https://design-dev.iiiknow.com"]
 }

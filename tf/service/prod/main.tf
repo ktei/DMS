@@ -42,4 +42,5 @@ module "service" {
       ]
     }
   ]
+  s3_allowed_origins = ["https://design.iiiknow.com"]
 }

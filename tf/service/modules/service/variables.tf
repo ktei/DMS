@@ -33,3 +33,8 @@ variable "task_exec_policy_statements" {
   }))
   default = []
 }
+
+variable "s3_allowed_origins" {
+  type = list(string)
+  default = []
+}
