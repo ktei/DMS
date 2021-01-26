@@ -18,6 +18,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("oauthAccessToken");
             builder.Property(o => o.WebhookUrl)
                 .HasColumnName("webhookURL");
+            builder.Property(o => o.TeamId)
+                .HasColumnName("teamId");
 
             builder.AttachTimestamps();
             

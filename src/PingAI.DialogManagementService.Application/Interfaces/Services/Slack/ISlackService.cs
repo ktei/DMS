@@ -19,6 +19,9 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Services.Slack
         [JsonPropertyName("error")]
         public string? Error { get; set; }
         
+        [JsonPropertyName("team_id")]
+        public string TeamId { get; set; }
+        
         [JsonPropertyName("incoming_webhook")]
         public IncomingWebhook? IncomingWebhook { get; set; }
     }

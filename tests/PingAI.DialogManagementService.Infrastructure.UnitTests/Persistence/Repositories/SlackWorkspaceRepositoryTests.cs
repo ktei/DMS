@@ -31,13 +31,15 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             
             // Act
             var slackWorkspace = await sut.AddSlackWorkspace(
-                new SlackWorkspace(project.Id, "accesstoken", "http://webhook.com"));
+                new SlackWorkspace(project.Id, "accesstoken", "http://webhook.com",
+                    "team_123"));
             await context.SaveChangesAsync();
 
             // Assert
             var actual = await context.SlackWorkspaces.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == slackWorkspace.Id);
             Equal(slackWorkspace.OAuthAccessToken, actual.OAuthAccessToken);
+            Equal("team_123", actual.TeamId);
         }
 
         public Task InitializeAsync() => _testDataFactory.Setup();
