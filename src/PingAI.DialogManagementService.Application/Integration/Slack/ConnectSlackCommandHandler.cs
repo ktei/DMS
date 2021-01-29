@@ -53,14 +53,14 @@ namespace PingAI.DialogManagementService.Application.Integration.Slack
                 slackWorkspace = await _slackWorkspaceRepository.AddSlackWorkspace(
                     new SlackWorkspace(request.ProjectId, slackResponse.AccessToken!,
                         slackResponse.IncomingWebhook!.Url,
-                        slackResponse.TeamId));
+                        slackResponse.Team.Id));
             }
             else
             {
                 slackWorkspace.UpdateSlackConfig(
                     slackResponse.AccessToken!,
                     slackResponse.IncomingWebhook!.Url,
-                    slackResponse.TeamId);
+                    slackResponse.Team.Id);
             }
 
             await _uow.SaveChanges();
