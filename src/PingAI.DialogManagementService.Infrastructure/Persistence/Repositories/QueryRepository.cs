@@ -77,7 +77,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             {
                 // RTE query means all responses should be RTE
                 query = query.Where(x => x.QueryResponses.All(
-                    qr => qr.Response!.Type.ToString() == responseType.ToString()));
+                    qr => qr.Response!.Type.ToString() == ResponseType.RTE.ToString() ||
+                          qr.Response!.Type.ToString() == ResponseType.QUICK_REPLY.ToString()));
             }
             else if (responseType == ResponseType.HANDOVER || responseType == ResponseType.FORM)
             {
