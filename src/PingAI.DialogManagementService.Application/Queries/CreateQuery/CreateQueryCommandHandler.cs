@@ -111,16 +111,16 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             }
             else if (request.Responses?.Any() == true)
             {
-                // TODO: we only support these cases for now:
-                // 1. 1 RTE
-                // 2. 1 RTE + 1 HANDOVER
-                // 3. 1 FORM
                 var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
                
                 Debug.Assert(!string.IsNullOrEmpty(request.RteText));
-                
-                request.Responses.FirstOrDefault(x => x.Type == ResponseType.RTE)?
-                    .SetRteText(request.RteText!, entityNames.ToDictionary(x => x.Name));
+
+                foreach (var resp in request.Responses.Where(r => r.Type == ResponseType.RTE ||
+                                                                  // TODO: quick replies shouldn't use entities anyway
+                                                                  r.Type == ResponseType.QUICK_REPLY))
+                {
+                    resp.SetRteText(request.RteText!, entityNames.ToDictionary(x => x.Name));
+                }
                 
                 foreach (var response in request.Responses)
                 {

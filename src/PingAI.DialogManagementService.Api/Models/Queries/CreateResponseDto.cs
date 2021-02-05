@@ -35,6 +35,10 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
                 .NotEmpty()
                 .MaximumLength(Response.MaxRteTextLength)
                 .When(x => x.Type == ResponseType.RTE.ToString());
+            RuleFor(x => x.RteText)
+                .NotEmpty()
+                .MaximumLength(Response.QuickReplyLength)
+                .When(x => x.Type == ResponseType.QUICK_REPLY.ToString());
             RuleFor(x => x.Form)
                 .NotNull()
                 .When(x => x.Type == ResolutionType.FORM.ToString());

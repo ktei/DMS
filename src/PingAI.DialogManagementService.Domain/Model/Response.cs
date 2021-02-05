@@ -25,6 +25,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public IReadOnlyList<QueryResponse> QueryResponses => _queryResponses.ToImmutableList();
 
         public const int MaxRteTextLength = 4000;
+        public const int QuickReplyLength = 250;
         
         public Response(Resolution? resolution, Guid projectId, ResponseType type,
             int order) : this(JsonUtils.Serialize(resolution ?? Resolution.Empty),
@@ -132,7 +133,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         VIDEO,
         SOCIAL,
         WEBHOOk,
-        FORM
+        FORM,
+        QUICK_REPLY
     }
 }
 
