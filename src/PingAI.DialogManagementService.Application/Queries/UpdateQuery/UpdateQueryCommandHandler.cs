@@ -120,10 +120,13 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
                 // TODO: we only support RTE for now
                 var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(query.ProjectId);
                 Debug.Assert(!string.IsNullOrEmpty(request.RteText));
-                
-                request.Responses.FirstOrDefault(x => x.Type == ResponseType.RTE)?
-                    .SetRteText(request.RteText!, entityNames.ToDictionary(x => x.Name));
-                
+
+                foreach (var resp in request.Responses.Where(r => r.Type == ResponseType.RTE ||
+                                                                  r.Type == ResponseType.QUICK_REPLY))
+                {
+                    resp.SetRteText(request.RteText!, entityNames.ToDictionary(x => x.Name));
+                }
+
                 // TODO: this won't delete the detached response though
                 query.ClearResponses();
                 foreach (var response in request.Responses)
