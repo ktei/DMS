@@ -80,7 +80,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var query = await _mediator.Send(new CreateQueryCommand(
                 request.Name, Guid.Parse(request.ProjectId),
                 new Expression[0], request.Description ?? request.Name, request.Tags,
-                request.DisplayOrder, null, intent, null, new[] {response}, request.Response.RteText));
+                request.DisplayOrder, null, intent, null, new[] {response}, 
+                new []{request.Response.RteText}));
             return new QueryDto(query);
         }
 
@@ -102,7 +103,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 request.Name, Guid.Parse(request.ProjectId),
                 new Expression[0], request.Description ?? request.Name, request.Tags,
                 request.DisplayOrder, null, intent, null, responses,
-                request.Responses.FirstOrDefault(r => r.Type == ResponseType.RTE.ToString())?.RteText));
+                request.Responses.Select(r => r.RteText).ToArray()));
             return new QueryDto(query);
         }
 
@@ -119,7 +120,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 queryId,
                 request.Name,
                 new Expression[0], request.Description ?? request.Name, request.Tags,
-                request.DisplayOrder, null, intent, null, new[] {response}, request.Response.RteText));
+                request.DisplayOrder, null, intent, null, new[] {response}, 
+                new []{request.Response.RteText}));
             return new UpdateQueryResponse(query);
         }
 
@@ -149,7 +151,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var phraseParts = FlattenPhraseParts(Guid.Empty, Guid.Empty, request.Intent.PhraseParts);
             var intent = new Intent(request.Intent.Name, Guid.Empty, IntentType.STANDARD, phraseParts);
             var responses = request.Responses.Select(r =>
-            { 
+            {
                 if (r.Form != null)
                 {
                     return new Response(new Resolution(new FormResolution(
@@ -163,7 +165,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 request.Name,
                 new Expression[0], request.Description ?? request.Name, request.Tags,
                 request.DisplayOrder, null, intent, null, responses,
-                request.Responses.FirstOrDefault(r => r.Type == ResponseType.RTE.ToString())?.RteText));
+                request.Responses.Select(r => r.RteText).ToArray()));
             return new UpdateQueryResponse(query);
         }
 

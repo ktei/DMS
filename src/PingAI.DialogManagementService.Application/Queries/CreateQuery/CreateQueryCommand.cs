@@ -17,11 +17,11 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
         public Intent? Intent { get; set; }
         public Guid? ResponseId { get; set; }
         public Response[]? Responses { get; set; }
-        public string? RteText { get; set; }
+        public string?[] RteText { get; set; }
 
         public CreateQueryCommand(string name, Guid projectId, Expression[] expressions, string description,
             string[]? tags, int? displayOrder, Guid? intentId, Intent? intent, Guid? responseId, Response[]? responses,
-            string? rteText)
+            string?[] rteText)
         {
             Name = name;
             ProjectId = projectId;

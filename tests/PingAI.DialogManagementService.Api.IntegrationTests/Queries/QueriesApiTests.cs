@@ -267,7 +267,19 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                                 }
                             }
                         }
-                    }
+                    },
+                    new CreateResponseDto
+                    {
+                        Order = 3,
+                        RteText = "QuickReply1",
+                        Type = ResponseType.QUICK_REPLY.ToString()
+                    },
+                    new CreateResponseDto
+                    {
+                        Order = 4,
+                        RteText = "QuickReply2",
+                        Type = ResponseType.QUICK_REPLY.ToString()
+                    },
                 }
             };
             var httpResponse = await _client.PostAsJsonAsync(
@@ -297,7 +309,9 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             Single(response.Intents);
             Equal(4, response.Intents.First().PhraseParts.Length);
             Contains(response.Intents.First().PhraseParts, p => p.EntityName == newEntityName);
-            Equal(3, response.Responses.Length);
+            Equal(5, response.Responses.Length);
+            Equal("QUICK_REPLY", response.Responses[3].Type);
+            Equal("QUICK_REPLY", response.Responses[4].Type);
         }
         
         // [Fact]
@@ -441,7 +455,19 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                                 }
                             }
                         }
-                    }
+                    },
+                    new CreateResponseDto
+                    {
+                        Order = 3,
+                        RteText = "QuickReply1",
+                        Type = ResponseType.QUICK_REPLY.ToString()
+                    },
+                    new CreateResponseDto
+                    {
+                        Order = 4,
+                        RteText = "QuickReply2",
+                        Type = ResponseType.QUICK_REPLY.ToString()
+                    },
                 }
             };
             var httpResponse = await _client.PutAsJsonAsync(
@@ -471,7 +497,9 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             
             NotNull(response);
             Single(response.Intents);
-            Equal(3, response.Responses.Length);
+            Equal(5, response.Responses.Length);
+            Equal("QUICK_REPLY", response.Responses[3].Type);
+            Equal("QUICK_REPLY", response.Responses[4].Type);
         }
         
         [Fact]

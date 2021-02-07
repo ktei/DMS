@@ -16,11 +16,11 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
         public Intent? Intent { get; set; }
         public Guid? ResponseId { get; set; }
         public Response[]? Responses { get; set; }
-        public string? RteText { get; set; } 
+        public string?[] RteText { get; set; } 
         
         public UpdateQueryCommand(Guid queryId, string name, Expression[] expressions, string description,
             string[]? tags, int displayOrder, Guid? intentId, Intent? intent, Guid? responseId, Response[]? responses,
-            string? rteText)
+            string?[] rteText)
         {
             QueryId = queryId;
             Name = name;

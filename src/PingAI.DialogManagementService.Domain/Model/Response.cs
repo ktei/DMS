@@ -103,7 +103,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             }
 
             ResolutionJson = JsonUtils.Serialize(new Resolution(resolutionParts.ToArray()));
-            Type = ResponseType.RTE;
         }
 
         public void SetForm(FormResolution form)

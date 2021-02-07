@@ -111,15 +111,14 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             }
             else if (request.Responses?.Any() == true)
             {
-                var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
-               
-                Debug.Assert(!string.IsNullOrEmpty(request.RteText));
-
-                foreach (var resp in request.Responses.Where(r => r.Type == ResponseType.RTE ||
-                                                                  // TODO: quick replies shouldn't use entities anyway
-                                                                  r.Type == ResponseType.QUICK_REPLY))
+                var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(query.ProjectId);
+                for (var i = 0; i < request.Responses.Length; i++)
                 {
-                    resp.SetRteText(request.RteText!, entityNames.ToDictionary(x => x.Name));
+                    if (request.RteText[i] != null)
+                    {
+                        request.Responses[i].SetRteText(request.RteText[i]!, 
+                            entityNames.ToDictionary(e => e.Name));
+                    }
                 }
                 
                 foreach (var response in request.Responses)
