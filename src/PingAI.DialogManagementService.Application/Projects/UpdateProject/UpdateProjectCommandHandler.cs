@@ -39,7 +39,7 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
             project.UpdateWidgetColor(request.WidgetColor);
             project.UpdateWidgetDescription(request.WidgetDescription);
             project.UpdateFallbackMessage(request.FallbackMessage);
-            project.UpdateGreetingMessage(request.GreetingMessage);
+            project.UpdateGreetingResponses(request.GreetingResponses);
             project.UpdateDomains(request.Domains);
             if (request.BusinessTimeStartUtc.HasValue)
             {

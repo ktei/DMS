@@ -58,6 +58,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .Query().Include(q => q.QueryIntents).LoadAsync();
             await _context.Entry(project).Collection(p => p.Queries)
                 .Query().Include(q => q.QueryResponses).LoadAsync();
+            await _context.Entry(project).Collection(p => p.GreetingResponses)
+                .Query().Include(r => r.Response).LoadAsync();
 
             return project;
         }

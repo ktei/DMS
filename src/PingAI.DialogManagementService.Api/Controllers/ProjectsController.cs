@@ -16,6 +16,7 @@ using PingAI.DialogManagementService.Application.Projects.PrepareUpload;
 using PingAI.DialogManagementService.Application.Projects.PublishProject;
 using PingAI.DialogManagementService.Application.Projects.UpdateEnquiries;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
+using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Controllers
 {
@@ -64,10 +65,30 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var businessTimeEndUtc = string.IsNullOrEmpty(request.BusinessTimeEnd)
                 ? null
                 : ProjectDto.TryConvertStringToUtc(request.BusinessTimeEnd);
+
+            var greetingResponses = new List<Response>();
+            if (request.GreetingMessage != null)
+            {
+                var r = new Response(projectId, ResponseType.RTE, 0);
+                r.SetRteText(request.GreetingMessage, new Dictionary<string, EntityName>());
+                greetingResponses.Add(r);
+            }
+
+            if (request.QuickReplies != null)
+            {
+                var responseOrder = 1;
+                foreach (var quickReply in request.QuickReplies)
+                {
+                    var r = new Response(projectId, ResponseType.QUICK_REPLY, responseOrder++);
+                    r.SetRteText(quickReply, new Dictionary<string, EntityName>());
+                    greetingResponses.Add(r);
+                }
+            }
+            
             var project = await _mediator.Send(new UpdateProjectCommand(projectId,
                 request.WidgetTitle, request.WidgetColor,
                 request.WidgetDescription, request.FallbackMessage,
-                request.GreetingMessage, request.Domains,
+                greetingResponses, request.Domains,
                 businessTimeStartUtc, businessTimeEndUtc, request.BusinessEmail));
             return new ProjectDto(project);
         }
@@ -93,30 +114,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
         {
             var result = await _mediator.Send(new PrepareUploadCommand(projectId, request.ContentType,
                 request.FileName));
-            // UploadObject(result.UploadUrl);
             return new UploadResponse(result.UploadUrl, result.PublicUrl);
-        }
-        
-        private static void UploadObject(string url)
-        {
-            HttpWebRequest httpRequest = WebRequest.Create(url) as HttpWebRequest;
-            httpRequest.Method = "PUT";
-            using (Stream dataStream = httpRequest.GetRequestStream())
-            {
-                var buffer = new byte[8000];
-                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "SS architecture.png");
-                using (FileStream fileStream = new FileStream(path,
-                    FileMode.Open, FileAccess.Read))
-                {
-                    int bytesRead = 0;
-                    while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        dataStream.Write(buffer, 0, bytesRead);
-                    }
-                }
-            }
-            HttpWebResponse response = httpRequest.GetResponse() as HttpWebResponse;
         }
     }
 }

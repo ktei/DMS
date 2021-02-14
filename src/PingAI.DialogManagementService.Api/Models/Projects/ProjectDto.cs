@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Projects
@@ -13,6 +15,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
         public string? WidgetDescription { get; set; }
         public string? FallbackMessage { get; set; }
         public string? GreetingMessage { get; set; }
+        public string[]? QuickReplies { get; set; }
         public string[] Enquiries { get; set; }
         public string? ApiKey { get; set; }
         public string[] Domains { get; set; }
@@ -23,7 +26,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
 
         public ProjectDto(string projectId, string name, string? widgetTitle, string widgetColor,
             string? widgetDescription,
-            string? fallbackMessage, string? greetingMessage, string[] enquiries, string? apiKey, string[] domains,
+            string? fallbackMessage, string? greetingMessage, string[]? quickReplies, string[] enquiries, string? apiKey, string[] domains,
             string? businessTimeStart, string? businessTimeEnd, string businessTimezone, string? businessEmail)
         {
             ProjectId = projectId;
@@ -33,6 +36,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
             WidgetDescription = widgetDescription;
             FallbackMessage = fallbackMessage;
             GreetingMessage = greetingMessage;
+            QuickReplies = quickReplies;
             Enquiries = enquiries;
             ApiKey = apiKey;
             Domains = domains;
@@ -51,7 +55,6 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
             WidgetColor = project.WidgetColor ?? string.Empty;
             WidgetDescription = project.WidgetDescription;
             FallbackMessage = project.FallbackMessage;
-            GreetingMessage = project.GreetingMessage;
             Enquiries = project.Enquiries ?? new string[0];
             ApiKey = project.ApiKey?.Key;
             Domains = project.Domains ?? new string[0];
@@ -63,6 +66,19 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
                 : null;
             BusinessTimezone = project.BusinessTimezone;
             BusinessEmail = project.BusinessEmail;
+
+            GreetingMessage = project.GreetingResponses.FirstOrDefault(gr => 
+                    gr.Response?.Type == ResponseType.RTE)?
+                .Response?.GetDisplayText();
+            var quickReplies = new List<string>();
+            foreach (var gr in project.GreetingResponses
+                .Where(x => x.Response!.Type == ResponseType.QUICK_REPLY)
+                .OrderBy(x => x.Response!.Order))
+            {
+                quickReplies.Add(gr.Response!.GetDisplayText());
+            }
+
+            QuickReplies = quickReplies.ToArray();
         }
 
         public static DateTime? TryConvertStringToUtc(string s) =>

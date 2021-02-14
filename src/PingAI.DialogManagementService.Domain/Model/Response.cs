@@ -40,7 +40,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             ProjectId = projectId;
             Type = type;
             Order = order;
-            _queryResponses = new List<QueryResponse>(); 
+            _queryResponses = new List<QueryResponse>();
         }
         
         public Response(Guid projectId, ResponseType type,

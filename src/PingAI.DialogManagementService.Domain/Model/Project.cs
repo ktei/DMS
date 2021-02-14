@@ -17,7 +17,6 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string? WidgetColor { get; private set; }
         public string? WidgetDescription { get; private set; }
         public string? FallbackMessage { get; private set; }
-        public string? GreetingMessage { get; private set; }
         public string[]? Enquiries { get; private set; }
         public ApiKey? ApiKey { get; private set; }
         public string[]? Domains { get; private set; }
@@ -48,19 +47,39 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<Query> _queries;
         public IReadOnlyList<Query> Queries => _queries.ToImmutableList();
 
+        private readonly List<GreetingResponse> _greetingResponses;
+        public IReadOnlyList<GreetingResponse> GreetingResponses => _greetingResponses.ToImmutableList();
+
         public const int MaxNameLength = 250;
 
         public Project(Cache cache) : this(cache.Name, cache.OrganisationId,
             cache.WidgetTitle, cache.WidgetColor!, cache.WidgetDescription, cache.FallbackMessage, 
-            cache.GreetingMessage, cache.Enquiries,
+            cache.Enquiries,
             cache.ApiKey, cache.Domains, cache.BusinessTimezone, cache.BusinessTimeStartUtc,
             cache.BusinessTimeEndUtc, cache.BusinessEmail)
         {
             Id = cache.Id;
+
+            var greetingResponses = new List<Response>();
+            if (cache.GreetingMessage != null)
+            {
+                var r = new Response(ResponseType.RTE, 0);
+                r.SetRteText(cache.GreetingMessage, new Dictionary<string, EntityName>());
+                greetingResponses.Add(r);
+            }
+
+            var order = 1;
+            foreach (var qr in cache.QuickReplies ?? new string[0])
+            {
+                var r = new Response(ResponseType.QUICK_REPLY, order++);
+                r.SetRteText(qr, new Dictionary<string, EntityName>());
+                greetingResponses.Add(r);
+            }
+            UpdateGreetingResponses(greetingResponses);
         }
 
         public Project(string name, Guid organisationId, string? widgetTitle, string widgetColor,
-            string? widgetDescription, string? fallbackMessage, string? greetingMessage, string[]? enquiries,
+            string? widgetDescription, string? fallbackMessage, string[]? enquiries,
             ApiKey? apiKey, string[]? domains, string businessTimezone, DateTime? businessTimeStartUtc,
             DateTime? businessTimeEndUtc, string? businessEmail)
         {
@@ -78,7 +97,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             WidgetColor = widgetColor;
             WidgetDescription = widgetDescription;
             FallbackMessage = fallbackMessage;
-            GreetingMessage = greetingMessage;
             Enquiries = enquiries;
             ApiKey = apiKey;
             Domains = domains;
@@ -91,6 +109,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             _intents = new List<Intent>();
             _responses = new List<Response>();
             _queries = new List<Query>();
+            _greetingResponses = new List<GreetingResponse>();
 
             if (ApiKey == null || ApiKey.IsEmpty)
             {
@@ -137,11 +156,13 @@ namespace PingAI.DialogManagementService.Domain.Model
             AddProjectUpdatedEvent();
         }
 
-        public void UpdateGreetingMessage(string greetingMessage)
+        public void UpdateGreetingResponses(IEnumerable<Response> responses)
         {
-            if (GreetingMessage == greetingMessage)
-                return;
-            GreetingMessage = greetingMessage;
+            _greetingResponses.Clear();
+            foreach (var r in responses)
+            {
+                AddGreetingResponse(r);
+            }
             AddProjectUpdatedEvent();
         }
 
@@ -239,6 +260,14 @@ namespace PingAI.DialogManagementService.Domain.Model
             _responses.Add(response);
         }
 
+        private void AddGreetingResponse(Response response)
+        {
+            _ = response ?? throw new ArgumentNullException(nameof(response));
+            if (_greetingResponses == null)
+                throw new ArgumentNullException($"Load {nameof(GreetingResponses)} first");
+            _greetingResponses.Add(new GreetingResponse(response));
+        }
+
         /// <summary>
         /// Export current project by copying it to a new project and return the copy
         /// </summary>
@@ -261,6 +290,8 @@ namespace PingAI.DialogManagementService.Domain.Model
                 throw new InvalidOperationException($"Load {nameof(Responses)} before publishing");
             if (_queries == null)
                 throw new InvalidOperationException($"Load {nameof(Queries)} before publishing");
+            if (_greetingResponses == null)
+                throw new InvalidOperationException($"Load {nameof(GreetingResponses)} before publishing");
             
             var entityNamesCopy =
                 _entityNames.ToDictionary(n => n.Id, 
@@ -290,7 +321,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             var projectToPublish = new Project($"{Name}__{Guid.NewGuid()}",
                 OrganisationId, 
                 WidgetTitle, WidgetColor!,
-                WidgetDescription, FallbackMessage, GreetingMessage, 
+                WidgetDescription, FallbackMessage, 
                 Enquiries, ApiKey, Domains?.ToArray(), BusinessTimezone, BusinessTimeStartUtc,
                 BusinessTimeEndUtc, BusinessEmail);
 
@@ -333,6 +364,14 @@ namespace PingAI.DialogManagementService.Domain.Model
                 }
                 projectToPublish.AddQuery(q);
             }
+
+            foreach (var greetingResponse in _greetingResponses)
+            {
+                if (greetingResponse.Response == null)
+                    throw new InvalidOperationException($"{nameof(greetingResponse.Response)} must be loaded");
+                var responseCopy = CopyResponse(greetingResponse.Response!);
+                projectToPublish.AddGreetingResponse(responseCopy);
+            }
             
             AddProjectPublishedEvent(projectToPublish);
             
@@ -367,6 +406,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             public string? WidgetDescription { get; set; }
             public string? FallbackMessage { get; set; }
             public string? GreetingMessage { get; set; }
+            public string[]? QuickReplies { get; set; }
             public string[]? Enquiries { get; set; }
             public ApiKey? ApiKey { get; set; }
             public string[]? Domains { get; set; }
@@ -387,7 +427,6 @@ namespace PingAI.DialogManagementService.Domain.Model
                 WidgetColor = project.WidgetColor;
                 WidgetDescription = project.WidgetDescription;
                 FallbackMessage = project.FallbackMessage;
-                GreetingMessage = project.GreetingMessage;
                 Enquiries = project.Enquiries;
                 ApiKey = project.ApiKey;
                 Domains = project.Domains;
@@ -395,6 +434,20 @@ namespace PingAI.DialogManagementService.Domain.Model
                 BusinessTimeStartUtc = project.BusinessTimeStartUtc;
                 BusinessTimeEndUtc = project.BusinessTimeEndUtc;
                 BusinessEmail = project.BusinessEmail;
+                
+                GreetingMessage = project.GreetingResponses.FirstOrDefault(gr => 
+                        gr.Response?.Type == ResponseType.RTE)?
+                    .Response?.GetDisplayText();
+                var quickReplies = new List<string>();
+                foreach (var gr in project.GreetingResponses
+                    .Where(x => x.Response!.Type == ResponseType.QUICK_REPLY)
+                    .OrderBy(x => x.Response!.Order))
+                {
+                    quickReplies.Add(gr.Response!.GetDisplayText());
+                }
+
+                QuickReplies = quickReplies.ToArray();
+
             }
 
             public Cache()

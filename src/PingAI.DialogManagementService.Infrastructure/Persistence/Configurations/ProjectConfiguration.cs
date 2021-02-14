@@ -20,8 +20,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasMaxLength(255);
             builder.Property(o => o.FallbackMessage)
                 .HasColumnName("fallbackMessage");
-            builder.Property(o => o.GreetingMessage)
-                .HasColumnName("greetingMessage");
             builder.Property(o => o.WidgetColor)
                 .HasColumnName("widgetColor");
             builder.Property(o => o.WidgetDescription)
@@ -54,6 +52,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             builder.HasMany(o => o.EntityNames)
                 .WithOne(e => e.Project);
             builder.HasMany(o => o.Responses)
+                .WithOne(o => o.Project);
+            builder.HasMany(o => o.GreetingResponses)
                 .WithOne(o => o.Project);
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -56,8 +57,14 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
         {
             var defaultProject = new Project("Default project", organisation.Id,
                 Defaults.WidgetTitle, Defaults.WidgetColor, Defaults.WidgetDescription,
-                Defaults.FallbackMessage, Defaults.GreetingMessage, null, ApiKey.GenerateNew(), null,
+                Defaults.FallbackMessage, null, ApiKey.GenerateNew(), null,
                 Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc, Defaults.BusinessTimeEndUtc, null);
+            var greetingResponse = new Response(ResponseType.RTE, 0);
+            greetingResponse.SetRteText(Defaults.GreetingMessage, new Dictionary<string, EntityName>());
+            defaultProject.UpdateGreetingResponses(new Response[]
+            {
+                greetingResponse
+            });
             foreach (var enquiryEntityName in Defaults.EnquiryEntityNames)
             {
                 defaultProject.AddEntityName(new EntityName(enquiryEntityName, Guid.Empty, true));
