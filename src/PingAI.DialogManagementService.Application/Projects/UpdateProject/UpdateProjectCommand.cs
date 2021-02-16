@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MediatR;
 using PingAI.DialogManagementService.Domain.Model;
 
@@ -11,14 +12,15 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
         public string WidgetColor { get; set; }
         public string WidgetDescription { get; set; }
         public string FallbackMessage { get; set; }
-        public string GreetingMessage { get; set; }
+        public IEnumerable<Response> GreetingResponses { get; set; }
         public string[]? Domains { get; set; }
         public DateTime? BusinessTimeStartUtc { get; set; }
         public DateTime? BusinessTimeEndUtc { get; set; }
         public string? BusinessEmail { get; set; }
 
         public UpdateProjectCommand(Guid projectId, string widgetTitle, string widgetColor, string widgetDescription,
-            string fallbackMessage, string greetingMessage, string[]? domains, DateTime? businessTimeStartUtc,
+            string fallbackMessage, IEnumerable<Response> greetingResponses,
+            string[]? domains, DateTime? businessTimeStartUtc,
             DateTime? businessTimeEndUtc, string? businessEmail)
         {
             ProjectId = projectId;
@@ -26,7 +28,7 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
             WidgetColor = widgetColor;
             WidgetDescription = widgetDescription;
             FallbackMessage = fallbackMessage;
-            GreetingMessage = greetingMessage;
+            GreetingResponses = greetingResponses;
             Domains = domains;
             BusinessTimeStartUtc = businessTimeStartUtc;
             BusinessTimeEndUtc = businessTimeEndUtc;

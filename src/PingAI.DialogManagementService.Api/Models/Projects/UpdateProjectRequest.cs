@@ -10,7 +10,8 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
         public string WidgetColor { get; set; }
         public string WidgetDescription { get; set; }
         public string FallbackMessage { get; set; }
-        public string GreetingMessage { get; set; }
+        public string? GreetingMessage { get; set; }
+        public string[]? QuickReplies { get; set; }
         public string[]? Domains { get; set; }
         public string? BusinessTimeStart { get; set; }
         public string? BusinessTimeEnd { get; set; }
@@ -54,6 +55,9 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
             RuleFor(x => x.BusinessEmail)
                 .NotEmpty()
                 .When(x => x.BusinessEmail != null);
+
+            RuleForEach(x => x.QuickReplies)
+                .NotEmpty();
         }
     }
 }

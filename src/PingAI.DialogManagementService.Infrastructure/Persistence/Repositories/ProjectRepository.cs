@@ -29,7 +29,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
 
         public async Task<Project?> GetProjectById(Guid id)
         {
-            var project = await _context.Projects.FirstOrDefaultAsync(x => x.Id == id);
+            var project = await _context.Projects
+                .Include(p => p.GreetingResponses)
+                .ThenInclude(gr => gr.Response)
+                .FirstOrDefaultAsync(x => x.Id == id);
             return project;
         }
         
@@ -58,6 +61,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .Query().Include(q => q.QueryIntents).LoadAsync();
             await _context.Entry(project).Collection(p => p.Queries)
                 .Query().Include(q => q.QueryResponses).LoadAsync();
+            await _context.Entry(project).Collection(p => p.GreetingResponses)
+                .Query().Include(r => r.Response).LoadAsync();
 
             return project;
         }

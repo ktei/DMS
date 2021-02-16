@@ -28,7 +28,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var organisation =
                 new Organisation(Guid.NewGuid().ToString(), "test", null);
             var project = new Project( "test", organisation.Id,  "title", Defaults.WidgetColor,
-                "description", "fallback message", "greeting message", new string[] { },
+                "description", "fallback message", new string[] { },
                 ApiKey.Empty, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
             organisation.AddProject(project);
@@ -57,7 +57,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 new Organisation(Guid.NewGuid().ToString(), "test", null);
             var project = new Project("test", organisation.Id, "title", Defaults.WidgetColor,
                 "description", "fallback message",
-                "greeting message", new string[] { }, ApiKey.Empty, null, Defaults.BusinessTimezone,
+                new string[] { }, ApiKey.Empty, null, Defaults.BusinessTimezone,
                 Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
             organisation.AddProject(project);
@@ -90,7 +90,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var sut = new ProjectRepository(context);
             var project = new Project(Guid.NewGuid().ToString(), organisation.Id, 
                 null, Defaults.WidgetColor,
-                null, null, null, null,
+                null, null, null, 
                 ApiKey.Empty, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
 
@@ -120,7 +120,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 new Organisation(RandomString(10), "test", null);
             var project = new Project(RandomString(10), organisation.Id,
                 null, Defaults.WidgetColor,
-                null, null, null, null,
+                null, null, null,
                 ApiKey.Empty, new[] {"https://google.com"}, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
             var entityType = new EntityType(

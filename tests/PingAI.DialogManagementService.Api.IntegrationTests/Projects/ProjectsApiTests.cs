@@ -65,6 +65,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
                     WidgetColor = "#2196f3",
                     WidgetDescription = "description",
                     GreetingMessage = "greeting",
+                    QuickReplies = new []{"hello", "world"},
                     FallbackMessage = "fallback",
                     BusinessEmail = "support@iiiknow.com",
                     BusinessTimeStart = "2020-09-19T09:30:00",
@@ -77,6 +78,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Projects
             Equal("2020-09-19T09:30:00", response.BusinessTimeStart);
             Equal("2020-09-19T17:00:00", response.BusinessTimeEnd);
             Equal("support@iiiknow.com", response.BusinessEmail);
+            Equal("hello", response.QuickReplies![0]);
+            Equal("world", response.QuickReplies![1]);
         }
 
         [Fact]
