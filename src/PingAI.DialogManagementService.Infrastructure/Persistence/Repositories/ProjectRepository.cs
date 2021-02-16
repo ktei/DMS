@@ -29,7 +29,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
 
         public async Task<Project?> GetProjectById(Guid id)
         {
-            var project = await _context.Projects.FirstOrDefaultAsync(x => x.Id == id);
+            var project = await _context.Projects
+                .Include(p => p.GreetingResponses)
+                .ThenInclude(gr => gr.Response)
+                .FirstOrDefaultAsync(x => x.Id == id);
             return project;
         }
         

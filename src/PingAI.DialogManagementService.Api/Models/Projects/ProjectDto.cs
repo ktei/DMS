@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using PingAI.DialogManagementService.Api.Models.Responses;
 using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Projects
@@ -15,6 +16,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
         public string? WidgetDescription { get; set; }
         public string? FallbackMessage { get; set; }
         public string? GreetingMessage { get; set; }
+        public ResponseDto[]? GreetingResponses { get; set; }
         public string[]? QuickReplies { get; set; }
         public string[] Enquiries { get; set; }
         public string? ApiKey { get; set; }
@@ -79,6 +81,9 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
             }
 
             QuickReplies = quickReplies.ToArray();
+
+            GreetingResponses = project.GreetingResponses.Select(gr => new ResponseDto(gr.Response!))
+                .ToArray();
         }
 
         public static DateTime? TryConvertStringToUtc(string s) =>
@@ -92,7 +97,7 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
 
         public static string ConvertUtcToString(DateTime utc) =>
             utc.ToString("yyyy-MM-ddTHH:mm:ss");
-
+        
         public ProjectDto()
         {
             
