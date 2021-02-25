@@ -16,6 +16,11 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("projectId");
             builder.Property(o => o.ResponseId)
                 .HasColumnName("responseId");
+
+            builder.Property(o => o.CreatedAt)
+                .HasColumnName("createdAt");
+            builder.Property(o => o.UpdatedAt)
+                .HasColumnName("updatedAt");
             
             builder.AttachTimestamps();
 
