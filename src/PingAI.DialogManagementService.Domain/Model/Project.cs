@@ -265,7 +265,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             _ = response ?? throw new ArgumentNullException(nameof(response));
             if (_greetingResponses == null)
                 throw new ArgumentNullException($"Load {nameof(GreetingResponses)} first");
-            _greetingResponses.Add(new GreetingResponse(Id, response));
+            _greetingResponses.Add(new GreetingResponse(this, response));
         }
 
         /// <summary>

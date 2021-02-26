@@ -20,9 +20,9 @@ namespace PingAI.DialogManagementService.Domain.Model
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public GreetingResponse(Guid projectId, Response response)
+        public GreetingResponse(Project project, Response response)
         {
-            ProjectId = projectId;
+            Project = project;
             Response = response;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;
