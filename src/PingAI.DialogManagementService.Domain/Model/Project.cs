@@ -369,7 +369,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             {
                 if (greetingResponse.Response == null)
                     throw new InvalidOperationException($"{nameof(greetingResponse.Response)} must be loaded");
-                var responseCopy = CopyResponse(greetingResponse.Response!);
+                var responseCopy = responsesCopy[greetingResponse.Response.Id]; // CopyResponse(greetingResponse.Response!);
                 projectToPublish.AddGreetingResponse(responseCopy);
             }
             
