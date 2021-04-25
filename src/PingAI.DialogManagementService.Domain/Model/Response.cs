@@ -20,6 +20,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Project? Project { get; private set; }
         public ResponseType Type { get; private set; }
         public int Order { get; private set; }
+        public string? SpeechContexts { get; private set; }
 
         private readonly List<QueryResponse> _queryResponses;
         public IReadOnlyList<QueryResponse> QueryResponses => _queryResponses.ToImmutableList();
@@ -29,17 +30,18 @@ namespace PingAI.DialogManagementService.Domain.Model
         
         public Response(Resolution? resolution, Guid projectId, ResponseType type,
             int order) : this(JsonUtils.Serialize(resolution ?? Resolution.Empty),
-            projectId, type, order)
+            projectId, type, order, null)
         {
         }
 
         public Response(string? resolutionJson, Guid projectId, ResponseType type,
-            int order)
+            int order, string? speechContexts)
         {
             ResolutionJson = resolutionJson;
             ProjectId = projectId;
             Type = type;
             Order = order;
+            SpeechContexts = speechContexts;
             _queryResponses = new List<QueryResponse>();
         }
         

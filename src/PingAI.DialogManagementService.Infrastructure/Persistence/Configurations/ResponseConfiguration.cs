@@ -24,6 +24,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("type");
             builder.Property(o => o.Order)
                 .HasColumnName("order");
+            builder.Property(o => o.SpeechContexts)
+                .HasColumnName("speechContexts");
             
             builder.AttachTimestamps();
         }

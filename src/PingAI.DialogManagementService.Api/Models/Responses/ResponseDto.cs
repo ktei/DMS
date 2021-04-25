@@ -10,6 +10,7 @@ namespace PingAI.DialogManagementService.Api.Models.Responses
         public string Type { get; set; }
         public ResolutionDto Resolution { get; set; }
         public int Order { get; set; }
+        public string? SpeechContexts { get; set; }
         
         public ResponseDto(Response response)
         {
@@ -32,6 +33,8 @@ namespace PingAI.DialogManagementService.Api.Models.Responses
             {
                 Resolution = new ResolutionDto(null, null, ResolutionType.EMPTY.ToString());
             }
+
+            SpeechContexts = response.SpeechContexts;
         }
 
         public ResponseDto()
