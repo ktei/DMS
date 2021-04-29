@@ -50,9 +50,12 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
         }
 
-        public Response(ResponseType type, int order) : this(Resolution.Empty, Guid.Empty, type, order)
+        public Response(ResponseType type, int order)
         {
-
+            Type = type;
+            Order = order;
+            ResolutionJson = JsonUtils.Serialize(Resolution.Empty);
+            _queryResponses = new List<QueryResponse>();
         }
 
         /// <summary>
