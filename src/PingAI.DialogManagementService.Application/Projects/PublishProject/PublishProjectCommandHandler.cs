@@ -48,7 +48,7 @@ namespace PingAI.DialogManagementService.Application.Projects.PublishProject
                 throw new BadRequestException($"Publish failed. {string.Join(" ", validationErrors)}");
             
             var user = await _requestContext.GetUser();
-            var organisationId = user.OrganisationIds.First();
+            var organisationId = project.OrganisationId; // user.OrganisationIds.First();
             var latestVersion = await _projectVersionRepository.GetLatestVersionByProjectId(request.ProjectId);
             if (latestVersion == null)
                 throw new InvalidOperationException($"No version found for project {request.ProjectId}");
