@@ -1,6 +1,7 @@
 <Project>
- <PropertyGroup>
-   <LangVersion>8.0</LangVersion>
-   <Nullable>enable</Nullable>
- </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
 </Project>

@@ -23,7 +23,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
-                new Organisation(Guid.NewGuid().ToString(), "test", null);
+                new Organisation(Guid.NewGuid().ToString(), "test");
             var project = new Project( "test", organisation.Id,  "title", Defaults.WidgetColor,
                 "description", "fallback message", new string[] { },
                 ApiKey.Empty, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,

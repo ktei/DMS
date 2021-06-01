@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingAI.DialogManagementServ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingAI.DialogManagementService.Api.UnitTests", "tests\PingAI.DialogManagementService.Api.UnitTests\PingAI.DialogManagementService.Api.UnitTests.csproj", "{856C6A92-7C54-405F-BC63-1B9CBCEFD306}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingAI.DialogManagementService.Persistence.DesignTime", "src\PingAI.DialogManagementService.Persistence.DesignTime\PingAI.DialogManagementService.Persistence.DesignTime.csproj", "{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingAI.DialogManagementService.TestingUtil", "tests\PingAI.DialogManagementService.TestingUtil\PingAI.DialogManagementService.TestingUtil.csproj", "{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -152,6 +156,30 @@ Global
 		{856C6A92-7C54-405F-BC63-1B9CBCEFD306}.Release|x64.Build.0 = Release|Any CPU
 		{856C6A92-7C54-405F-BC63-1B9CBCEFD306}.Release|x86.ActiveCfg = Release|Any CPU
 		{856C6A92-7C54-405F-BC63-1B9CBCEFD306}.Release|x86.Build.0 = Release|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Debug|x64.Build.0 = Debug|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Debug|x86.Build.0 = Debug|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Release|x64.ActiveCfg = Release|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Release|x64.Build.0 = Release|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Release|x86.ActiveCfg = Release|Any CPU
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5}.Release|x86.Build.0 = Release|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Debug|x64.Build.0 = Debug|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Debug|x86.Build.0 = Debug|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Release|x64.ActiveCfg = Release|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Release|x64.Build.0 = Release|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Release|x86.ActiveCfg = Release|Any CPU
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{78F9764C-384F-4370-BBF9-D1E453B5E9BF} = {FFD3940D-722F-4B77-AC19-440A004D3FA1}
@@ -163,5 +191,7 @@ Global
 		{12D2D053-87D8-4CA5-A0C6-BF55EFEC4CC1} = {CD0612C9-277E-4849-80CA-81AB584FBCBF}
 		{B418A2D7-C0AB-411B-A41A-71B721BB3626} = {CD0612C9-277E-4849-80CA-81AB584FBCBF}
 		{856C6A92-7C54-405F-BC63-1B9CBCEFD306} = {CD0612C9-277E-4849-80CA-81AB584FBCBF}
+		{8CDE9F93-EBF4-400B-9D80-AB141CA5D1F5} = {FFD3940D-722F-4B77-AC19-440A004D3FA1}
+		{D615DE71-1BCA-4E56-9187-5D181DDD4E9F} = {CD0612C9-277E-4849-80CA-81AB584FBCBF}
 	EndGlobalSection
 EndGlobal

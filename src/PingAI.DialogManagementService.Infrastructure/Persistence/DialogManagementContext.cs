@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using Npgsql.NameTranslation;
 using PingAI.DialogManagementService.Domain.Events;
@@ -14,38 +15,50 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 {
     public class DialogManagementContext : DbContext
     {
+        public const string DefaultSchema = "chatbot";
         static DialogManagementContext() => MapEnums();
 
         private readonly IMediator _mediator;
-        
+
         public DialogManagementContext(DbContextOptions<DialogManagementContext> options, IMediator mediator)
             : base(options)
         {
             _mediator = mediator;
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.EnableDetailedErrors();
+            optionsBuilder.UseLoggerFactory(GetLoggerFactory(LogLevel.Debug));
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
             // modelBuilder.HasDefaultSchema("chatbot");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrganisationConfiguration).Assembly);
-            
-            modelBuilder.HasPostgresEnum<IntentType>("chatbot");
-            modelBuilder.HasPostgresEnum<PhrasePartType>("chatbot");
-            modelBuilder.HasPostgresEnum<ResponseType>("chatbot");
-            modelBuilder.HasPostgresEnum<SessionStatus>("chatbot");
-            
+
+            modelBuilder.HasPostgresEnum<IntentType>(DefaultSchema, "enum_Intents_type",
+                new NpgsqlNullNameTranslator());
+            modelBuilder.HasPostgresEnum<PhrasePartType>(DefaultSchema, "enum_PhraseParts_type",
+                new NpgsqlNullNameTranslator());
+            modelBuilder.HasPostgresEnum<ResponseType>(DefaultSchema, "enum_Response_type",
+                new NpgsqlNullNameTranslator());
+            modelBuilder.HasPostgresEnum<SessionStatus>(DefaultSchema, "enum_ChatHistories_session_status",
+                new NpgsqlNullNameTranslator());
+
             modelBuilder.Ignore<DomainEvent>();
-            
+
             base.OnModelCreating(modelBuilder);
         }
 
         private static void MapEnums()
         {
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: "enum_Intents_type", new NpgsqlNullNameTranslator());
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: "enum_PhraseParts_type", new NpgsqlNullNameTranslator());
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: "enum_Response_type", new NpgsqlNullNameTranslator());
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<SessionStatus>("enum_ChatHistories_session_status",
-                new NpgsqlNullNameTranslator());
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: $"{DefaultSchema}.enum_Intents_type");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: $"{DefaultSchema}.enum_PhraseParts_type");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: $"{DefaultSchema}.enum_Response_type");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<SessionStatus>(
+                $"{DefaultSchema}.enum_ChatHistories_session_status");
         }
 
         public DbSet<Organisation> Organisations { get; set; }
@@ -63,9 +76,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<QueryIntent> QueryIntents { get; set; }
         public DbSet<QueryResponse> QueryResponses { get; set; }
         public DbSet<SlackWorkspace> SlackWorkspaces { get; set; }
-        
         public DbSet<ChatHistory> ChatHistories { get; set; }
-        
+
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             UpdateTimestamps();
@@ -84,7 +96,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         private void UpdateTimestamps()
         {
             var entities = ChangeTracker.Entries()
-                .Where(x => (x.Entity is IHaveTimestamps || x.Entity is EntityName )&& 
+                .Where(x => (x.Entity is IHaveTimestamps || x.Entity is EntityName) &&
                             (x.State == EntityState.Added || x.State == EntityState.Modified));
 
             foreach (var entity in entities)
@@ -102,5 +114,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
                 }
             }
         }
+        
+        private static readonly Func<LogLevel, ILoggerFactory> GetLoggerFactory = logLevel =>
+            LoggerFactory.Create(builder =>
+            {
+                builder.SetMinimumLevel(logLevel)
+                    .AddConsole();
+            });
     }
 }

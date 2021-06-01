@@ -136,7 +136,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         HANDOVER,
         VIDEO,
         SOCIAL,
-        WEBHOOk,
+        WEBHOOK,
         FORM,
         QUICK_REPLY
     }

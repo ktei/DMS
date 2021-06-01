@@ -23,7 +23,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
         public async Task Setup()
         {
             Organisation =
-                new Organisation(Guid.NewGuid().ToString(), "test description", null);
+                new Organisation(Guid.NewGuid().ToString(), "test description");
             Project = new Project(Guid.NewGuid().ToString(), Organisation.Id, 
                 "test widget title", Defaults.WidgetColor,
                 "test widget description", "test fallback message", 

@@ -1,0 +1,5 @@
+dotnet ef migrations add InitialCreate --startup-project "./src/PingAI.DialogManagementService.Persistence.DesignTime" --project "./src/PingAI.DialogManagementService.Infrastructure" -o "Persistence/Migrations"
+
+dotnet ef database update --startup-project "./src/PingAI.DialogManagementService.Persistence.DesignTime" --project "./src/PingAI.DialogManagementService.Infrastructure"
+
+dotnet ef migrations remove --startup-project "./src/PingAI.DialogManagementService.Persistence.DesignTime" --project "./src/PingAI.DialogManagementService.Infrastructure"

@@ -26,7 +26,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
-                new Organisation(Guid.NewGuid().ToString(), "test", null);
+                new Organisation(Guid.NewGuid().ToString(), "test");
             var project = new Project( "test", organisation.Id,  "title", Defaults.WidgetColor,
                 "description", "fallback message", new string[] { },
                 ApiKey.Empty, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
@@ -54,7 +54,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
-                new Organisation(Guid.NewGuid().ToString(), "test", null);
+                new Organisation(Guid.NewGuid().ToString(), "test");
             var project = new Project("test", organisation.Id, "title", Defaults.WidgetColor,
                 "description", "fallback message",
                 new string[] { }, ApiKey.Empty, null, Defaults.BusinessTimezone,
@@ -84,7 +84,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
-                new Organisation(Guid.NewGuid().ToString(), "test", null);
+                new Organisation(Guid.NewGuid().ToString(), "test");
             await context.AddAsync(organisation);
             await context.SaveChangesAsync();
             var sut = new ProjectRepository(context);
@@ -117,7 +117,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             // Arrange
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
-                new Organisation(RandomString(10), "test", null);
+                new Organisation(RandomString(10), "test");
             var project = new Project(RandomString(10), organisation.Id,
                 null, Defaults.WidgetColor,
                 null, null, null,

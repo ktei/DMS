@@ -29,7 +29,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         
         public const int MaxNameLength = 250;
         
-        public Organisation(string name, string description, string[]? tags)
+        public Organisation(string name, string description)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException($"{nameof(name)} cannot be empty");
@@ -38,7 +38,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             
             Name = name.Trim();
             Description = description;
-            Tags = tags;
             _projects = new List<Project>();
             _projectVersions = new List<ProjectVersion>();
             _organisationUsers = new List<OrganisationUser>();
