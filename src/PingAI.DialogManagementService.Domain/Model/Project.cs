@@ -49,13 +49,15 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         private readonly List<GreetingResponse> _greetingResponses;
         public IReadOnlyList<GreetingResponse> GreetingResponses => _greetingResponses.ToImmutableList();
+        
+        public ProjectVersion ProjectVersion { get; private set; }
 
         public const int MaxNameLength = 250;
 
         public Project(Cache cache) : this(cache.Name, cache.OrganisationId,
             cache.WidgetTitle, cache.WidgetColor!, cache.WidgetDescription, cache.FallbackMessage, 
             cache.Enquiries,
-            cache.ApiKey, cache.Domains, cache.BusinessTimezone, cache.BusinessTimeStartUtc,
+            cache.Domains, cache.BusinessTimezone, cache.BusinessTimeStartUtc,
             cache.BusinessTimeEndUtc, cache.BusinessEmail)
         {
             Id = cache.Id;
@@ -80,7 +82,7 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public Project(string name, Guid organisationId, string? widgetTitle, string widgetColor,
             string? widgetDescription, string? fallbackMessage, string[]? enquiries,
-            ApiKey? apiKey, string[]? domains, string businessTimezone, DateTime? businessTimeStartUtc,
+            string[]? domains, string businessTimezone, DateTime? businessTimeStartUtc,
             DateTime? businessTimeEndUtc, string? businessEmail)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -98,7 +100,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             WidgetDescription = widgetDescription;
             FallbackMessage = fallbackMessage;
             Enquiries = enquiries;
-            ApiKey = apiKey;
             Domains = domains;
             BusinessTimezone = businessTimezone;
             BusinessTimeStartUtc = businessTimeStartUtc;
@@ -115,6 +116,10 @@ namespace PingAI.DialogManagementService.Domain.Model
             {
                 GenerateNewApiKey();
             }
+        }
+
+        private Project()
+        {
         }
 
         public void GenerateNewApiKey()
@@ -322,7 +327,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                 OrganisationId, 
                 WidgetTitle, WidgetColor!,
                 WidgetDescription, FallbackMessage, 
-                Enquiries, ApiKey, Domains?.ToArray(), BusinessTimezone, BusinessTimeStartUtc,
+                Enquiries, Domains?.ToArray(), BusinessTimezone, BusinessTimeStartUtc,
                 BusinessTimeEndUtc, BusinessEmail);
 
             var intentsCopy = _intents.ToDictionary(i => i.Id, CopyIntent);

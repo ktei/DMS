@@ -26,7 +26,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 new Organisation(Guid.NewGuid().ToString(), "test");
             var project = new Project( "test", organisation.Id,  "title", Defaults.WidgetColor,
                 "description", "fallback message", new string[] { },
-                ApiKey.Empty, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
+                null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
             organisation.AddProject(project);
             var projectVersion = new ProjectVersion(project, organisation.Id,

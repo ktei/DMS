@@ -29,7 +29,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 new Organisation(Guid.NewGuid().ToString(), "test");
             var project = new Project( "test", organisation.Id,  "title", Defaults.WidgetColor,
                 "description", "fallback message", new string[] { },
-                ApiKey.Empty, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
+                null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
             organisation.AddProject(project);
             await context.AddAsync(organisation);
@@ -57,7 +57,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 new Organisation(Guid.NewGuid().ToString(), "test");
             var project = new Project("test", organisation.Id, "title", Defaults.WidgetColor,
                 "description", "fallback message",
-                new string[] { }, ApiKey.Empty, null, Defaults.BusinessTimezone,
+                new string[] { }, null, Defaults.BusinessTimezone,
                 Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
             organisation.AddProject(project);
@@ -88,10 +88,11 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await context.AddAsync(organisation);
             await context.SaveChangesAsync();
             var sut = new ProjectRepository(context);
-            var project = new Project(Guid.NewGuid().ToString(), organisation.Id, 
+            var project = new Project(Guid.NewGuid().ToString(),
+                organisation.Id,
                 null, Defaults.WidgetColor,
                 null, null, null, 
-                ApiKey.Empty, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
+                null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
 
             // Act
@@ -118,10 +119,11 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
             var organisation =
                 new Organisation(RandomString(10), "test");
-            var project = new Project(RandomString(10), organisation.Id,
+            var project = new Project(RandomString(10),
+                organisation.Id,
                 null, Defaults.WidgetColor,
                 null, null, null,
-                ApiKey.Empty, new[] {"https://google.com"}, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
+                new[] {"https://google.com"}, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
             var entityType = new EntityType(
                 RandomString(10), project.Id, RandomString(15), new []{"t1"},

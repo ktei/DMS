@@ -42,6 +42,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             _projectVersions = new List<ProjectVersion>();
             _organisationUsers = new List<OrganisationUser>();
         }
+        
+        private Organisation () { }
 
         public void AddProject(Project project)
         {

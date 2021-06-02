@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -27,10 +28,10 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
                 var user = await _userRepository.GetUserByAuth0Id(request.Auth0UserId!);
                 if (user == null)
                     throw new BadRequestException("User does not exist");
-                return await _organisationRepository.GetOrganisationsByUserId(user.Id);
+                return (await _organisationRepository.ListByUserId(user.Id)).ToList();
             }
 
-            return await _organisationRepository.GetAllOrganisations();
+            return (await _organisationRepository.ListAll()).ToList();
         }
     }
 }

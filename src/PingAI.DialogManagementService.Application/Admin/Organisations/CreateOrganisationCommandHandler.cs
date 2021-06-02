@@ -31,11 +31,11 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
         public async Task<Organisation> Handle(CreateOrganisationCommand request, CancellationToken cancellationToken)
         {
             var organisationWithSameName =
-                await _organisationRepository.FindOrganisationByName(request.Name);
+                await _organisationRepository.FindByName(request.Name);
             if (organisationWithSameName != null)
                 throw new BadRequestException($"Organisation with name '{request.Name}' already exists. " +
                                               "Please use a different name.");
-            var organisationToCreate = await _organisationRepository.AddOrganisation(
+            var organisationToCreate = await _organisationRepository.Add(
                 new Organisation(request.Name, request.Description ?? string.Empty));
             if (!string.IsNullOrEmpty(request.Auth0UserId))
             {
@@ -57,7 +57,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
         {
             var defaultProject = new Project("Default project", organisation.Id,
                 Defaults.WidgetTitle, Defaults.WidgetColor, Defaults.WidgetDescription,
-                Defaults.FallbackMessage, null, ApiKey.GenerateNew(), null,
+                Defaults.FallbackMessage, null, null,
                 Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc, Defaults.BusinessTimeEndUtc, null);
             var greetingResponse = new Response(ResponseType.RTE, 0);
             greetingResponse.SetRteText(Defaults.GreetingMessage, new Dictionary<string, EntityName>());

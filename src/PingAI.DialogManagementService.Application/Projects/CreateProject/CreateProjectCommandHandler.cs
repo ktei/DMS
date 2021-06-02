@@ -34,8 +34,7 @@ namespace PingAI.DialogManagementService.Application.Projects.CreateProject
                 throw new BadRequestException("Missing organisationId");
 
             var organisationId = user.OrganisationIds.First();
-            var organisation = (await _organisationRepository
-                .GetOrganisationsByIds(new[] {organisationId})).FirstOrDefault();
+            var organisation = await _organisationRepository.FindById(organisationId);
             if (organisation == null)
                 throw new BadRequestException("No organisation found");
             
@@ -47,7 +46,7 @@ namespace PingAI.DialogManagementService.Application.Projects.CreateProject
             var project = new Project(request.Name, organisation.Id,
                 null, Defaults.WidgetColor, null, 
                 null, null, 
-                ApiKey.Empty, null, Defaults.BusinessTimezone,
+                null, Defaults.BusinessTimezone,
                 Defaults.BusinessTimeStartUtc, Defaults.BusinessTimeEndUtc, null);
             organisation.AddProjectVersion(new ProjectVersion(project, organisationId, 
                 Guid.NewGuid(), ProjectVersionNumber.NewDesignTime()));

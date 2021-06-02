@@ -15,6 +15,10 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
         private static bool _databaseInitialized;
 
         public DbConnection Connection { get; }
+        
+        public Organisation Organisation { get; private set; }
+        
+        public User User { get; private set; }
 
         public SharedDatabaseFixture()
         {
@@ -50,8 +54,24 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                     context.Database.EnsureDeleted();
                     context.Database.EnsureCreated();
                     
-                    var organisation = new Organisation("test_org", "TEST FIXTURE");
-                    context.Add(organisation);
+                    Organisation = new Organisation(nameof(Organisation), nameof(Organisation));
+                    var project = new Project("Seeded Project",
+                        Organisation.Id, Defaults.WidgetTitle,
+                        Defaults.WidgetColor, Defaults.WidgetDescription,
+                        Defaults.FallbackMessage, null, null,
+                        Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
+                        Defaults.BusinessTimeEndUtc, null);
+                    Organisation.AddProject(project);
+                    context.Add(Organisation);
+                    var projectVersion = new ProjectVersion(project.Id,
+                        Organisation.Id, project.Id,
+                        ProjectVersionNumber.NewDesignTime());
+                    Organisation.AddProjectVersion(projectVersion);
+                    context.AddRange(projectVersion);
+
+                    User = new User("SEEDED_USER", "AUTH0_ID");
+                    Organisation.AddUser(User);
+                    context.Add(User);
                     
                     context.SaveChanges();
                 }
@@ -63,4 +83,3 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
         public void Dispose() => Connection.Dispose();
     }
 }
-    

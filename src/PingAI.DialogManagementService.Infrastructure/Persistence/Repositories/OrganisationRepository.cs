@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -17,44 +17,42 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<Organisation?> FindOrganisationByName(string name)
+        public async Task<Organisation?> FindById(Guid id)
+        {
+            var organisation = await _context.Organisations
+                .Include(x => x.Projects)
+                .Include(x => x.ProjectVersions)
+                .SingleOrDefaultAsync(o => o.Id == id);
+            return organisation; 
+        }
+
+        public async Task<Organisation?> FindByName(string name)
         {
             var organisation = await _context.Organisations
                 .FirstOrDefaultAsync(o => o.Name == name);
             return organisation;
         }
-
-        public async Task<List<Organisation>> GetOrganisationsByIds(IEnumerable<Guid> ids)
-        {
-            var _ = ids ?? throw new ArgumentNullException(nameof(ids));
-            var organisationIds = ids as Guid[] ?? ids.ToArray();
-            if (!organisationIds.Any()) return new List<Organisation>(0);
-            return await _context.Organisations
-                .Include(x => x.Projects)
-                .Include(x => x.ProjectVersions)
-                .Where(x => organisationIds.Contains(x.Id))
-                .OrderBy(o => o.Name)
-                .ToListAsync();
-        }
-
-        public async Task<Organisation> AddOrganisation(Organisation organisation)
+        
+        public async Task<Organisation> Add(Organisation organisation)
         {
             var result = await _context.AddAsync(organisation);
             return result.Entity;
         }
 
-        public Task<List<Organisation>> GetAllOrganisations()
+        public async Task<ReadOnlyCollection<Organisation>> ListAll()
         {
-            return _context.Organisations
+            var results = await _context.Organisations
                 .OrderBy(o => o.Name)
                 .ToListAsync();
+            return results.AsReadOnly();
         }
 
-        public Task<List<Organisation>> GetOrganisationsByUserId(Guid userId)
+        public async Task<ReadOnlyCollection<Organisation>> ListByUserId(Guid userId)
         {
-            return _context.Organisations
-                .Where(o => o.OrganisationUsers.Select(x => x.UserId).Contains(userId))
+            var results = await _context.Organisations
+                .Where(o => o.OrganisationUsers.Any(x => x.UserId == userId))
                 .ToListAsync();
+            return results.AsReadOnly();
         }
     }
 }

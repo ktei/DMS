@@ -27,7 +27,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
             Project = new Project(Guid.NewGuid().ToString(), Organisation.Id, 
                 "test widget title", Defaults.WidgetColor,
                 "test widget description", "test fallback message", 
-                new string[] { }, ApiKey.Empty, null,
+                new string[] { }, null,
                 Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc, Defaults.BusinessTimeEndUtc,
                 null);
             Organisation.AddProject(Project);
