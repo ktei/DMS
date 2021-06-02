@@ -16,10 +16,6 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
 
         public DbConnection Connection { get; }
         
-        public Organisation Organisation { get; private set; }
-        
-        public User User { get; private set; }
-
         public SharedDatabaseFixture()
         {
             Connection = new NpgsqlConnection("Host=localhost;Database=postgres;Username=postgres;Password=admin");
@@ -53,26 +49,45 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                 {
                     context.Database.EnsureDeleted();
                     context.Database.EnsureCreated();
+                   
+                    // seed Organisations
+                    var organisation = new Organisation("Seeded Organisation", "TEST");
+                    context.Add(organisation);
                     
-                    Organisation = new Organisation(nameof(Organisation), nameof(Organisation));
+                    // seed Projects
                     var project = new Project("Seeded Project",
-                        Organisation.Id, Defaults.WidgetTitle,
+                        organisation.Id, Defaults.WidgetTitle,
                         Defaults.WidgetColor, Defaults.WidgetDescription,
                         Defaults.FallbackMessage, null, null,
                         Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                         Defaults.BusinessTimeEndUtc, null);
-                    Organisation.AddProject(project);
-                    context.Add(Organisation);
-                    var projectVersion = new ProjectVersion(project.Id,
-                        Organisation.Id, project.Id,
-                        ProjectVersionNumber.NewDesignTime());
-                    Organisation.AddProjectVersion(projectVersion);
-                    context.AddRange(projectVersion);
-
-                    User = new User("SEEDED_USER", "AUTH0_ID");
-                    Organisation.AddUser(User);
-                    context.Add(User);
+                    context.Add(project);
                     
+                    // seed ProjectVersions
+                    var projectVersion = new ProjectVersion(project.Id,
+                        organisation.Id, project.Id,
+                        ProjectVersionNumber.NewDesignTime());
+                    context.Add(projectVersion);
+
+                    // seed Users
+                    var user = new User("SEEDED_USER", "AUTH0_ID");
+                    context.Add(user);
+                    context.Add(new OrganisationUser(organisation.Id, user.Id));
+
+                    // seed EntityTypes
+                    var entityType1 = new EntityType("SEEDED_ENTITY_TYPE1", project.Id,
+                        "description 1");
+                    context.Add(entityType1);
+                    var entityType1Value1 = new EntityValue("v1", entityType1.Id, null);
+                    var entityType1Value2 = new EntityValue("v2", entityType1.Id, null);
+                    context.AddRange(entityType1Value1, entityType1Value2);
+                    var entityType2 = new EntityType("SEEDED_ENTITY_TYPE2", project.Id,
+                        "description 2");
+                    context.Add(entityType2);
+                    var entityType2Value1 = new EntityValue("v1", entityType2.Id, null);
+                    var entityType2Value2 = new EntityValue("v2", entityType2.Id, null);
+                    context.AddRange(entityType2Value1, entityType2Value2);
+
                     context.SaveChanges();
                 }
 

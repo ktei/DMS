@@ -20,37 +20,34 @@ namespace PingAI.DialogManagementService.Domain.Model
         public const int MaxNameLength = 30;
         public const int MaxTagLength = 50;
         
-        public EntityType(string name, Guid projectId, string description, string[]? tags)
+        public EntityType(string name, Guid projectId, string description)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException($"{nameof(name)} cannot be empty");
             if (name.Trim().Length > MaxNameLength)
                 throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
             
-            if (tags != null && tags.Any(t => t == null 
-                                              || t.Trim().Length == 0 || t.Trim().Length > MaxTagLength))
-                throw new ArgumentException(
-                    $"Some {nameof(Tags)} are not valid: empty tags and tags with " +
-                    $"length > {MaxTagLength} are not allowed");
-
-            
             Name = name.Trim();
             ProjectId = projectId;
             Description = description;
-            Tags = tags?.Select(t => t.Trim()).ToArray();
             _values = new List<EntityValue>();
         }
         
-        public EntityType(string name, Guid projectId, string description, string[]? tags, IEnumerable<EntityValue> values)
+        public EntityType(string name, Guid projectId, string description, IEnumerable<EntityValue> values)
         {
             Name = name;
             ProjectId = projectId;
             Description = description;
-            Tags = tags;
             _values = (values ?? throw new ArgumentNullException(nameof(values))).ToList();
         }
 
-        
+        public void AddValue(string value, string[]? synonyms)
+        {
+            // TODO: validation
+            var entityValue = new EntityValue(value, Id, synonyms);
+            _values.Add(entityValue);
+        }
+
         public void UpdateValues(IEnumerable<EntityValue> values)
         {
             _values.Clear();

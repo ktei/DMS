@@ -118,10 +118,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             }
         }
 
-        private Project()
-        {
-        }
-
         public void GenerateNewApiKey()
         {
             ApiKey = ApiKey.GenerateNew();
@@ -304,7 +300,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             var entityTypesCopy =
                 _entityTypes.ToDictionary(e => e.Id,
                     e => new EntityType(e.Name, Guid.Empty,
-                        e.Description, e.Tags?.ToArray(), 
+                        e.Description,
                         e.Values.Select(v => new EntityValue(v.Value, Guid.Empty, v.Synonyms))));
 
             PhrasePart CopyPhrasePart(Intent i, PhrasePart p) =>

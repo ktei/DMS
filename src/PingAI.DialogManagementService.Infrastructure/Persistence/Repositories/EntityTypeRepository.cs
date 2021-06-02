@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +17,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public Task<List<EntityType>> GetEntityTypesByProjectId(Guid projectId) =>
-            _context.EntityTypes.Where(e => e.ProjectId == projectId).ToListAsync();
-
-        public async Task<EntityType> AddEntityType(EntityType entityType)
+        public async Task<ReadOnlyCollection<EntityType>> ListByProjectId(Guid projectId)
         {
-            var result = await _context.EntityTypes.AddAsync(entityType);
-            return result.Entity;
+            var results = await _context.EntityTypes.Where(e => e.ProjectId == projectId).ToListAsync();
+            return results.AsReadOnly();
         }
     }
 }

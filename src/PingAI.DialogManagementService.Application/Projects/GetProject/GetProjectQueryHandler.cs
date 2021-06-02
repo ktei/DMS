@@ -30,7 +30,7 @@ namespace PingAI.DialogManagementService.Application.Projects.GetProject
             if (!canRead)
                 throw new ForbiddenException(ProjectReadDenied);
 
-            var cachedProject = await _cacheService.GetObject<Project.Cache>(Project.Cache.MakeKey(request.ProjectId));
+            var cachedProject = await _cacheService.GetObject<Project.Cache>(Domain.Model.Project.Cache.MakeKey(request.ProjectId));
             if (cachedProject != null)
                 return new Project(cachedProject);
             

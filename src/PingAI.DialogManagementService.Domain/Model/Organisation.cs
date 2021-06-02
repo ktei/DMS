@@ -43,8 +43,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             _organisationUsers = new List<OrganisationUser>();
         }
         
-        private Organisation () { }
-
         public void AddProject(Project project)
         {
             _ = project ?? throw new ArgumentNullException(nameof(project));

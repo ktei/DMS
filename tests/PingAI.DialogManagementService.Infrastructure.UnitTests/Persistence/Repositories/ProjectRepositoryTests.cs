@@ -126,7 +126,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 new[] {"https://google.com"}, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
             var entityType = new EntityType(
-                RandomString(10), project.Id, RandomString(15), new []{"t1"},
+                RandomString(10), project.Id, RandomString(15),
                 new []{new EntityValue("v", Guid.Empty, default)});
             var entityName = new EntityName(RandomString(10), project.Id, true);
             project.AddEntityType(entityType);

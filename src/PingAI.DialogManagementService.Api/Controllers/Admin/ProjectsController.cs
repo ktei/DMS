@@ -37,7 +37,7 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
             [FromServices] IProjectRepository projectRepository,
             [FromServices] ICacheService cacheService)
         {
-            var cachedProject = await cacheService.GetObject<Project.Cache>(Project.Cache.MakeKey(projectId));
+            var cachedProject = await cacheService.GetObject<Project.Cache>(Domain.Model.Project.Cache.MakeKey(projectId));
             if (cachedProject != null)
                 return new ProjectDto(new Project(cachedProject));
             var project = await projectRepository.GetProjectById(projectId);
@@ -47,7 +47,7 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
             }
             
             var cache = new Project.Cache(project);
-            await cacheService.SetObject(Project.Cache.MakeKey(projectId), cache);
+            await cacheService.SetObject(Domain.Model.Project.Cache.MakeKey(projectId), cache);
 
 
             return new ProjectDto(project);

@@ -61,7 +61,7 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             else if (request.Intent != null)
             {
                 var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
-                var entityTypes = await _entityTypeRepository.GetEntityTypesByProjectId(request.ProjectId);
+                var entityTypes = await _entityTypeRepository.ListByProjectId(request.ProjectId);
                 var entityTypeIds = entityTypes.Select(e => e.Id).ToArray();
                 var entityNamesToCreate = new List<EntityName>();
                 

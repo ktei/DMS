@@ -20,11 +20,12 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         {
             var context = Fixture.CreateContext();
             var sut = new OrganisationRepository(context);
-            
-            var actual = await sut.FindByName(Fixture.Organisation.Name);
+            var organisation = await context.Organisations.FirstAsync();
+
+            var actual = await sut.FindByName(organisation.Name);
             
             actual.Should().NotBeNull();
-            actual!.Name.Should().Be(Fixture.Organisation.Name);
+            actual!.Name.Should().Be(organisation.Name);
         }
        
         [Fact]
@@ -32,8 +33,9 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         {
             var context = Fixture.CreateContext();
             var sut = new OrganisationRepository(context);
+            var organisation = await context.Organisations.FirstAsync();
 
-            var actual = await sut.FindById(Fixture.Organisation.Id);
+            var actual = await sut.FindById(organisation.Id);
 
             actual.Should().NotBeNull();
         }
@@ -73,13 +75,13 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var context = Fixture.CreateContext();
             var sut = new OrganisationRepository(context);
             var organisation = new Organisation(Guid.NewGuid().ToString(), "test");
-            context.Attach(Fixture.User);
-            organisation.AddUser(Fixture.User);
+            var user = await context.Users.FirstAsync();
             await context.AddAsync(organisation);
+            await context.AddAsync(new OrganisationUser(organisation.Id, user.Id));
             await context.SaveChangesAsync();
 
             context.ChangeTracker.Clear();
-            var actual = await sut.ListByUserId(Fixture.User.Id);
+            var actual = await sut.ListByUserId(user.Id);
 
             actual.Should().HaveCount(2);
         }

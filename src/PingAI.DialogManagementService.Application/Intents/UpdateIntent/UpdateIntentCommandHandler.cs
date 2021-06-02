@@ -46,7 +46,7 @@ namespace PingAI.DialogManagementService.Application.Intents.UpdateIntent
             if (request.PhraseParts != null)
             {
                 var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(intent.ProjectId);
-                var entityTypes = await _entityTypeRepository.GetEntityTypesByProjectId(intent.ProjectId);
+                var entityTypes = await _entityTypeRepository.ListByProjectId(intent.ProjectId);
                 var entityTypeIds = entityTypes.Select(e => e.Id).ToArray();
                 var entityNamesToCreate = new List<EntityName>();
                 foreach (var phrasePart in request.PhraseParts)

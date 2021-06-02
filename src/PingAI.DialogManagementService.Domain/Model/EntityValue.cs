@@ -16,7 +16,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             EntityTypeId = entityTypeId;
             Synonyms = synonyms;
         }
-
+        
         public void UpdateEntityTypeId(Guid entityTypeId) => EntityTypeId = entityTypeId;
 
         public override string ToString() => Value;
