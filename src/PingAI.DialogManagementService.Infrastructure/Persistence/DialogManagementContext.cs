@@ -54,11 +54,14 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 
         private static void MapEnums()
         {
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: $"{DefaultSchema}.enum_Intents_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: $"{DefaultSchema}.enum_PhraseParts_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: $"{DefaultSchema}.enum_Response_type");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<IntentType>(pgName: $"{DefaultSchema}.enum_Intents_type",
+                new NpgsqlNullNameTranslator());
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<PhrasePartType>(pgName: $"{DefaultSchema}.enum_PhraseParts_type",
+                new NpgsqlNullNameTranslator());
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<ResponseType>(pgName: $"{DefaultSchema}.enum_Response_type",
+                new NpgsqlNullNameTranslator());
             NpgsqlConnection.GlobalTypeMapper.MapEnum<SessionStatus>(
-                $"{DefaultSchema}.enum_ChatHistories_session_status");
+                $"{DefaultSchema}.enum_ChatHistories_session_status", new NpgsqlNullNameTranslator());
         }
 
         public DbSet<Organisation> Organisations { get; set; }

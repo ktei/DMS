@@ -2,12 +2,9 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
-using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
-using PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Helpers;
 using PingAI.DialogManagementService.TestingUtil.Persistence;
 using Xunit;
-using static Xunit.Assert;
 
 namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Repositories
 {
