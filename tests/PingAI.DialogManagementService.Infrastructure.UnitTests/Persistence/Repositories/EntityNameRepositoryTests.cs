@@ -1,39 +1,46 @@
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
 using PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Helpers;
+using PingAI.DialogManagementService.TestingUtil.Persistence;
 using Xunit;
 using static Xunit.Assert;
 
 namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Repositories
 {
-    public class EntityNameRepositoryTests : IAsyncLifetime
+    public class EntityNameRepositoryTests : RepositoryTestBase
     {
-        private readonly DialogManagementContextFactory _dialogManagementContextFactory;
-        private readonly TestDataFactory _testDataFactory;
-        
-        public EntityNameRepositoryTests()
+        public EntityNameRepositoryTests(SharedDatabaseFixture fixture) : base(fixture)
         {
-            _dialogManagementContextFactory = new DialogManagementContextFactory();
-            _testDataFactory = new TestDataFactory(_dialogManagementContextFactory.CreateDbContext(new string[] { }));
+        }
+        
+        [Fact]
+        public async Task ListByProjectId()
+        {
+            var context = Fixture.CreateContext();
+            var sut = new EntityNameRepository(context);
+            var project = await context.Projects.FirstAsync();
+
+            var actual = await sut.ListByProjectId(project.Id);
+
+            actual.Should().HaveCountGreaterOrEqualTo(2);
         }
 
         [Fact]
-        public async Task GetEntityNamesByProjectId()
+        public async Task Add()
         {
-            // Arrange
-            await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
+            var context = Fixture.CreateContext();
             var sut = new EntityNameRepository(context);
+            var project = await context.Projects.FirstAsync();
 
-            // Act
-            var actual = await sut.GetEntityNamesByProjectId(_testDataFactory.Project.Id);
-
-            // Assert
-            Single(actual);
+            var entityName = await sut.Add(new EntityName("TEST_ENTITY", project.Id, true));
+            
+            context.ChangeTracker.Clear();
+            var actual = context.EntityNames.SingleOrDefaultAsync(x => x.Id == entityName.Id);
+            actual.Should().NotBeNull();
         }
-
-        public Task InitializeAsync() => _testDataFactory.Setup();
-
-        public Task DisposeAsync() => _testDataFactory.Cleanup();
     }
 }

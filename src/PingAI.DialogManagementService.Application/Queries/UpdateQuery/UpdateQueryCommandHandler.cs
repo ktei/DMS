@@ -56,7 +56,7 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
                 // TODO: this won't delete the detached intent
                 var existingIntent = query.Intents.FirstOrDefault(i => i.Name == request.Intent.Name);
                 
-                var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(query.ProjectId);
+                var entityNames = await _entityNameRepository.ListByProjectId(query.ProjectId);
                 var entityTypes = await _entityTypeRepository.ListByProjectId(query.ProjectId);
                 var entityTypeIds = entityTypes.Select(e => e.Id).ToArray();
                 var entityNamesToCreate = new List<EntityName>();
@@ -88,7 +88,7 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
 
                 foreach (var newEntityName in entityNamesToCreate)
                 {
-                    await _entityNameRepository.AddEntityName(newEntityName);
+                    await _entityNameRepository.Add(newEntityName);
                 }
 
                 if (existingIntent != null)
@@ -117,7 +117,7 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
             }
             else if (request.Responses?.Any() == true)
             {
-                var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(query.ProjectId);
+                var entityNames = await _entityNameRepository.ListByProjectId(query.ProjectId);
                 for (var i = 0; i < request.Responses.Length; i++)
                 {
                     if (request.RteText[i] != null)

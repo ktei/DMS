@@ -87,6 +87,11 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                     var entityType2Value1 = new EntityValue("v1", entityType2.Id, null);
                     var entityType2Value2 = new EntityValue("v2", entityType2.Id, null);
                     context.AddRange(entityType2Value1, entityType2Value2);
+                    
+                    // seed EntityNames
+                    var entityName1 = new EntityName("SEEDED_ENTITY_NAME1", project.Id, true);
+                    var entityName2 = new EntityName("SEEDED_ENTITY_NAME2", project.Id, true);
+                    context.AddRange(entityName1, entityName2);
 
                     context.SaveChanges();
                 }

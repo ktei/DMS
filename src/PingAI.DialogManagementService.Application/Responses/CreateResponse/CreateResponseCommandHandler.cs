@@ -32,7 +32,7 @@ namespace PingAI.DialogManagementService.Application.Responses.CreateResponse
             var canWrite = await _authorizationService.UserCanReadProject(request.ProjectId);
             if (!canWrite)
                 throw new ForbiddenException(ErrorDescriptions.ProjectWriteDenied);
-            var entityNames = await _entityNameRepository.GetEntityNamesByProjectId(request.ProjectId);
+            var entityNames = await _entityNameRepository.ListByProjectId(request.ProjectId);
             var response = new Response(default(Resolution), request.ProjectId,
                 request.Type, request.Order);
             
