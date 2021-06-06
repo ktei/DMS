@@ -27,16 +27,15 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             return projects.ToListAsync();
         }
 
-        public async Task<Project?> GetProjectById(Guid id)
+        public async Task<Project?> FindById(Guid id)
         {
             var project = await _context.Projects
                 .Include(p => p.GreetingResponses)
-                .ThenInclude(gr => gr.Response)
                 .FirstOrDefaultAsync(x => x.Id == id);
             return project;
         }
         
-        public async Task<Project?> GetFullProjectById(Guid id)
+        public async Task<Project?> FindByIdWithJoins(Guid id)
         {
             var project = await _context.Projects
                 .AsSplitQuery()
@@ -45,7 +44,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .Include(p => p.Intents).ThenInclude(i => i.PhraseParts)
                 .Include(p => p.Responses)
                 .Include(p => p.Queries)
-                .Include(p => p.GreetingResponses).ThenInclude(gr => gr.Response)
+                .Include(p => p.GreetingResponses).ThenInclude(x => x.Response)
                 .FirstOrDefaultAsync(x => x.Id == id);
             return project;
         }

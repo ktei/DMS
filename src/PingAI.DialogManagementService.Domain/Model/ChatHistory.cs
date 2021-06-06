@@ -12,20 +12,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string? Input { get; private set; }
         public string? Output { get; private set; }
         public SessionStatus SessionStatus { get; private set; }
-
-        private DateTime _createdAt;
-        public DateTime CreatedAt
-        {
-            get => DateTime.SpecifyKind(_createdAt, DateTimeKind.Utc);
-            private set => _createdAt = value;
-        }
-
-        private DateTime _updatedAt;
-        public DateTime UpdatedAt
-        {
-            get => DateTime.SpecifyKind(_updatedAt, DateTimeKind.Utc);
-            private set => _updatedAt = value;
-        }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime UpdatedAt { get; private set; }
 
         public ChatHistoryInput? ChatHistoryInput =>
             Input == null ? null : JsonUtils.TryDeserialize<ChatHistoryInput>(Input);

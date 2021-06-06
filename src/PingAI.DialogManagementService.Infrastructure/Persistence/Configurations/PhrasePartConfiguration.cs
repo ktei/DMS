@@ -5,12 +5,11 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class PhrasePartConfiguration : IEntityTypeConfiguration<PhrasePart>
+    public class PhrasePartConfiguration : EntityConfigurationBase<PhrasePart>
     {
-        public void Configure(EntityTypeBuilder<PhrasePart> builder)
+        protected override void Configure(EntityTypeBuilder<PhrasePart> builder)
         {
             builder.ToTable("PhraseParts", "chatbot");
-            builder.ConfigureId();
 
             builder.Property(o => o.Position)
                 .HasColumnName("position");
@@ -38,8 +37,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             builder.Property(o => o.DisplayOrder)
                 .HasColumnName("displayOrder");
 
-            builder.AttachTimestamps();
-            
             builder.HasOne(o => o.EntityName);
             builder.HasOne(o => o.EntityType);
         }

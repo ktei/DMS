@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,9 +36,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-            // modelBuilder.HasDefaultSchema("chatbot");
-
             modelBuilder.HasPostgresEnum<IntentType>(DefaultSchema, "enum_Intents_type",
                 new NpgsqlNullNameTranslator());
             modelBuilder.HasPostgresEnum<PhrasePartType>(DefaultSchema, "enum_PhraseParts_type",
@@ -48,22 +46,23 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
                 new NpgsqlNullNameTranslator());
 
             modelBuilder.Ignore<DomainEvent>();
-            
+
             modelBuilder.SharedTypeEntity<QueryIntent>(nameof(QueryIntent), b =>
             {
                 b.ToTable("QueryIntents", "chatbot");
-                b.ConfigureId();
-                b.AttachTimestamps();
+                b.AddId();
+                b.AddTimestamps();
             });
-            
+
             modelBuilder.SharedTypeEntity<QueryResponse>(nameof(QueryResponse), b =>
             {
                 b.ToTable("QueryResponses", "chatbot");
-                b.ConfigureId();
-                b.AttachTimestamps();
+                b.AddId();
+                b.AddTimestamps();
             });
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrganisationConfiguration).Assembly);
+            modelBuilder.ApplyUtcDateTimeConverter();
 
             base.OnModelCreating(modelBuilder);
         }
@@ -92,8 +91,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<EntityName> EntityNames { get; set; }
         public DbSet<Response> Responses { get; set; }
         public DbSet<Query> Queries { get; set; }
-        // public DbSet<QueryIntent> QueryIntents { get; set; }
-        // public DbSet<QueryResponse> QueryResponses { get; set; }
         public DbSet<SlackWorkspace> SlackWorkspaces { get; set; }
         public DbSet<ChatHistory> ChatHistories { get; set; }
 
@@ -115,25 +112,21 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         private void UpdateTimestamps()
         {
             var entities = ChangeTracker.Entries()
-                .Where(x => (x.Entity is IHaveTimestamps || x.Entity is EntityName) &&
-                            (x.State == EntityState.Added || x.State == EntityState.Modified));
+                .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified);
 
             foreach (var entity in entities)
             {
                 var timestamp = DateTime.UtcNow;
 
-                if (entity.Entity is IHaveTimestamps)
+                if (entity.State == EntityState.Added)
                 {
-                    if (entity.State == EntityState.Added)
-                    {
-                        entity.Property("CreatedAt").CurrentValue = timestamp;
-                    }
-
-                    entity.Property("UpdatedAt").CurrentValue = timestamp;
+                    entity.Property("CreatedAt").CurrentValue = timestamp;
                 }
+
+                entity.Property("UpdatedAt").CurrentValue = timestamp;
             }
         }
-        
+
         private static readonly Func<LogLevel, ILoggerFactory> GetLoggerFactory = logLevel =>
             LoggerFactory.Create(builder =>
             {

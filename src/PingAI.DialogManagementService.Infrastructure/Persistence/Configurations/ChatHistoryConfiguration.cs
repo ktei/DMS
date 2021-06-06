@@ -5,12 +5,11 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class ChatHistoryConfiguration : IEntityTypeConfiguration<ChatHistory>
+    public class ChatHistoryConfiguration : EntityConfigurationBase<ChatHistory>
     {
-        public void Configure(EntityTypeBuilder<ChatHistory> builder)
+        protected override void Configure(EntityTypeBuilder<ChatHistory> builder)
         {
             builder.ToTable("ChatHistories", "chatbot");
-            builder.ConfigureId();
             
             builder.Property(o => o.ProjectId)
                 .HasColumnName("projectId");
@@ -28,8 +27,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("sessionStatus");
             builder.Ignore(o => o.ChatHistoryInput);
             builder.Ignore(o => o.ChatHistoryOutput);
-            
-            builder.AttachTimestamps();
         }
     }
 }

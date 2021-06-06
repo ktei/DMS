@@ -5,12 +5,11 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class SlackWorkspaceConfiguration : IEntityTypeConfiguration<SlackWorkspace>
+    public class SlackWorkspaceConfiguration : EntityConfigurationBase<SlackWorkspace>
     {
-        public void Configure(EntityTypeBuilder<SlackWorkspace> builder)
+        protected override void Configure(EntityTypeBuilder<SlackWorkspace> builder)
         {
             builder.ToTable("SlackWorkspaces", "chatbot");
-            builder.ConfigureId();
 
             builder.Property(o => o.ProjectId)
                 .HasColumnName("projectId");
@@ -21,8 +20,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             builder.Property(o => o.TeamId)
                 .HasColumnName("teamId");
 
-            builder.AttachTimestamps();
-            
             builder.HasOne(o => o.Project);
         }
     }

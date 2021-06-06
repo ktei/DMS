@@ -34,7 +34,7 @@ namespace PingAI.DialogManagementService.Application.Projects.GetProject
             if (cachedProject != null)
                 return new Project(cachedProject);
             
-            var project = await _projectRepository.GetProjectById(request.ProjectId);
+            var project = await _projectRepository.FindById(request.ProjectId);
             if (project == null)
             {
                 throw new ForbiddenException(ProjectReadDenied);

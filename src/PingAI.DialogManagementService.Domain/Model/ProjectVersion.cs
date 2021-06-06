@@ -3,10 +3,10 @@ using PingAI.DialogManagementService.Domain.Utils;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class ProjectVersion : DomainEntity, IHaveTimestamps
+    public class ProjectVersion : DomainEntity
     {
         public Guid Id { get; private set; }
-        
+
         public Guid OrganisationId { get; private set; }
         
         public Organisation? Organisation { get; private set; }

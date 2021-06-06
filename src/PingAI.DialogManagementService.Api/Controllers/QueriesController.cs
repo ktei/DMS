@@ -82,7 +82,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 var formResolution = r.Form == null
                     ? null
                     : new FormResolution(
-                        r.Form.Fields.Select(f => new FormField(f.DisplayName, f.Name)));
+                        r.Form.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
                 return new Response(r.RteText, formResolution, r.Order);
             }).ToArray();
             var createQueryCommand = new CreateQueryCommand(

@@ -5,13 +5,11 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class EntityValueConfiguration : IEntityTypeConfiguration<EntityValue>
+    public class EntityValueConfiguration : EntityConfigurationBase<EntityValue>
     {
-        public void Configure(EntityTypeBuilder<EntityValue> builder)
+        protected override void Configure(EntityTypeBuilder<EntityValue> builder)
         {
             builder.ToTable("EntityValues", "chatbot");
-            builder.ConfigureId();
-
             builder.Property(o => o.Value)
                 .HasColumnName("value")
                 .HasMaxLength(255);
@@ -19,8 +17,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("entityTypeId");
             builder.Property(o => o.Synonyms)
                 .HasColumnName("synonyms");
-            
-            builder.AttachTimestamps();        
         }
     }
 }

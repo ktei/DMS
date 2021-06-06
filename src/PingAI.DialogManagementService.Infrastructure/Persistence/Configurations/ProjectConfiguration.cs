@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PingAI.DialogManagementService.Domain.Model;
@@ -6,12 +5,11 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class ProjectConfiguration : IEntityTypeConfiguration<Project>
+    public class ProjectConfiguration : EntityConfigurationBase<Project>
     {
-        public void Configure(EntityTypeBuilder<Project> builder)
+        protected override void Configure(EntityTypeBuilder<Project> builder)
         {
             builder.ToTable("Projects", "chatbot");
-            builder.ConfigureId();
 
             builder.Property(o => o.OrganisationId)
                 .HasColumnName("organisationId");
@@ -28,10 +26,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("widgetTitle");
             builder.Property(o => o.Enquiries)
                 .HasColumnName("enquiries");
-            builder.Property(o => o.ApiKey)
-                .HasColumnName("apiKey")
-                .HasConversion(k => k.Key, 
-                    k => k == null ? ApiKey.Empty : (ApiKey)k);
             builder.Property(o => o.Domains)
                 .HasColumnName("domains");
             builder.Property(o => o.BusinessTimezone)
@@ -43,21 +37,22 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             builder.Property(o => o.BusinessEmail)
                 .HasColumnName("businessEmail");
 
-            builder.AttachTimestamps();
-            
             builder.HasMany(o => o.Intents)
                 .WithOne(p => p.Project);
             builder.HasMany(o => o.EntityTypes)
                 .WithOne(e => e.Project);
             builder.HasMany(o => o.EntityNames)
                 .WithOne(e => e.Project);
+
             builder.HasMany(o => o.Responses)
-                .WithOne(o => o.Project);
+                .WithOne(o => o.Project)
+                .HasForeignKey(o => o.ProjectId)
+                .HasPrincipalKey(o => o.Id);
+
             builder.HasMany(o => o.GreetingResponses)
                 .WithOne(o => o.Project);
-            
+                
             builder.HasOne(o => o.ProjectVersion);
-
         }
     }
 }

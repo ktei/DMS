@@ -16,6 +16,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ResolutionPartType Type { get; set; }
 
+        [JsonConstructor]
         public ResolutionPart(string? text, Guid? entityNameId, ResolutionPartType type)
         {
             Text = text;
@@ -23,11 +24,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             Type = type;
         }
 
-        public ResolutionPart()
-        {
-            
-        }
-        
         public static ResolutionPart TextPart(string text) => 
             new ResolutionPart(text ?? throw new ArgumentNullException(nameof(text)), null, ResolutionPartType.RTE);
         public static ResolutionPart EntityNamePart(Guid entityNameId) =>

@@ -29,7 +29,7 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
             var canWrite = await _authorizationService.UserCanWriteProject(request.ProjectId);
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
-            var project = await _projectRepository.GetProjectById(request.ProjectId);
+            var project = await _projectRepository.FindById(request.ProjectId);
             if (project == null)
             {
                 // TODO: this should never happen
@@ -40,8 +40,7 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
             project.UpdateWidgetColor(request.WidgetColor);
             project.UpdateWidgetDescription(request.WidgetDescription);
             project.UpdateFallbackMessage(request.FallbackMessage);
-            project.UpdateGreetingResponses(
-                request.GreetingResponses.Select(gr => new GreetingResponse(project.Id, gr)));
+            project.UpdateGreetingResponses(request.GreetingResponses);
             project.UpdateDomains(request.Domains);
             if (request.BusinessTimeStartUtc.HasValue)
             {

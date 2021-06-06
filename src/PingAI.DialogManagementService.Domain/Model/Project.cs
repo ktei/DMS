@@ -7,7 +7,7 @@ using PingAI.DialogManagementService.Domain.Events;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class Project : DomainEntity, IHaveTimestamps
+    public class Project : DomainEntity
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
@@ -18,19 +18,12 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string? WidgetDescription { get; private set; }
         public string? FallbackMessage { get; private set; }
         public string[]? Enquiries { get; private set; }
-        public ApiKey? ApiKey { get; private set; }
         public string[]? Domains { get; private set; }
         public string BusinessTimezone { get; private set; }
         public DateTime? BusinessTimeStartUtc { get; private set; }
         public DateTime? BusinessTimeEndUtc { get; private set; }
         public string? BusinessEmail { get; private set; }
-        
-        private DateTime _createdAt;
-        public DateTime CreatedAt
-        {
-            get => DateTime.SpecifyKind(_createdAt, DateTimeKind.Utc);
-            private set => _createdAt = value;
-        }
+        public DateTime CreatedAt { get; private set; }
 
         private readonly List<Intent> _intents;
         public IReadOnlyList<Intent> Intents => _intents.ToImmutableList();
@@ -112,16 +105,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             _responses = new List<Response>();
             _queries = new List<Query>();
             _greetingResponses = new List<GreetingResponse>();
-
-            if (ApiKey == null || ApiKey.IsEmpty)
-            {
-                GenerateNewApiKey();
-            }
-        }
-
-        public void GenerateNewApiKey()
-        {
-            ApiKey = ApiKey.GenerateNew();
         }
 
         public void UpdateWidgetTitle(string widgetTitle)
@@ -158,7 +141,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             AddProjectUpdatedEvent();
         }
 
-        public void UpdateGreetingResponses(IEnumerable<GreetingResponse> responses)
+        public void UpdateGreetingResponses(IEnumerable<Response> responses)
         {
             _greetingResponses.Clear();
             foreach (var r in responses)
@@ -262,12 +245,16 @@ namespace PingAI.DialogManagementService.Domain.Model
             _responses.Add(response);
         }
 
-        private void AddGreetingResponse(GreetingResponse greetingResponse)
+        public void AddGreetingResponse(Response response)
         {
-            _ = greetingResponse ?? throw new ArgumentNullException(nameof(greetingResponse));
+            _ = response ?? throw new ArgumentNullException(nameof(response));
             if (_greetingResponses == null)
                 throw new ArgumentNullException($"Load {nameof(GreetingResponses)} first");
-            _greetingResponses.Add(greetingResponse);
+            if (!_responses.Contains(response))
+            {
+                _responses.Add(response);
+            }
+            _greetingResponses.Add(new GreetingResponse(this, response));
         }
 
         /// <summary>
@@ -466,7 +453,6 @@ namespace PingAI.DialogManagementService.Domain.Model
                 WidgetDescription = project.WidgetDescription;
                 FallbackMessage = project.FallbackMessage;
                 Enquiries = project.Enquiries;
-                ApiKey = project.ApiKey;
                 Domains = project.Domains;
                 BusinessTimezone = project.BusinessTimezone;
                 BusinessTimeStartUtc = project.BusinessTimeStartUtc;
@@ -474,8 +460,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                 BusinessEmail = project.BusinessEmail;
                 
                 GreetingMessage = project.GreetingResponses.FirstOrDefault(gr => 
-                        gr.Response?.Type == ResponseType.RTE)?
-                    .Response?.GetDisplayText();
+                        gr.Response!.Type == ResponseType.RTE)?.Response!.GetDisplayText();
                 var quickReplies = new List<string>();
                 foreach (var gr in project.GreetingResponses
                     .Where(x => x.Response!.Type == ResponseType.QUICK_REPLY)

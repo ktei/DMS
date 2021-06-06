@@ -40,7 +40,7 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
             var cachedProject = await cacheService.GetObject<Project.Cache>(Domain.Model.Project.Cache.MakeKey(projectId));
             if (cachedProject != null)
                 return new ProjectDto(new Project(cachedProject));
-            var project = await projectRepository.GetProjectById(projectId);
+            var project = await projectRepository.FindById(projectId);
             if (project == null)
             {
                 throw new NotFoundException($"Project {projectId} does not exist");

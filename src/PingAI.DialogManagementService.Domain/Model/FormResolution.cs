@@ -11,7 +11,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public FormField[] Fields { get; set; }
 
         [JsonConstructor]
-        public FormResolution(IEnumerable<FormField> fields)
+        public FormResolution(FormField[] fields)
         {
             Fields = (fields ?? throw new ArgumentNullException(nameof(fields))).ToArray();
         }

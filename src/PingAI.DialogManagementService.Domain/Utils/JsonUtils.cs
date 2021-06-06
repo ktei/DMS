@@ -27,6 +27,7 @@ namespace PingAI.DialogManagementService.Domain.Utils
             options.PropertyNamingPolicy = defaultOptions.PropertyNamingPolicy;
             options.DictionaryKeyPolicy = defaultOptions.DictionaryKeyPolicy;
             options.IgnoreReadOnlyProperties = defaultOptions.IgnoreReadOnlyProperties;
+            options.PropertyNameCaseInsensitive = true;
             foreach (var converter in defaultOptions.Converters)
             {
                 options.Converters.Add(converter);

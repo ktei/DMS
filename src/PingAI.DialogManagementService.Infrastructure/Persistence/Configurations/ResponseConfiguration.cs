@@ -6,12 +6,12 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class ResponseConfiguration : IEntityTypeConfiguration<Response>
+    public class ResponseConfiguration : EntityConfigurationBase<Response>
     {
-        public void Configure(EntityTypeBuilder<Response> builder)
+        protected override void Configure(EntityTypeBuilder<Response> builder)
         {
             builder.ToTable("Responses", "chatbot");
-            builder.ConfigureId();
+            
             builder.Property(o => o.Resolution)
                 .HasColumnName("resolution")
                 .HasColumnType("jsonb")
@@ -26,8 +26,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             builder.Property(o => o.SpeechContexts)
                 .HasColumnName("speechContexts")
                 .HasColumnType("jsonb");
-            
-            builder.AttachTimestamps();
         }
 
         private static string MarshallResolution(Resolution? resolution)

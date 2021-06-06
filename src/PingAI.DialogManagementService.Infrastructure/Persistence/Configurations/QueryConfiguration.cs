@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PingAI.DialogManagementService.Domain.Model;
@@ -5,14 +6,12 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class QueryConfiguration:  IEntityTypeConfiguration<Query>
+    public class QueryConfiguration:  EntityConfigurationBase<Query>
     {
-        public void Configure(EntityTypeBuilder<Query> builder)
+        protected override void Configure(EntityTypeBuilder<Query> builder)
         {
             builder.ToTable("Queries", "chatbot");
             
-            builder.ConfigureId();
-
             builder.Property(o => o.Name)
                 .HasColumnName("name");
             builder.Property(o => o.Expressions)
@@ -60,8 +59,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                         .HasForeignKey("queryId")
                         .HasConstraintName("QueryResponses_queryId_fkey")
                         .OnDelete(DeleteBehavior.Cascade));
-            
-            builder.AttachTimestamps();
         }
     }
 }

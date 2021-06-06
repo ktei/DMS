@@ -25,7 +25,7 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateEnquiries
 
         public async Task<Project> Handle(UpdateEnquiriesCommand request, CancellationToken cancellationToken)
         {
-            var project = await _projectRepository.GetProjectById(request.ProjectId);
+            var project = await _projectRepository.FindById(request.ProjectId);
             if (project == null)
                 throw new ForbiddenException(ProjectWriteDenied);
             

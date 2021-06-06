@@ -2,7 +2,7 @@ using System;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class SlackWorkspace : DomainEntity, IHaveTimestamps
+    public class SlackWorkspace : DomainEntity
     {
         public Guid Id { get; private set; }
         public Guid ProjectId { get; private set; }

@@ -2,7 +2,7 @@ using System;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class PhrasePart : IHaveTimestamps
+    public class PhrasePart
     {
         public Guid Id { get; private set; }
         public Guid IntentId { get; private set; }

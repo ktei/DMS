@@ -2,7 +2,7 @@ using System;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class GreetingResponse : DomainEntity, IHaveTimestamps
+    public class GreetingResponse : DomainEntity
     {
         public Guid Id { get; private set; }
         public Guid ProjectId { get; private set; }
@@ -17,9 +17,9 @@ namespace PingAI.DialogManagementService.Domain.Model
             
         }
 
-        public GreetingResponse(Guid projectId, Response response)
+        public GreetingResponse(Project project, Response response)
         {
-            ProjectId = projectId;
+            Project = project;
             Response = response;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;

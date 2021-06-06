@@ -5,20 +5,17 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class OrganisationUserConfiguration : IEntityTypeConfiguration<OrganisationUser>
+    public class OrganisationUserConfiguration : EntityConfigurationBase<OrganisationUser>
     {
-        public void Configure(EntityTypeBuilder<OrganisationUser> builder)
+        protected override void Configure(EntityTypeBuilder<OrganisationUser> builder)
         {
             builder.ToTable("OrganisationUsers", "chatbot");
-            builder.ConfigureId();
 
             builder.Property(o => o.OrganisationId)
                 .HasColumnName("organisationId");
             builder.Property(o => o.UserId)
                 .HasColumnName("userId");
             
-            builder.AttachTimestamps();
-
             builder.HasOne(o => o.Organisation)
                 .WithMany(o => o.OrganisationUsers);
 

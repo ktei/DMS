@@ -44,7 +44,7 @@ namespace PingAI.DialogManagementService.Application.UnitTests.Projects
                 config.Including(x => x.Id)
                     .Including(x => x.Name)
                     .Including(x => x.BusinessTimezone));
-            projectRepoMock.Verify(x => x.GetProjectById(IsAny<Guid>()), Times.Never);
+            projectRepoMock.Verify(x => x.FindById(IsAny<Guid>()), Times.Never);
         }
     }
 }

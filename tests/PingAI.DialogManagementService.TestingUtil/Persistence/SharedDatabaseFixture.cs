@@ -61,6 +61,8 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                         Defaults.FallbackMessage, null, null,
                         Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                         Defaults.BusinessTimeEndUtc, null);
+                    project.AddGreetingResponse(new Response(Resolution.Factory.RteText("Hello, and welcome!"),
+                        ResponseType.RTE, 0));
                     context.Add(project);
                     
                     // seed ProjectVersions
@@ -97,6 +99,17 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                     orderDeliveryIntent.AddPhrase(new Phrase(0)
                         .AppendText("Hello, I want to order some ")
                         .AppendEntity("pizza", deliveryOrderEntityName));
+                    
+                    // seed Responses
+                    var orderDeliveryResponse = new Response(project.Id, Resolution.Factory.RteText("It's done!"),
+                        ResponseType.RTE, 0);
+                    
+                    // seed Queries
+                    var query = new Query("ORDER_FOOD_QUERY", project.Id, new Expression[0], "SEEDED",
+                        null, 0);
+                    query.AddIntent(orderDeliveryIntent);
+                    query.AddResponse(orderDeliveryResponse);
+                    context.Add(query);
 
                     context.SaveChanges();
                 }

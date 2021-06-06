@@ -6,12 +6,11 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class OrganisationConfiguration : IEntityTypeConfiguration<Organisation>
+    public class OrganisationConfiguration : EntityConfigurationBase<Organisation>
     {
-        public void Configure(EntityTypeBuilder<Organisation> builder)
+        protected override void Configure(EntityTypeBuilder<Organisation> builder)
         {
             builder.ToTable("Organisations", "chatbot");
-            builder.ConfigureId();
 
             builder.Property(o => o.Name)
                 .HasColumnName("name")
@@ -20,8 +19,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("description");
             builder.Property(o => o.Tags)
                 .HasColumnName("tags");
-            
-            builder.AttachTimestamps();
             
             builder.HasMany(o => o.Projects)
                 .WithOne(p => p.Organisation);

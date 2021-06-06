@@ -58,7 +58,6 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
             WidgetDescription = project.WidgetDescription;
             FallbackMessage = project.FallbackMessage;
             Enquiries = project.Enquiries ?? new string[0];
-            ApiKey = project.ApiKey?.Key;
             Domains = project.Domains ?? new string[0];
             BusinessTimeStart = project.BusinessTimeStartUtc.HasValue
                 ? ConvertUtcToString(project.BusinessTimeStartUtc.Value)
@@ -69,9 +68,8 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
             BusinessTimezone = project.BusinessTimezone;
             BusinessEmail = project.BusinessEmail;
 
-            GreetingMessage = project.GreetingResponses.FirstOrDefault(gr => 
-                    gr.Response?.Type == ResponseType.RTE)?
-                .Response?.GetDisplayText();
+            GreetingMessage = project.GreetingResponses.FirstOrDefault(gr =>
+                gr.Response!.Type == ResponseType.RTE)?.Response!.GetDisplayText();
             var quickReplies = new List<string>();
             foreach (var gr in project.GreetingResponses
                 .Where(x => x.Response!.Type == ResponseType.QUICK_REPLY)
@@ -97,10 +95,5 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
 
         public static string ConvertUtcToString(DateTime utc) =>
             utc.ToString("yyyy-MM-ddTHH:mm:ss");
-        
-        public ProjectDto()
-        {
-            
-        }
     }
 }

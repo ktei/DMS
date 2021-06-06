@@ -5,12 +5,11 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class IntentConfiguration : IEntityTypeConfiguration<Intent>
+    public class IntentConfiguration : EntityConfigurationBase<Intent>
     {
-        public void Configure(EntityTypeBuilder<Intent> builder)
+        protected override void Configure(EntityTypeBuilder<Intent> builder)
         {
             builder.ToTable("Intents", "chatbot");
-            builder.ConfigureId();
 
             builder.Property(o => o.Name)
                 .HasColumnName("name")
@@ -28,9 +27,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             builder.Property(o => o.Type)
                 .HasColumnName("type");
 
-            
-            builder.AttachTimestamps();
-            
             builder.HasMany(o => o.PhraseParts)
                 .WithOne(p => p.Intent);
         }

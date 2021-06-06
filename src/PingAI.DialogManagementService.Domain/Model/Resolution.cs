@@ -17,7 +17,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         [JsonPropertyName("form")] public FormResolution? Form { get; }
 
         [JsonConstructor]
-        public Resolution(ResolutionType type, IEnumerable<ResolutionPart>? parts, FormResolution? form)
+        public Resolution(ResolutionType type, ResolutionPart[]? parts, FormResolution? form)
         {
             Type = type;
             Parts = parts?.ToArray();
@@ -86,7 +86,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                     resolutionParts.Add(ResolutionPart.TextPart(rteText[pos..]));
                 }
 
-                return new Resolution(ResolutionType.PARTS, resolutionParts, null);
+                return new Resolution(ResolutionType.PARTS, resolutionParts.ToArray(), null);
             }
 
             public static Resolution Form(FormResolution form)

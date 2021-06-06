@@ -2,9 +2,9 @@ using System;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class QueryResponse : IHaveTimestamps
+    public class QueryResponse
     {
-        public Guid Id { get; private set; }
+        // public Guid Id { get; }
         // public readonly Guid _queryId;
         // public Guid QueryId => _queryId;
         // public Query? Query { get; private set; }

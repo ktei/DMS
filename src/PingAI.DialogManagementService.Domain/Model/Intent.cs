@@ -7,7 +7,7 @@ using PingAI.DialogManagementService.Domain.Utils;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
-    public class Intent : DomainEntity, IHaveTimestamps
+    public class Intent : DomainEntity
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }

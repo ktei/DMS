@@ -72,7 +72,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
                 ResponseType.RTE, 0);
             project.UpdateGreetingResponses(new[]
             {
-                new GreetingResponse(project.Id, defaultGreeting)
+                defaultGreeting
             });
             foreach (var enquiryEntityName in Defaults.EnquiryEntityNames)
             {

@@ -25,7 +25,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Projects
             var projectVersion = await _projectVersionRepository.GetLatestVersionByProjectId(request.DesignTimeProjectId);
             if (projectVersion == null)
                 throw new BadRequestException(ProjectNotFound);
-            var project = await _projectRepository.GetProjectById(projectVersion.ProjectId);
+            var project = await _projectRepository.FindById(projectVersion.ProjectId);
             if (project == null)
                 throw new BadRequestException(ProjectNotFound);
             return project;
