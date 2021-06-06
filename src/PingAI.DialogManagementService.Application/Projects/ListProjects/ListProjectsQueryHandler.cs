@@ -37,20 +37,20 @@ namespace PingAI.DialogManagementService.Application.Projects.ListProjects
             }
             else
             {
-                Guid? organisationId = null;
+                Organisation? organisation = null;
                 var user = await _requestContext.GetUser();
-                if (user.OrganisationIds.Any())
+                if (user.Organisations.Any())
                 {
                     // TODO: what if user has multiple organisations?
-                    organisationId = user.OrganisationIds.First();
+                    organisation = user.Organisations.First();
                 }
 
                 // no organisation found, no project to query
-                if (!organisationId.HasValue)
+                if (organisation == null)
                     return new List<Project>(0);
 
                 projectVersions =
-                    await _projectVersionRepository.GetDesignTimeVersionsByOrganisationId(organisationId.Value);
+                    await _projectVersionRepository.GetDesignTimeVersionsByOrganisationId(organisation.Id);
             }
 
             if (!projectVersions.Any())

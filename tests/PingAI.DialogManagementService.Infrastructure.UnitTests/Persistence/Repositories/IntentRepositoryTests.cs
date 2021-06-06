@@ -32,11 +32,11 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         {
             var context = Fixture.CreateContext();
             var sut = new IntentRepository(context);
-            var intent = await context.Intents.FirstAsync();
-
+            var intent = await context.Intents.Include(x => x.Queries).FirstAsync();
+            
             context.ChangeTracker.Clear();
             var actual = await sut.FindById(intent.Id);
-
+            
             actual.Should().NotBeNull();
         }
 

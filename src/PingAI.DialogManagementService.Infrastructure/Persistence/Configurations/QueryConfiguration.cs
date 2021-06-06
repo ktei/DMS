@@ -6,12 +6,12 @@ using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
-    public class QueryConfiguration:  EntityConfigurationBase<Query>
+    public class QueryConfiguration : EntityConfigurationBase<Query>
     {
         protected override void Configure(EntityTypeBuilder<Query> builder)
         {
             builder.ToTable("Queries", "chatbot");
-            
+
             builder.Property(o => o.Name)
                 .HasColumnName("name");
             builder.Property(o => o.Expressions)
@@ -25,9 +25,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("tags");
             builder.Property(o => o.DisplayOrder)
                 .HasColumnName("displayOrder");
-            
+
             builder.HasMany(x => x.Intents)
                 .WithMany(x => x.Queries)
+                // .UsingEntity(j => j.ToTable("QueryIntents"));
                 .UsingEntity<QueryIntent>(
                     nameof(QueryIntent),
                     j => j
@@ -42,7 +43,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                         .HasForeignKey("queryId")
                         .HasConstraintName("QueryIntents_queryId_fkey")
                         .OnDelete(DeleteBehavior.Cascade));
-            
+
             builder.HasMany(x => x.Responses)
                 .WithMany(x => x.Queries)
                 .UsingEntity<QueryResponse>(

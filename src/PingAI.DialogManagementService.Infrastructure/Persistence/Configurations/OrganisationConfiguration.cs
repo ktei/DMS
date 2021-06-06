@@ -24,6 +24,23 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .WithOne(p => p.Organisation);
             builder.HasMany(o => o.ProjectVersions)
                 .WithOne(p => p.Organisation);
+            
+            builder.HasMany(x => x.Users)
+                .WithMany(x => x.Organisations)
+                .UsingEntity<OrganisationUser>(
+                    nameof(OrganisationUser),
+                    j => j
+                        .HasOne<User>()
+                        .WithMany()
+                        .HasForeignKey("userId")
+                        .HasConstraintName("OrganisationUsers_userId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j
+                        .HasOne<Organisation>()
+                        .WithMany()
+                        .HasForeignKey("organisationId")
+                        .HasConstraintName("OrganisationUsers_organisationId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade));
         }
     }
 }

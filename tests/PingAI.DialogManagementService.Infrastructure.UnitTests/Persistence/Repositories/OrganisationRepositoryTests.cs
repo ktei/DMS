@@ -35,9 +35,11 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var sut = new OrganisationRepository(context);
             var organisation = await context.Organisations.FirstAsync();
 
+            context.ChangeTracker.Clear();
             var actual = await sut.FindById(organisation.Id);
 
             actual.Should().NotBeNull();
+            actual!.Users.Should().HaveCountGreaterOrEqualTo(1);
         }
 
         [Fact]
@@ -74,16 +76,12 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         {
             var context = Fixture.CreateContext();
             var sut = new OrganisationRepository(context);
-            var organisation = new Organisation(Guid.NewGuid().ToString(), "test");
             var user = await context.Users.FirstAsync();
-            await context.AddAsync(organisation);
-            await context.AddAsync(new OrganisationUser(organisation.Id, user.Id));
-            await context.SaveChangesAsync();
 
             context.ChangeTracker.Clear();
             var actual = await sut.ListByUserId(user.Id);
 
-            actual.Should().HaveCount(2);
+            actual.Should().HaveCountGreaterOrEqualTo(1);
         }
     }
 }

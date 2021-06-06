@@ -11,7 +11,7 @@ using PingAI.DialogManagementService.Infrastructure.Persistence;
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(DialogManagementContext))]
-    [Migration("20210606072046_InitialCreate")]
+    [Migration("20210606101622_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,6 +26,39 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+            modelBuilder.Entity("OrganisationUser", b =>
+                {
+                    b.Property<Guid>("organisationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("userId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 938, DateTimeKind.Utc).AddTicks(1390))
+                        .HasColumnName("createdAt");
+
+                    b.Property<Guid>("P1")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValue(new Guid("1b9c75df-2928-4675-83b2-e09dfe46696e"))
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 938, DateTimeKind.Utc).AddTicks(1770))
+                        .HasColumnName("updatedAt");
+
+                    b.HasKey("organisationId", "userId");
+
+                    b.HasIndex("userId");
+
+                    b.ToTable("OrganisationUsers", "chatbot");
+                });
+
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.ChatHistory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -36,7 +69,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 933, DateTimeKind.Utc).AddTicks(5090))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 958, DateTimeKind.Utc).AddTicks(4330))
                         .HasColumnName("createdAt");
 
                     b.Property<string>("Input")
@@ -66,7 +99,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 933, DateTimeKind.Utc).AddTicks(5320))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 958, DateTimeKind.Utc).AddTicks(4730))
                         .HasColumnName("updatedAt");
 
                     b.HasKey("Id");
@@ -88,7 +121,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 937, DateTimeKind.Utc).AddTicks(640))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 961, DateTimeKind.Utc).AddTicks(7270))
                         .HasColumnName("createdAt");
 
                     b.Property<string>("Name")
@@ -104,7 +137,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 937, DateTimeKind.Utc).AddTicks(1360))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 961, DateTimeKind.Utc).AddTicks(8090))
                         .HasColumnName("updatedAt");
 
                     b.HasKey("Id");
@@ -124,7 +157,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 942, DateTimeKind.Utc).AddTicks(3750))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 967, DateTimeKind.Utc).AddTicks(990))
                         .HasColumnName("createdAt");
 
                     b.Property<string>("Description")
@@ -149,7 +182,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 942, DateTimeKind.Utc).AddTicks(4520))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 967, DateTimeKind.Utc).AddTicks(1950))
                         .HasColumnName("updatedAt");
 
                     b.HasKey("Id");
@@ -169,7 +202,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 944, DateTimeKind.Utc).AddTicks(3200))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 968, DateTimeKind.Utc).AddTicks(9400))
                         .HasColumnName("createdAt");
 
                     b.Property<Guid>("EntityTypeId")
@@ -183,7 +216,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 944, DateTimeKind.Utc).AddTicks(3650))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 968, DateTimeKind.Utc).AddTicks(9830))
                         .HasColumnName("updatedAt");
 
                     b.Property<string>("Value")
@@ -209,7 +242,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 947, DateTimeKind.Utc).AddTicks(9820))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 972, DateTimeKind.Utc).AddTicks(7200))
                         .HasColumnName("createdAt");
 
                     b.Property<Guid>("ProjectId")
@@ -223,7 +256,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 948, DateTimeKind.Utc).AddTicks(80))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 972, DateTimeKind.Utc).AddTicks(7450))
                         .HasColumnName("updatedAt");
 
                     b.HasKey("Id");
@@ -245,7 +278,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 953, DateTimeKind.Utc).AddTicks(2760))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 976, DateTimeKind.Utc).AddTicks(9290))
                         .HasColumnName("createdAt");
 
                     b.Property<string>("Name")
@@ -265,7 +298,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 953, DateTimeKind.Utc).AddTicks(3460))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 976, DateTimeKind.Utc).AddTicks(9880))
                         .HasColumnName("updatedAt");
 
                     b.Property<string>("_color")
@@ -295,7 +328,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 956, DateTimeKind.Utc).AddTicks(6510))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 6, DateTimeKind.Utc).AddTicks(940))
                         .HasColumnName("createdAt");
 
                     b.Property<string>("Description")
@@ -316,48 +349,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 956, DateTimeKind.Utc).AddTicks(7520))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 6, DateTimeKind.Utc).AddTicks(1490))
                         .HasColumnName("updatedAt");
 
                     b.HasKey("Id");
 
                     b.ToTable("Organisations", "chatbot");
-                });
-
-            modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.OrganisationUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 959, DateTimeKind.Utc).AddTicks(8960))
-                        .HasColumnName("createdAt");
-
-                    b.Property<Guid>("OrganisationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("organisationId");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 959, DateTimeKind.Utc).AddTicks(9580))
-                        .HasColumnName("updatedAt");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("userId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganisationId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("OrganisationUsers", "chatbot");
                 });
 
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.PhrasePart", b =>
@@ -370,7 +367,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 964, DateTimeKind.Utc).AddTicks(9310))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 11, DateTimeKind.Utc).AddTicks(240))
                         .HasColumnName("createdAt");
 
                     b.Property<int>("DisplayOrder")
@@ -408,7 +405,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 965, DateTimeKind.Utc).AddTicks(200))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 11, DateTimeKind.Utc).AddTicks(1220))
                         .HasColumnName("updatedAt");
 
                     b.Property<string>("Value")
@@ -453,7 +450,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 982, DateTimeKind.Utc).AddTicks(6360))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 18, DateTimeKind.Utc).AddTicks(1260))
                         .HasColumnName("createdAt");
 
                     b.Property<string[]>("Domains")
@@ -478,13 +475,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("organisationId");
 
-                    b.Property<Guid?>("ResponseId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 982, DateTimeKind.Utc).AddTicks(8390))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 18, DateTimeKind.Utc).AddTicks(2820))
                         .HasColumnName("updatedAt");
 
                     b.Property<string>("WidgetColor")
@@ -503,8 +497,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("OrganisationId");
 
-                    b.HasIndex("ResponseId");
-
                     b.ToTable("Projects", "chatbot");
                 });
 
@@ -518,7 +510,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 997, DateTimeKind.Utc).AddTicks(5740))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 22, DateTimeKind.Utc).AddTicks(9590))
                         .HasColumnName("createdAt");
 
                     b.Property<Guid>("OrganisationId")
@@ -532,7 +524,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 997, DateTimeKind.Utc).AddTicks(6360))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 23, DateTimeKind.Utc).AddTicks(420))
                         .HasColumnName("updatedAt");
 
                     b.Property<int>("Version")
@@ -563,7 +555,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 46, 9, DateTimeKind.Utc).AddTicks(7290))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 37, DateTimeKind.Utc).AddTicks(9240))
                         .HasColumnName("createdAt");
 
                     b.Property<string>("Description")
@@ -596,7 +588,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 46, 9, DateTimeKind.Utc).AddTicks(7810))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 37, DateTimeKind.Utc).AddTicks(9670))
                         .HasColumnName("updatedAt");
 
                     b.HasKey("Id");
@@ -616,7 +608,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 46, 16, DateTimeKind.Utc).AddTicks(2830))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 42, DateTimeKind.Utc).AddTicks(4980))
                         .HasColumnName("createdAt");
 
                     b.Property<int>("Order")
@@ -643,7 +635,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 46, 16, DateTimeKind.Utc).AddTicks(3800))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 42, DateTimeKind.Utc).AddTicks(5590))
                         .HasColumnName("updatedAt");
 
                     b.HasKey("Id");
@@ -663,7 +655,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 46, 18, DateTimeKind.Utc).AddTicks(2730))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 44, DateTimeKind.Utc).AddTicks(4390))
                         .HasColumnName("createdAt");
 
                     b.Property<string>("OAuthAccessToken")
@@ -683,7 +675,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 46, 18, DateTimeKind.Utc).AddTicks(3210))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 44, DateTimeKind.Utc).AddTicks(4960))
                         .HasColumnName("updatedAt");
 
                     b.Property<string>("WebhookUrl")
@@ -714,7 +706,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 46, 19, DateTimeKind.Utc).AddTicks(2700))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 45, DateTimeKind.Utc).AddTicks(5940))
                         .HasColumnName("createdAt");
 
                     b.Property<string>("Name")
@@ -726,7 +718,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 46, 19, DateTimeKind.Utc).AddTicks(3240))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 22, 45, DateTimeKind.Utc).AddTicks(6570))
                         .HasColumnName("updatedAt");
 
                     b.HasKey("Id");
@@ -736,32 +728,31 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("QueryIntent", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                    b.Property<Guid>("intentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("queryId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 913, DateTimeKind.Utc).AddTicks(2030))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 935, DateTimeKind.Utc).AddTicks(7420))
                         .HasColumnName("createdAt");
+
+                    b.Property<Guid>("P1")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValue(new Guid("9d8ddd5b-6188-45e4-9e19-b8433496ec4e"))
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 914, DateTimeKind.Utc).AddTicks(8750))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 935, DateTimeKind.Utc).AddTicks(8280))
                         .HasColumnName("updatedAt");
 
-                    b.Property<Guid?>("intentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("queryId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("intentId");
+                    b.HasKey("intentId", "queryId");
 
                     b.HasIndex("queryId");
 
@@ -770,36 +761,52 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("QueryResponse", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                    b.Property<Guid>("queryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("responseId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 915, DateTimeKind.Utc).AddTicks(8530))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 936, DateTimeKind.Utc).AddTicks(6410))
                         .HasColumnName("createdAt");
+
+                    b.Property<Guid>("P1")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValue(new Guid("002f79de-7bb4-40e4-b7b8-ef306719e912"))
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2021, 6, 6, 7, 20, 45, 915, DateTimeKind.Utc).AddTicks(8770))
+                        .HasDefaultValue(new DateTime(2021, 6, 6, 10, 16, 21, 936, DateTimeKind.Utc).AddTicks(6640))
                         .HasColumnName("updatedAt");
 
-                    b.Property<Guid?>("queryId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("responseId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("queryId");
+                    b.HasKey("queryId", "responseId");
 
                     b.HasIndex("responseId");
 
                     b.ToTable("QueryResponses", "chatbot");
+                });
+
+            modelBuilder.Entity("OrganisationUser", b =>
+                {
+                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Organisation", null)
+                        .WithMany()
+                        .HasForeignKey("organisationId")
+                        .HasConstraintName("OrganisationUsers_organisationId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PingAI.DialogManagementService.Domain.Model.User", null)
+                        .WithMany()
+                        .HasForeignKey("userId")
+                        .HasConstraintName("OrganisationUsers_userId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.EntityName", b =>
@@ -865,25 +872,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.OrganisationUser", b =>
-                {
-                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Organisation", "Organisation")
-                        .WithMany("OrganisationUsers")
-                        .HasForeignKey("OrganisationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PingAI.DialogManagementService.Domain.Model.User", "User")
-                        .WithMany("OrganisationUsers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organisation");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.PhrasePart", b =>
                 {
                     b.HasOne("PingAI.DialogManagementService.Domain.Model.EntityName", "EntityName")
@@ -914,10 +902,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                         .HasForeignKey("OrganisationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Response", null)
-                        .WithMany("GreetingProjects")
-                        .HasForeignKey("ResponseId");
 
                     b.Navigation("Organisation");
                 });
@@ -980,13 +964,15 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("intentId")
                         .HasConstraintName("QueryIntents_intentId_fkey")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("PingAI.DialogManagementService.Domain.Model.Query", null)
                         .WithMany()
                         .HasForeignKey("queryId")
                         .HasConstraintName("QueryIntents_queryId_fkey")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("QueryResponse", b =>
@@ -995,13 +981,15 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("queryId")
                         .HasConstraintName("QueryResponses_queryId_fkey")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("PingAI.DialogManagementService.Domain.Model.Response", null)
                         .WithMany()
                         .HasForeignKey("responseId")
                         .HasConstraintName("QueryResponses_responseId_fkey")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.EntityType", b =>
@@ -1016,8 +1004,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.Organisation", b =>
                 {
-                    b.Navigation("OrganisationUsers");
-
                     b.Navigation("Projects");
 
                     b.Navigation("ProjectVersions");
@@ -1039,16 +1025,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Navigation("Queries");
 
                     b.Navigation("Responses");
-                });
-
-            modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.Response", b =>
-                {
-                    b.Navigation("GreetingProjects");
-                });
-
-            modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.User", b =>
-                {
-                    b.Navigation("OrganisationUsers");
                 });
 #pragma warning restore 612, 618
         }

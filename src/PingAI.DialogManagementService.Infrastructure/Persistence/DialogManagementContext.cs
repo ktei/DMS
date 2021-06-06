@@ -50,14 +50,27 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
             modelBuilder.SharedTypeEntity<QueryIntent>(nameof(QueryIntent), b =>
             {
                 b.ToTable("QueryIntents", "chatbot");
-                b.AddId();
+                b.Property<Guid>("P1")
+                    .HasColumnName("id")
+                    .HasDefaultValue(Guid.NewGuid());
                 b.AddTimestamps();
             });
-
+            
             modelBuilder.SharedTypeEntity<QueryResponse>(nameof(QueryResponse), b =>
             {
                 b.ToTable("QueryResponses", "chatbot");
-                b.AddId();
+                b.Property<Guid>("P1")
+                    .HasColumnName("id")
+                    .HasDefaultValue(Guid.NewGuid());
+                b.AddTimestamps();
+            });
+
+            modelBuilder.SharedTypeEntity<OrganisationUser>(nameof(OrganisationUser), b =>
+            {
+                b.ToTable("OrganisationUsers", "chatbot");
+                b.Property<Guid>("P1")
+                    .HasColumnName("id")
+                    .HasDefaultValue(Guid.NewGuid());
                 b.AddTimestamps();
             });
 
@@ -83,7 +96,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectVersion> ProjectVersions { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<OrganisationUser> OrganisationUsers { get; set; }
+        // public DbSet<OrganisationUser> OrganisationUsers { get; set; }
+        // public DbSet<QueryIntent> QueryIntents { get; set; }
         public DbSet<Intent> Intents { get; set; }
         public DbSet<PhrasePart> PhraseParts { get; set; }
         public DbSet<EntityType> EntityTypes { get; set; }
@@ -94,19 +108,17 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<SlackWorkspace> SlackWorkspaces { get; set; }
         public DbSet<ChatHistory> ChatHistories { get; set; }
 
+        public override int SaveChanges()
+        {
+            UpdateTimestamps();
+            return base.SaveChanges();
+        }
+
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             UpdateTimestamps();
             await _mediator.DispatchDomainEvents(this);
             return await base.SaveChangesAsync(cancellationToken);
-        }
-
-        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
-            CancellationToken cancellationToken = default)
-        {
-            UpdateTimestamps();
-            await _mediator.DispatchDomainEvents(this);
-            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
         private void UpdateTimestamps()
@@ -120,6 +132,18 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 
                 if (entity.State == EntityState.Added)
                 {
+                    if (entity.Entity is QueryIntent)
+                    {
+                        entity.Property("P1").CurrentValue = Guid.NewGuid();
+                    }
+                    else if (entity.Entity is QueryResponse)
+                    {
+                        entity.Property("P1").CurrentValue = Guid.NewGuid();
+                    }
+                    else if (entity.Entity is OrganisationUser)
+                    {
+                        entity.Property("P1").CurrentValue = Guid.NewGuid();
+                    }
                     entity.Property("CreatedAt").CurrentValue = timestamp;
                 }
 

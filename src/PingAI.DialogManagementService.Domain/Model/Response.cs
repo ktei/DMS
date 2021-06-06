@@ -17,8 +17,6 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string? SpeechContexts { get; private set; }
         private List<Query> _queries;
         public IReadOnlyList<Query> Queries => _queries.ToImmutableList();
-        private List<Project> _greetingProjects;
-        public IReadOnlyList<Project> GreetingProjects => _greetingProjects.ToImmutableList();
 
         public const int MaxRteTextLength = 4000;
         public const int QuickReplyLength = 250;

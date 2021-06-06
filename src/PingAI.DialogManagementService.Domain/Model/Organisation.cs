@@ -11,12 +11,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string Description { get; private set; }
         public string[]? Tags { get; private set; }
 
-        private DateTime _createdAt;
-        public DateTime CreatedAt
-        {
-            get => DateTime.SpecifyKind(_createdAt, DateTimeKind.Utc);
-            private set => _createdAt = value;
-        }
+        public DateTime CreatedAt { get; private set; }
         
         private readonly List<Project> _projects;
         public IReadOnlyList<Project> Projects => _projects.ToImmutableList();
@@ -24,8 +19,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<ProjectVersion> _projectVersions;
         public IReadOnlyList<ProjectVersion> ProjectVersions => _projectVersions.ToImmutableList();
 
-        private readonly List<OrganisationUser> _organisationUsers;
-        public IReadOnlyList<OrganisationUser> OrganisationUsers => _organisationUsers.ToImmutableList();
+        private readonly List<User> _users;
+        public IReadOnlyList<User> Users => _users.ToImmutableList();
         
         public const int MaxNameLength = 250;
         
@@ -40,7 +35,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             Description = description;
             _projects = new List<Project>();
             _projectVersions = new List<ProjectVersion>();
-            _organisationUsers = new List<OrganisationUser>();
+            _users = new List<User>();
         }
         
         public void AddProject(Project project)
@@ -64,19 +59,19 @@ namespace PingAI.DialogManagementService.Domain.Model
         public void AddUser(User user)
         {
             _ = user ?? throw new ArgumentNullException(nameof(user));
-            if (_organisationUsers == null)
-                throw new InvalidOperationException($"Load {nameof(OrganisationUsers)} first");
+            if (_users == null)
+                throw new InvalidOperationException($"Load {nameof(Users)} first");
 
-            _organisationUsers.Add(new OrganisationUser(Id, user));
+            _users.Add(user);
         }
 
         public void RemoveUser(User user)
         {
             _ = user ?? throw new ArgumentNullException(nameof(user)); 
-            if (_organisationUsers == null)
-                throw new InvalidOperationException($"Load {nameof(OrganisationUsers)} first");
+            if (_users == null)
+                throw new InvalidOperationException($"Load {nameof(Users)} first");
 
-            _organisationUsers.RemoveAll(x => x.UserId == user.Id);
+            _users.Remove(user);
         }
 
         public override string ToString() => Name;

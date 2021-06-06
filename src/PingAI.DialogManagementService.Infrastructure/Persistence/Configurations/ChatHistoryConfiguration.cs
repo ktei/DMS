@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PingAI.DialogManagementService.Domain.Model;
-using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configurations
 {
@@ -10,7 +9,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
         protected override void Configure(EntityTypeBuilder<ChatHistory> builder)
         {
             builder.ToTable("ChatHistories", "chatbot");
-            
+
             builder.Property(o => o.ProjectId)
                 .HasColumnName("projectId");
             builder.Property(o => o.SessionId)

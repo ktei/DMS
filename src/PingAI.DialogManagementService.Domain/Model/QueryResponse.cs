@@ -6,10 +6,10 @@ namespace PingAI.DialogManagementService.Domain.Model
     {
         // public Guid Id { get; }
         // public readonly Guid _queryId;
-        // public Guid QueryId => _queryId;
+        // public Guid QueryId { get; private set; }
         // public Query? Query { get; private set; }
-        // private readonly Guid _responseId;
-        // public Guid ResponseId => _responseId;
+        // // private readonly Guid _responseId;
+        // public Guid ResponseId { get; private set; }
         // public Response? Response { get; private set; }
         //
         // public QueryResponse(Guid queryId, Guid responseId)

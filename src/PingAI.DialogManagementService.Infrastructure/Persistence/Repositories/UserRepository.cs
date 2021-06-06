@@ -20,7 +20,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         {
             var user = await _context.Users
                 .AsNoTracking()
-                .Include(x => x.OrganisationUsers)
+                .Include(x => x.Organisations).ThenInclude(x => x.Projects)
                 .FirstOrDefaultAsync(x => x.Auth0Id == auth0Id);
             return user;
         }
@@ -28,7 +28,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public async Task<User?> GetUserById(Guid userId)
         {
             var user = await _context.Users
-                .Include(x => x.OrganisationUsers)
+                .Include(x => x.Organisations)
                 .FirstOrDefaultAsync(x => x.Id == userId);
             return user;
         }

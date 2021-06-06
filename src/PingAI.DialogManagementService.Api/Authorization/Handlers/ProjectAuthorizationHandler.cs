@@ -50,14 +50,9 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
                 return;
             }
             
-            // get IDs of organisations this user belongs to
-            var organisationIds = user.OrganisationUsers.Select(o => o.OrganisationId).ToArray();
-            var organisations = await Task.WhenAll(organisationIds.Select(_organisationRepository.FindById));
-            
             // get IDs of projects this user belongs to
-            var projectIds = organisations
-                .Where(org => org != null)
-                .SelectMany(org => org!.Projects)
+            var projectIds = user.Organisations
+                .SelectMany(org => org.Projects)
                 .Select(p => p.Id);
 
             if (projectIds.Contains(resource))

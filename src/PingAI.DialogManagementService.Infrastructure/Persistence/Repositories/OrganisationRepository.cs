@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +21,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public async Task<Organisation?> FindById(Guid id)
         {
             var organisation = await _context.Organisations
+                .Include(x => x.Users)
                 .Include(x => x.Projects)
                 .Include(x => x.ProjectVersions)
                 .SingleOrDefaultAsync(o => o.Id == id);
@@ -52,7 +52,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public async Task<IReadOnlyList<Organisation>> ListByUserId(Guid userId)
         {
             var results = await _context.Organisations
-                .Where(o => o.OrganisationUsers.Any(x => x.UserId == userId))
+                .Where(o => o.Users.Any(x => x.Id == userId))
                 .ToListAsync();
             return results.ToImmutableList();
         }

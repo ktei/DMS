@@ -30,13 +30,10 @@ namespace PingAI.DialogManagementService.Application.Projects.CreateProject
         public async Task<Project> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
             var user = await _requestContext.GetUser();
-            if (user.OrganisationIds.Any())
-                throw new BadRequestException("Missing organisationId");
+            if (!user.Organisations.Any())
+                throw new BadRequestException($"User {user.Id} has no organisations");
 
-            var organisationId = user.OrganisationIds.First();
-            var organisation = await _organisationRepository.FindById(organisationId);
-            if (organisation == null)
-                throw new BadRequestException("No organisation found");
+            var organisation = user.Organisations.First();
             
             // ensure project name does not duplicate
             var nameExists = await _projectRepository.ProjectNameExists(organisation.Id, request.Name);
@@ -48,7 +45,7 @@ namespace PingAI.DialogManagementService.Application.Projects.CreateProject
                 null, null, 
                 null, Defaults.BusinessTimezone,
                 Defaults.BusinessTimeStartUtc, Defaults.BusinessTimeEndUtc, null);
-            organisation.AddProjectVersion(new ProjectVersion(project, organisationId, 
+            organisation.AddProjectVersion(new ProjectVersion(project, organisation.Id, 
                 Guid.NewGuid(), ProjectVersionNumber.NewDesignTime()));
 
             await _uow.SaveChanges();

@@ -13,7 +13,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
         
         // TODO: this is a bit disgusting, fix me
         Task<Project?> FindByIdWithJoins(Guid id);
-
+        
         Task<bool> ProjectNameExists(Guid organisationId, string name);
         Task<Project> AddProject(Project project);
     }
