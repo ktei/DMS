@@ -16,8 +16,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string Description { get; private set; }
         public string[]? Tags { get; private set; }
         public int DisplayOrder { get; private set; }
-        // private List<Intent> _intents;
-        public List<Intent> Intents { get; set; }
+        private List<Intent> _intents;
+        public IReadOnlyList<Intent> Intents => _intents.ToImmutableList();
         private List<Response> _responses;
         public IReadOnlyList<Response> Responses => _responses.ToImmutableList();
         
@@ -56,7 +56,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             Expressions = expressions.ToArray();
             Description = description;
             DisplayOrder = displayOrder;
-            Intents = new List<Intent>();
+            _intents = new List<Intent>();
             _responses = new List<Response>();
         }
 
@@ -86,15 +86,15 @@ namespace PingAI.DialogManagementService.Domain.Model
         public void AddIntent(Intent intent)
         {
             _ = intent ?? throw new ArgumentNullException(nameof(intent));
-            Intents.Add(intent);
+            _intents.Add(intent);
         }
         
         public void ClearIntents()
         {
-            if (Intents == null)
+            if (_intents == null)
                 throw new InvalidOperationException($"Load {nameof(Intents)} first");
 
-            Intents.Clear();
+            _intents.Clear();
         }
 
         public void IncreaseDisplayOrder() => DisplayOrder += 1;

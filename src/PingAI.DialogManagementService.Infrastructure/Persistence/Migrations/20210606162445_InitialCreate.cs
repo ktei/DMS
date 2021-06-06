@@ -29,8 +29,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     input = table.Column<string>(type: "jsonb", nullable: true),
                     output = table.Column<string>(type: "jsonb", nullable: true),
                     sessionStatus = table.Column<SessionStatus>(type: "chatbot.\"enum_ChatHistories_session_status\"", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 958, DateTimeKind.Utc).AddTicks(4330)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 958, DateTimeKind.Utc).AddTicks(4730))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 974, DateTimeKind.Utc).AddTicks(340)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 974, DateTimeKind.Utc).AddTicks(710))
                 },
                 constraints: table =>
                 {
@@ -46,8 +46,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     description = table.Column<string>(type: "text", nullable: false),
                     tags = table.Column<string[]>(type: "text[]", nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 6, DateTimeKind.Utc).AddTicks(940)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 6, DateTimeKind.Utc).AddTicks(1490))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 18, DateTimeKind.Utc).AddTicks(2350)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 18, DateTimeKind.Utc).AddTicks(2940))
                 },
                 constraints: table =>
                 {
@@ -62,8 +62,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     auth0Id = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 45, DateTimeKind.Utc).AddTicks(5940)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 45, DateTimeKind.Utc).AddTicks(6570))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 62, DateTimeKind.Utc).AddTicks(2840)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 62, DateTimeKind.Utc).AddTicks(3590))
                 },
                 constraints: table =>
                 {
@@ -88,8 +88,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     businessTimeStartUtc = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     businessTimeEndUtc = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     businessEmail = table.Column<string>(type: "text", nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 18, DateTimeKind.Utc).AddTicks(1260)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 18, DateTimeKind.Utc).AddTicks(2820))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 34, DateTimeKind.Utc).AddTicks(1770)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 34, DateTimeKind.Utc).AddTicks(3100))
                 },
                 constraints: table =>
                 {
@@ -110,9 +110,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                 {
                     organisationId = table.Column<Guid>(type: "uuid", nullable: false),
                     userId = table.Column<Guid>(type: "uuid", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 938, DateTimeKind.Utc).AddTicks(1390)),
-                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValue: new Guid("1b9c75df-2928-4675-83b2-e09dfe46696e")),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 938, DateTimeKind.Utc).AddTicks(1770))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 952, DateTimeKind.Utc).AddTicks(9780)),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValue: new Guid("b251c133-6311-426e-8906-3144180c1972")),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 953, DateTimeKind.Utc).AddTicks(40))
                 },
                 constraints: table =>
                 {
@@ -142,8 +142,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     projectId = table.Column<Guid>(type: "uuid", nullable: false),
                     canBeReferenced = table.Column<bool>(type: "boolean", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 961, DateTimeKind.Utc).AddTicks(7270)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 961, DateTimeKind.Utc).AddTicks(8090))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 977, DateTimeKind.Utc).AddTicks(7420)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 977, DateTimeKind.Utc).AddTicks(8060))
                 },
                 constraints: table =>
                 {
@@ -167,8 +167,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     projectId = table.Column<Guid>(type: "uuid", nullable: false),
                     description = table.Column<string>(type: "text", nullable: false),
                     tags = table.Column<string[]>(type: "text[]", nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 967, DateTimeKind.Utc).AddTicks(990)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 967, DateTimeKind.Utc).AddTicks(1950))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 982, DateTimeKind.Utc).AddTicks(7080)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 982, DateTimeKind.Utc).AddTicks(7830))
                 },
                 constraints: table =>
                 {
@@ -191,8 +191,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     projectId = table.Column<Guid>(type: "uuid", nullable: false),
                     type = table.Column<IntentType>(type: "chatbot.\"enum_Intents_type\"", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 976, DateTimeKind.Utc).AddTicks(9290)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 976, DateTimeKind.Utc).AddTicks(9880)),
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 992, DateTimeKind.Utc).AddTicks(570)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 992, DateTimeKind.Utc).AddTicks(1330)),
                     color = table.Column<string>(type: "text", nullable: false),
                     iconName = table.Column<string>(type: "text", nullable: false)
                 },
@@ -218,19 +218,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     projectId = table.Column<Guid>(type: "uuid", nullable: false),
                     versionGroupId = table.Column<Guid>(type: "uuid", nullable: false),
                     version = table.Column<int>(type: "integer", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 22, DateTimeKind.Utc).AddTicks(9590)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 23, DateTimeKind.Utc).AddTicks(420))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 37, DateTimeKind.Utc).AddTicks(6380)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 37, DateTimeKind.Utc).AddTicks(6950))
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProjectVersions", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_ProjectVersions_Organisations_organisationId",
-                        column: x => x.organisationId,
-                        principalSchema: "chatbot",
-                        principalTable: "Organisations",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ProjectVersions_Projects_projectId",
                         column: x => x.projectId,
@@ -252,8 +245,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     description = table.Column<string>(type: "text", nullable: false),
                     tags = table.Column<string[]>(type: "text[]", nullable: true),
                     displayOrder = table.Column<int>(type: "integer", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 37, DateTimeKind.Utc).AddTicks(9240)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 37, DateTimeKind.Utc).AddTicks(9670))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 53, DateTimeKind.Utc).AddTicks(4850)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 53, DateTimeKind.Utc).AddTicks(5250))
                 },
                 constraints: table =>
                 {
@@ -278,8 +271,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     type = table.Column<ResponseType>(type: "chatbot.\"enum_Response_type\"", nullable: false),
                     order = table.Column<int>(type: "integer", nullable: false),
                     speechContexts = table.Column<string>(type: "jsonb", nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 42, DateTimeKind.Utc).AddTicks(4980)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 42, DateTimeKind.Utc).AddTicks(5590))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 58, DateTimeKind.Utc).AddTicks(580)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 58, DateTimeKind.Utc).AddTicks(1140))
                 },
                 constraints: table =>
                 {
@@ -303,8 +296,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     oauthAccessToken = table.Column<string>(type: "text", nullable: false),
                     webhookURL = table.Column<string>(type: "text", nullable: false),
                     teamId = table.Column<string>(type: "text", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 44, DateTimeKind.Utc).AddTicks(4390)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 44, DateTimeKind.Utc).AddTicks(4960))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 60, DateTimeKind.Utc).AddTicks(1280)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 60, DateTimeKind.Utc).AddTicks(2040))
                 },
                 constraints: table =>
                 {
@@ -327,8 +320,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     value = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     entityTypeId = table.Column<Guid>(type: "uuid", nullable: false),
                     synonyms = table.Column<string[]>(type: "text[]", nullable: true),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 968, DateTimeKind.Utc).AddTicks(9400)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 968, DateTimeKind.Utc).AddTicks(9830))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 984, DateTimeKind.Utc).AddTicks(6830)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 984, DateTimeKind.Utc).AddTicks(7380))
                 },
                 constraints: table =>
                 {
@@ -357,8 +350,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     entityNameId = table.Column<Guid>(type: "uuid", nullable: true),
                     entityTypeId = table.Column<Guid>(type: "uuid", nullable: true),
                     displayOrder = table.Column<int>(type: "integer", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 11, DateTimeKind.Utc).AddTicks(240)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 22, 11, DateTimeKind.Utc).AddTicks(1220))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 22, DateTimeKind.Utc).AddTicks(6010)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 45, 22, DateTimeKind.Utc).AddTicks(6720))
                 },
                 constraints: table =>
                 {
@@ -393,9 +386,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                 {
                     intentId = table.Column<Guid>(type: "uuid", nullable: false),
                     queryId = table.Column<Guid>(type: "uuid", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 935, DateTimeKind.Utc).AddTicks(7420)),
-                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValue: new Guid("9d8ddd5b-6188-45e4-9e19-b8433496ec4e")),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 935, DateTimeKind.Utc).AddTicks(8280))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 949, DateTimeKind.Utc).AddTicks(1560)),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValue: new Guid("e3aa9477-778a-49bc-96e2-39402cae278a")),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 949, DateTimeKind.Utc).AddTicks(3470))
                 },
                 constraints: table =>
                 {
@@ -424,8 +417,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     projectId = table.Column<Guid>(type: "uuid", nullable: false),
                     responseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 972, DateTimeKind.Utc).AddTicks(7200)),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 972, DateTimeKind.Utc).AddTicks(7450))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 988, DateTimeKind.Utc).AddTicks(250)),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 988, DateTimeKind.Utc).AddTicks(430))
                 },
                 constraints: table =>
                 {
@@ -453,9 +446,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                 {
                     queryId = table.Column<Guid>(type: "uuid", nullable: false),
                     responseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 936, DateTimeKind.Utc).AddTicks(6410)),
-                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValue: new Guid("002f79de-7bb4-40e4-b7b8-ef306719e912")),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 10, 16, 21, 936, DateTimeKind.Utc).AddTicks(6640))
+                    createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 951, DateTimeKind.Utc).AddTicks(1420)),
+                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValue: new Guid("2d39708d-e99d-4183-b269-8cad2220601c")),
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false, defaultValue: new DateTime(2021, 6, 6, 16, 24, 44, 951, DateTimeKind.Utc).AddTicks(1650))
                 },
                 constraints: table =>
                 {
@@ -540,12 +533,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                 name: "IX_Projects_organisationId",
                 schema: "chatbot",
                 table: "Projects",
-                column: "organisationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProjectVersions_organisationId",
-                schema: "chatbot",
-                table: "ProjectVersions",
                 column: "organisationId");
 
             migrationBuilder.CreateIndex(

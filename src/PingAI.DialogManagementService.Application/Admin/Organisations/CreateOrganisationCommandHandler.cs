@@ -46,21 +46,17 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
             }
             var defaultProject = await AddDefaultProject(organisationToCreate);
             ConfigureDefaultProject(defaultProject);
-            await _projectVersionRepository.AddProjectVersion(new ProjectVersion(defaultProject,
-                organisationToCreate.Id, defaultProject.Id, ProjectVersionNumber.NewDesignTime()));
+            // await _projectVersionRepository.AddProjectVersion(new ProjectVersion(defaultProject,
+            //     organisationToCreate.Id, defaultProject.Id, ProjectVersionNumber.NewDesignTime()));
             
             await _unitOfWork.SaveChanges();
             return organisationToCreate;
         }
 
-        private async Task<Project> AddDefaultProject(Organisation organisation) 
+        private async Task<Project> AddDefaultProject(Organisation organisation)
         {
-            var defaultProject = new Project("Default project", organisation.Id,
-                Defaults.WidgetTitle, Defaults.WidgetColor, Defaults.WidgetDescription,
-                Defaults.FallbackMessage, null, null,
-                Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc, Defaults.BusinessTimeEndUtc, null);
-
-            await _projectRepository.AddProject(defaultProject);
+            var defaultProject = Project.CreateWithDefaults(organisation.Id);
+            await _projectRepository.Add(defaultProject);
             return defaultProject;
         }
 

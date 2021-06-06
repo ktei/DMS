@@ -48,8 +48,10 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
 
             builder.HasMany(o => o.GreetingResponses)
                 .WithOne(o => o.Project);
-                
-            builder.HasOne(o => o.ProjectVersion);
+
+            builder.HasOne(o => o.ProjectVersion)
+                .WithOne(o => o.Project)
+                .HasForeignKey<ProjectVersion>(x => x.ProjectId);
         }
     }
 }

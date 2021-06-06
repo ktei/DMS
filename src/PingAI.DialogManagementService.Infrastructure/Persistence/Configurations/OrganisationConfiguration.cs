@@ -20,8 +20,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             
             builder.HasMany(o => o.Projects)
                 .WithOne(p => p.Organisation);
-            builder.HasMany(o => o.ProjectVersions)
-                .WithOne(p => p.Organisation);
+            // builder.HasMany(o => o.ProjectVersions)
+            //     .WithOne(p => p.Organisation);
             
             builder.HasMany(x => x.Users)
                 .WithMany(x => x.Organisations)

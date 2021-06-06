@@ -61,8 +61,8 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                     context.Add(organisation);
                     
                     // seed Projects
-                    var project = new Project(Guid.NewGuid().ToString(),
-                        organisation.Id, Defaults.WidgetTitle,
+                    var project = new Project(organisation.Id, Guid.NewGuid().ToString(),
+                        Defaults.WidgetTitle,
                         Defaults.WidgetColor, Defaults.WidgetDescription,
                         Defaults.FallbackMessage, null, null,
                         Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,

@@ -18,6 +18,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
 
         public async Task<User?> GetUserByAuth0Id(string auth0Id)
         {
+            throw new NotImplementedException("ThenInclude Projects won't work well, need to find designTime project");
             var user = await _context.Users
                 .AsNoTracking()
                 .Include(x => x.Organisations).ThenInclude(x => x.Projects)

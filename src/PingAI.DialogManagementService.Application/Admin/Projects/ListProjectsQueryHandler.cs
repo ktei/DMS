@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -8,7 +7,7 @@ using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Application.Admin.Projects
 {
-    public class ListProjectsQueryHandler : IRequestHandler<ListProjectsQuery, List<Project>>
+    public class ListProjectsQueryHandler : IRequestHandler<ListProjectsQuery, IReadOnlyList<Project>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IProjectVersionRepository _projectVersionRepository;
@@ -20,20 +19,12 @@ namespace PingAI.DialogManagementService.Application.Admin.Projects
             _projectVersionRepository = projectVersionRepository;
         }
 
-        public async Task<List<Project>> Handle(ListProjectsQuery request, CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<Project>> Handle(ListProjectsQuery request, CancellationToken cancellationToken)
         {
-            var projectVersions =
-                request.OrganisationId.HasValue
-                    ? await _projectVersionRepository.GetDesignTimeVersionsByOrganisationId(
-                        request.OrganisationId.Value)
-                    : await _projectVersionRepository.GetDesignTimeVersions();
+            if (request.OrganisationId.HasValue)
+                return await _projectRepository.ListByOrganisationId(request.OrganisationId.Value);
 
-            if (!projectVersions.Any())
-                return new List<Project>(0);
-
-            var projects = await _projectRepository
-                .GetProjectsByIds(projectVersions.Select(p => p.ProjectId));
-            return projects;
+            return await _projectRepository.ListAll();
         }
     }
 }

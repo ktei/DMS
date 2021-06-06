@@ -42,12 +42,11 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         private readonly List<GreetingResponse> _greetingResponses;
         public IReadOnlyList<GreetingResponse> GreetingResponses => _greetingResponses.ToImmutableList();
-        
         public ProjectVersion ProjectVersion { get; private set; }
 
         public const int MaxNameLength = 250;
 
-        public Project(Cache cache) : this(cache.Name, cache.OrganisationId,
+        public Project(Cache cache) : this(cache.OrganisationId, cache.Name,
             cache.WidgetTitle, cache.WidgetColor!, cache.WidgetDescription, cache.FallbackMessage, 
             cache.Enquiries,
             cache.Domains, cache.BusinessTimezone, cache.BusinessTimeStartUtc,
@@ -74,7 +73,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             // UpdateGreetingResponses(greetingResponses.Select(gr => new GreetingResponse(this, gr)));
         }
 
-        public Project(string name, Guid organisationId, string? widgetTitle, string widgetColor,
+        public Project(Guid organisationId, string name, string? widgetTitle, string widgetColor,
             string? widgetDescription, string? fallbackMessage, string[]? enquiries,
             string[]? domains, string businessTimezone, DateTime? businessTimeStartUtc,
             DateTime? businessTimeEndUtc, string? businessEmail)
@@ -87,8 +86,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             if (string.IsNullOrWhiteSpace(widgetColor))
                 throw new ArgumentException($"{nameof(widgetColor)} cannot be empty");
             
-            Name = name.Trim();
             OrganisationId = organisationId;
+            Name = name.Trim();
             WidgetTitle = widgetTitle;
             WidgetColor = widgetColor;
             WidgetDescription = widgetDescription;
@@ -105,8 +104,16 @@ namespace PingAI.DialogManagementService.Domain.Model
             _responses = new List<Response>();
             _queries = new List<Query>();
             _greetingResponses = new List<GreetingResponse>();
+            ProjectVersion = ProjectVersion.NewDesignTime(this);
         }
-
+        
+        public static Project CreateWithDefaults(Guid organisationId) =>
+            new Project(organisationId, Guid.NewGuid().ToString(),
+                Defaults.WidgetTitle, Defaults.WidgetColor,
+                Defaults.WidgetDescription, Defaults.FallbackMessage,
+                null, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
+                Defaults.BusinessTimeEndUtc, null);
+        
         public void UpdateWidgetTitle(string widgetTitle)
         {
             if (!string.IsNullOrEmpty(widgetTitle) && widgetTitle.Length > 255)

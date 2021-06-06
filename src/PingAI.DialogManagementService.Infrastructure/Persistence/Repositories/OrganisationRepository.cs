@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
@@ -16,16 +17,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public OrganisationRepository(DialogManagementContext context)
         {
             _context = context;
-        }
-
-        public async Task<Organisation?> FindById(Guid id)
-        {
-            var organisation = await _context.Organisations
-                .Include(x => x.Users)
-                .Include(x => x.Projects)
-                .Include(x => x.ProjectVersions)
-                .SingleOrDefaultAsync(o => o.Id == id);
-            return organisation; 
         }
 
         public async Task<Organisation?> FindByName(string name)
