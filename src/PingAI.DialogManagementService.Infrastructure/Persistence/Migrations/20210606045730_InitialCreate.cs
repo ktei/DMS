@@ -274,7 +274,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    resolution = table.Column<string>(type: "jsonb", nullable: true),
+                    resolution = table.Column<string>(type: "jsonb", nullable: false),
                     projectId = table.Column<Guid>(type: "uuid", nullable: false),
                     type = table.Column<ResponseType>(type: "chatbot.\"enum_Response_type\"", nullable: false),
                     order = table.Column<int>(type: "integer", nullable: false),
@@ -393,23 +393,23 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    queryId = table.Column<Guid>(type: "uuid", nullable: false),
-                    intentId = table.Column<Guid>(type: "uuid", nullable: false),
                     createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    intentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    queryId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_QueryIntents", x => x.id);
                     table.ForeignKey(
-                        name: "FK_QueryIntents_Intents_intentId",
+                        name: "QueryIntents_intentId_fkey",
                         column: x => x.intentId,
                         principalSchema: "chatbot",
                         principalTable: "Intents",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_QueryIntents_Queries_queryId",
+                        name: "QueryIntents_queryId_fkey",
                         column: x => x.queryId,
                         principalSchema: "chatbot",
                         principalTable: "Queries",
@@ -453,23 +453,23 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    queryId = table.Column<Guid>(type: "uuid", nullable: false),
-                    responseId = table.Column<Guid>(type: "uuid", nullable: false),
                     createdAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    updatedAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    queryId = table.Column<Guid>(type: "uuid", nullable: true),
+                    responseId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_QueryResponses", x => x.id);
                     table.ForeignKey(
-                        name: "FK_QueryResponses_Queries_queryId",
+                        name: "QueryResponses_queryId_fkey",
                         column: x => x.queryId,
                         principalSchema: "chatbot",
                         principalTable: "Queries",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_QueryResponses_Responses_responseId",
+                        name: "QueryResponses_responseId_fkey",
                         column: x => x.responseId,
                         principalSchema: "chatbot",
                         principalTable: "Responses",
@@ -559,7 +559,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                 name: "IX_ProjectVersions_projectId",
                 schema: "chatbot",
                 table: "ProjectVersions",
-                column: "projectId");
+                column: "projectId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Queries_projectId",

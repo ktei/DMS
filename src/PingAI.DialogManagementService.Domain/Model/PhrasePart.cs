@@ -23,9 +23,13 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public const int MaxValueLength = 255;
         public const int MaxTextLength = 255;
-        
-        public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
-            PhrasePartType type, Guid? entityNameId, Guid? entityTypeId, int displayOrder)
+
+        private PhrasePart()
+        {
+        }
+
+        public PhrasePart(Guid phraseId, int? position, string? text, string? value,
+            PhrasePartType type, EntityName? entityName, Guid? entityTypeId, int displayOrder)
         {
             if (Text?.Length > MaxTextLength)
                 throw new ArgumentException($"Max length of {nameof(Text)} is {MaxTextLength}");
@@ -33,32 +37,16 @@ namespace PingAI.DialogManagementService.Domain.Model
             if (Value?.Length > MaxValueLength)
                 throw new ArgumentException($"Max length of {nameof(Value)} is {MaxValueLength}");
             
-            IntentId = intentId;
             PhraseId = phraseId;
             Position = position;
             Text = text;
             Value = value;
             Type = type;
-            EntityNameId = entityNameId;
+            EntityName = entityName;
             EntityTypeId = entityTypeId;
             DisplayOrder = displayOrder;
         }
         
-        public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
-            PhrasePartType type, EntityName? entityName, Guid? entityTypeId, int displayOrder) : this(intentId,
-            phraseId, position, text, value, type, default(Guid?), entityTypeId, displayOrder)
-        {
-            EntityName = entityName;
-        }
-        
-        public PhrasePart(Guid intentId, Guid phraseId, int? position, string? text, string? value,
-            PhrasePartType type, EntityName? entityName, EntityType? entityType, int displayOrder) : this(intentId,
-            phraseId, position, text, value, type, default(Guid?), default(Guid?), displayOrder)
-        {
-            EntityName = entityName;
-            EntityType = entityType;
-        }
-
         public void UpdatePosition(int position)
         {
             if (Type != PhrasePartType.CONSTANT_ENTITY)
@@ -75,12 +63,5 @@ namespace PingAI.DialogManagementService.Domain.Model
         }
 
         public override string ToString() => Text ?? Value ?? string.Empty;
-    }
-
-    public enum PhrasePartType
-    {
-        CONSTANT_ENTITY,
-        ENTITY,
-        TEXT
     }
 }

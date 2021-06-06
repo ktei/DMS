@@ -26,11 +26,42 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
                 .HasColumnName("tags");
             builder.Property(o => o.DisplayOrder)
                 .HasColumnName("displayOrder");
-
-            builder.AttachTimestamps();
             
-            builder.Ignore(o => o.Intents);
-            builder.Ignore(o => o.Responses);
+            builder.HasMany(x => x.Intents)
+                .WithMany(x => x.Queries)
+                .UsingEntity<QueryIntent>(
+                    nameof(QueryIntent),
+                    j => j
+                        .HasOne<Intent>()
+                        .WithMany()
+                        .HasForeignKey("intentId")
+                        .HasConstraintName("QueryIntents_intentId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j
+                        .HasOne<Query>()
+                        .WithMany()
+                        .HasForeignKey("queryId")
+                        .HasConstraintName("QueryIntents_queryId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade));
+            
+            builder.HasMany(x => x.Responses)
+                .WithMany(x => x.Queries)
+                .UsingEntity<QueryResponse>(
+                    nameof(QueryResponse),
+                    j => j
+                        .HasOne<Response>()
+                        .WithMany()
+                        .HasForeignKey("responseId")
+                        .HasConstraintName("QueryResponses_responseId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j
+                        .HasOne<Query>()
+                        .WithMany()
+                        .HasForeignKey("queryId")
+                        .HasConstraintName("QueryResponses_queryId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade));
+            
+            builder.AttachTimestamps();
         }
     }
 }

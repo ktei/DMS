@@ -12,17 +12,14 @@ namespace PingAI.DialogManagementService.Domain.Model
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
 
-        public GreetingResponse(Guid projectId, Guid responseId)
+        private GreetingResponse()
         {
-            ProjectId = projectId;
-            ResponseId = responseId;
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
+            
         }
 
-        public GreetingResponse(Project project, Response response)
+        public GreetingResponse(Guid projectId, Response response)
         {
-            Project = project;
+            ProjectId = projectId;
             Response = response;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = DateTime.UtcNow;

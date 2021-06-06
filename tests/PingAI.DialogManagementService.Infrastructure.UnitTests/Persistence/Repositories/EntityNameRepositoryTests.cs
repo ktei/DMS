@@ -21,6 +21,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var sut = new EntityNameRepository(context);
             var project = await context.Projects.FirstAsync();
 
+            context.ChangeTracker.Clear();
             var actual = await sut.ListByProjectId(project.Id);
 
             actual.Should().HaveCountGreaterOrEqualTo(2);
@@ -33,7 +34,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var sut = new EntityNameRepository(context);
             var project = await context.Projects.FirstAsync();
 
-            var entityName = await sut.Add(new EntityName("TEST_ENTITY", project.Id, true));
+            var entityName = await sut.Add(new EntityName(project.Id, "TEST_ENTITY", true));
             
             context.ChangeTracker.Clear();
             var actual = context.EntityNames.SingleOrDefaultAsync(x => x.Id == entityName.Id);

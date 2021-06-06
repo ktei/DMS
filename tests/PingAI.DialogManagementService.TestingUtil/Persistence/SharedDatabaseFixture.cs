@@ -75,33 +75,28 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                     context.Add(new OrganisationUser(organisation.Id, user.Id));
 
                     // seed EntityTypes
-                    var foodEntityType = new EntityType("Food", project.Id,
+                    var foodEntityType = new EntityType(project.Id, "Food", 
                         "description 1");
                     context.Add(foodEntityType);
-                    context.AddRange(new EntityValue("pizza", foodEntityType.Id, null),
-                        new EntityValue("Dumpling", foodEntityType.Id, null));
-                    var cityEntityType = new EntityType("City", project.Id,
+                    context.AddRange(new EntityValue(foodEntityType.Id, "pizza", null),
+                        new EntityValue(foodEntityType.Id, "Dumpling", null));
+                    var cityEntityType = new EntityType(project.Id, "City", 
                         "description 2");
                     context.Add(cityEntityType);
-                    context.AddRange(new EntityValue("Sydney", cityEntityType.Id, new[]{"SYD"}), 
-                        new EntityValue("Melbourne", cityEntityType.Id, new[]{"MEL"}));
+                    context.AddRange(new EntityValue(cityEntityType.Id, "Sydney", new[]{"SYD"}), 
+                        new EntityValue(cityEntityType.Id, "Melbourne", new[]{"MEL"}));
                     
                     // seed EntityNames
-                    var deliveryOrderEntityName = new EntityName("deliveryOrder", project.Id, true);
-                    var destinationEntityName = new EntityName("destination", project.Id, true);
+                    var deliveryOrderEntityName = new EntityName(project.Id, "deliveryOrder", true);
+                    var destinationEntityName = new EntityName(project.Id, "destination", true);
                     context.AddRange(deliveryOrderEntityName, destinationEntityName);
                     
                     // seed Intents
-                    var orderDeliveryIntent = new Intent("ORDER_FOOD", project.Id, IntentType.STANDARD);
+                    var orderDeliveryIntent = new Intent(project.Id, "ORDER_FOOD",  IntentType.STANDARD);
                     context.Add(orderDeliveryIntent);
-                    var orderDeliveryIntentPhraseId = Guid.NewGuid();
-                    object[] orderDeliveryPhrase = {
-                        new PhrasePart(orderDeliveryIntent.Id, orderDeliveryIntentPhraseId, 0, "Hello, I want to order some ",
-                            null, PhrasePartType.TEXT, default(Guid?), default(Guid?), 0),
-                        new PhrasePart(orderDeliveryIntent.Id, orderDeliveryIntentPhraseId, 1, "pizza",
-                            null, PhrasePartType.ENTITY, deliveryOrderEntityName.Id, foodEntityType.Id, 0),
-                    };
-                    context.AddRange(orderDeliveryPhrase);
+                    orderDeliveryIntent.AddPhrase(new Phrase(0)
+                        .AppendText("Hello, I want to order some ")
+                        .AppendEntity("pizza", deliveryOrderEntityName));
 
                     context.SaveChanges();
                 }

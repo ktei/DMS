@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -17,28 +18,35 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public Task<List<Intent>> GetIntentsByProjectId(Guid projectId) =>
-            _context.Intents.Where(x => x.ProjectId == projectId)
+        public async Task<IReadOnlyList<Intent>> ListByProjectId(Guid projectId)
+        {
+            var results = await _context.Intents.Where(x => x.ProjectId == projectId)
                 .OrderBy(x => x.Name)
                 .ToListAsync();
+            return results.ToImmutableList();
+        }
 
-        public Task<Intent?> GetIntentById(Guid intentId)
+        public async Task<Intent?> FindById(Guid intentId)
         {
-            return _context.Intents
+            var intent = await _context.Intents
+                .AsSplitQuery()
                 .Include(x => x.PhraseParts)
-                .ThenInclude(p => p.EntityType).ThenInclude(e => e.Values)
+                .ThenInclude(p => p.EntityType)
+                .ThenInclude(e => e!.Values)
+                
                 .Include(x => x.PhraseParts)
                 .ThenInclude(p => p.EntityName)
                 .FirstOrDefaultAsync(x => x.Id == intentId);
+            return intent;
         }
 
-        public async Task<Intent> AddIntent(Intent intent)
+        public async Task<Intent> Add(Intent intent)
         {
             var result = await _context.AddAsync(intent ?? throw new ArgumentNullException(nameof(intent)));
             return result.Entity;
         }
 
-        public void RemoveIntent(Intent intent)
+        public void Remove(Intent intent)
         {
             _context.Intents.Remove(intent);
         }

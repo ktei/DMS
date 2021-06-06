@@ -12,12 +12,11 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
         {
             builder.ToTable("Responses", "chatbot");
             builder.ConfigureId();
-            builder.Ignore(o => o.Resolution);
-            builder.Property(o => o.ResolutionJson)
+            builder.Property(o => o.Resolution)
                 .HasColumnName("resolution")
-                .HasColumnType("jsonb");
-                // .HasConversion(x => SerializeResolution(x),
-                //     x => ConvertToResolution(x));
+                .HasColumnType("jsonb")
+                .HasConversion(x => MarshallResolution(x),
+                x => UnmarshallResolution(x));
             builder.Property(o => o.ProjectId)
                 .HasColumnName("projectId");
             builder.Property(o => o.Type)
@@ -31,21 +30,21 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             builder.AttachTimestamps();
         }
 
-        private static string? SerializeResolution(Resolution? resolution)
+        private static string MarshallResolution(Resolution? resolution)
         {
-            return resolution == null ? null : JsonUtils.Serialize(resolution);
+            return resolution == null ? JsonUtils.Serialize(Resolution.Empty) : JsonUtils.Serialize(resolution);
         }
 
-        private static Resolution? ConvertToResolution(string? json)
+        private static Resolution UnmarshallResolution(string? json)
         {
             if (string.IsNullOrWhiteSpace(json))
-                return null;
+                return Resolution.Empty;
             // for backward compatibility some of the responses are
             // already using ResolutionPart[]
             var resolutionParts = JsonUtils.TryDeserialize<ResolutionPart[]>(json!);
             if (resolutionParts != null)
             {
-                return new Resolution(resolutionParts);
+                return new Resolution(ResolutionType.PARTS, resolutionParts, null);
             }
 
             return JsonUtils.Deserialize<Resolution>(json!);

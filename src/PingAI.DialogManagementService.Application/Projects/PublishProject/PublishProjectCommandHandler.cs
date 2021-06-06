@@ -34,30 +34,32 @@ namespace PingAI.DialogManagementService.Application.Projects.PublishProject
 
         public async Task<Project> Handle(PublishProjectCommand request, CancellationToken cancellationToken)
         {
-            var canWrite = await _authorizationService.UserCanWriteProject(request.ProjectId);
-            if (!canWrite)
-                throw new ForbiddenException(ProjectWriteDenied);
-            
-            var project = await PerformanceLogger.Monitor(_projectRepository.GetFullProjectById(request.ProjectId),
-                nameof(_projectRepository.GetFullProjectById));
-            if (project == null)
-                throw new ForbiddenException(ProjectReadDenied);
-
-            var validationErrors = Validate(project);
-            if (validationErrors.Any())
-                throw new BadRequestException($"Publish failed. {string.Join(" ", validationErrors)}");
-            
-            var user = await _requestContext.GetUser();
-            var organisationId = project.OrganisationId; // user.OrganisationIds.First();
-            var latestVersion = await _projectVersionRepository.GetLatestVersionByProjectId(request.ProjectId);
-            if (latestVersion == null)
-                throw new InvalidOperationException($"No version found for project {request.ProjectId}");
-            var projectToPublish = project.Export();
-            var versionToPublish = new ProjectVersion(projectToPublish, organisationId, latestVersion.VersionGroupId,
-                latestVersion.Version.Next());
-            await _projectVersionRepository.AddProjectVersion(versionToPublish);
-            await _uow.SaveChanges();
-            return projectToPublish;
+            // TODO:
+            throw new NotImplementedException();
+            // var canWrite = await _authorizationService.UserCanWriteProject(request.ProjectId);
+            // if (!canWrite)
+            //     throw new ForbiddenException(ProjectWriteDenied);
+            //
+            // var project = await PerformanceLogger.Monitor(_projectRepository.GetFullProjectById(request.ProjectId),
+            //     nameof(_projectRepository.GetFullProjectById));
+            // if (project == null)
+            //     throw new ForbiddenException(ProjectReadDenied);
+            //
+            // var validationErrors = Validate(project);
+            // if (validationErrors.Any())
+            //     throw new BadRequestException($"Publish failed. {string.Join(" ", validationErrors)}");
+            //
+            // var user = await _requestContext.GetUser();
+            // var organisationId = project.OrganisationId; // user.OrganisationIds.First();
+            // var latestVersion = await _projectVersionRepository.GetLatestVersionByProjectId(request.ProjectId);
+            // if (latestVersion == null)
+            //     throw new InvalidOperationException($"No version found for project {request.ProjectId}");
+            // var projectToPublish = project.Export();
+            // var versionToPublish = new ProjectVersion(projectToPublish, organisationId, latestVersion.VersionGroupId,
+            //     latestVersion.Version.Next());
+            // await _projectVersionRepository.AddProjectVersion(versionToPublish);
+            // await _uow.SaveChanges();
+            // return projectToPublish;
         }
 
         /// <summary>

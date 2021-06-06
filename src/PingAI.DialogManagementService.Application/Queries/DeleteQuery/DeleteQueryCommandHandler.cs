@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -30,8 +31,11 @@ namespace PingAI.DialogManagementService.Application.Queries.DeleteQuery
             var canWrite = await _authorizationService.UserCanWriteProject(query.ProjectId);
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
+
+            // TODO:
+            throw new NotImplementedException("query delete");
             
-            query.Delete();
+            // query.Delete();
             _queryRepository.RemoveQuery(query);
 
             await _unitOfWork.SaveChanges();

@@ -10,6 +10,7 @@ using Npgsql.NameTranslation;
 using PingAI.DialogManagementService.Domain.Events;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Configurations;
+using PingAI.DialogManagementService.Infrastructure.Utils;
 
 namespace PingAI.DialogManagementService.Infrastructure.Persistence
 {
@@ -36,7 +37,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         {
             
             // modelBuilder.HasDefaultSchema("chatbot");
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrganisationConfiguration).Assembly);
 
             modelBuilder.HasPostgresEnum<IntentType>(DefaultSchema, "enum_Intents_type",
                 new NpgsqlNullNameTranslator());
@@ -48,6 +48,22 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
                 new NpgsqlNullNameTranslator());
 
             modelBuilder.Ignore<DomainEvent>();
+            
+            modelBuilder.SharedTypeEntity<QueryIntent>(nameof(QueryIntent), b =>
+            {
+                b.ToTable("QueryIntents", "chatbot");
+                b.ConfigureId();
+                b.AttachTimestamps();
+            });
+            
+            modelBuilder.SharedTypeEntity<QueryResponse>(nameof(QueryResponse), b =>
+            {
+                b.ToTable("QueryResponses", "chatbot");
+                b.ConfigureId();
+                b.AttachTimestamps();
+            });
+
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(OrganisationConfiguration).Assembly);
 
             base.OnModelCreating(modelBuilder);
         }
@@ -76,8 +92,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<EntityName> EntityNames { get; set; }
         public DbSet<Response> Responses { get; set; }
         public DbSet<Query> Queries { get; set; }
-        public DbSet<QueryIntent> QueryIntents { get; set; }
-        public DbSet<QueryResponse> QueryResponses { get; set; }
+        // public DbSet<QueryIntent> QueryIntents { get; set; }
+        // public DbSet<QueryResponse> QueryResponses { get; set; }
         public DbSet<SlackWorkspace> SlackWorkspaces { get; set; }
         public DbSet<ChatHistory> ChatHistories { get; set; }
 

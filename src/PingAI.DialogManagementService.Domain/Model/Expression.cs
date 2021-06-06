@@ -65,26 +65,5 @@ namespace PingAI.DialogManagementService.Domain.Model
             _ => base.ToString()
         };
     }
-
-    public enum Operator
-    {
-        CONTAINS,
-        ENDSWITH,
-        EQ,
-        GT,
-        GTE,
-        KNOWN,
-        LT,
-        LTE,
-        NE,
-        STARTSWITH,
-        UNKNOWN
-    }
-
-    public enum Comparer
-    {
-        VALUE,
-        OTHER_ENTITY_NAME
-    }
 }
 

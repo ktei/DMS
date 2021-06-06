@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace PingAI.DialogManagementService.Domain.Model
@@ -6,39 +8,31 @@ namespace PingAI.DialogManagementService.Domain.Model
     public class FormResolution
     {
         [JsonPropertyName("fields")]
-        public Field[] Fields { get; set; }
+        public FormField[] Fields { get; set; }
 
-        public FormResolution()
+        [JsonConstructor]
+        public FormResolution(IEnumerable<FormField> fields)
         {
-            
+            Fields = (fields ?? throw new ArgumentNullException(nameof(fields))).ToArray();
         }
-
-        public FormResolution(Field[] fields)
-        {
-            Fields = fields ?? new Field[0];
-        }
-        
-        public class Field
-        {
-            [JsonPropertyName("displayName")]
-            public string DisplayName { get; set; }
+    }
+    
+    public class FormField
+    {
+        [JsonPropertyName("displayName")]
+        public string DisplayName { get; set; }
             
-            [JsonPropertyName("name")]
-            public string Name { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
             
-            [JsonPropertyName("defaultValue")]
-            public string? DefaultValue { get; set; }
+        [JsonPropertyName("defaultValue")]
+        public string? DefaultValue { get; set; }
 
-            public Field(string displayName, string name)
-            {
-                DisplayName = displayName;
-                Name = name;
-            }
-
-            public Field()
-            {
-                
-            }
+        [JsonConstructor]
+        public FormField(string displayName, string name)
+        {
+            DisplayName = displayName;
+            Name = name;
         }
     }
 }

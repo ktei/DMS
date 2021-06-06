@@ -21,7 +21,7 @@ namespace PingAI.DialogManagementService.Application.Intents.Handlers
         public Task Handle(IntentDeletedEvent notification, CancellationToken cancellationToken)
         {
             var intent = notification.Intent;
-            _intentRepository.RemoveIntent(intent);
+            _intentRepository.Remove(intent);
             return _nluService.DeleteIntent(intent.ProjectId, intent.Id);
         }
     }

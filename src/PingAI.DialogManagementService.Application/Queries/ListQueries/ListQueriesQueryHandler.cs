@@ -55,7 +55,7 @@ namespace PingAI.DialogManagementService.Application.Queries.ListQueries
                 _ => default(ResponseType?)
             };
             
-            var queries = await _queryRepository.GetQueriesByProjectId(projectId, responseType);
+            var queries = await _queryRepository.ListByProjectId(projectId, responseType);
             return queries;
         }
     }

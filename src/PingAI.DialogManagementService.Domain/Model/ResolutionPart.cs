@@ -42,10 +42,4 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public override string ToString() => Text ?? EntityNameId?.ToString() ?? string.Empty;
     }
-    
-    public enum ResolutionPartType
-    {
-        RTE,
-        OTHER_ENTITY_NAME 
-    }
 }

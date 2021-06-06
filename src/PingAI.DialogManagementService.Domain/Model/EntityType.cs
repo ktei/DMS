@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using PingAI.DialogManagementService.Domain.Utils;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -19,8 +20,16 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public const int MaxNameLength = 30;
         public const int MaxTagLength = 50;
-        
-        public EntityType(string name, Guid projectId, string description)
+
+        public EntityType(Guid projectId, string name, string description)
+            : this(name, description)
+        {
+            if (projectId.IsEmpty())
+                throw new ArgumentException($"{nameof(projectId)} cannot be empty.");
+            ProjectId = projectId;
+        }
+
+        public EntityType(string name, string description)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException($"{nameof(name)} cannot be empty");
@@ -28,35 +37,14 @@ namespace PingAI.DialogManagementService.Domain.Model
                 throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
             
             Name = name.Trim();
-            ProjectId = projectId;
             Description = description;
             _values = new List<EntityValue>();
-        }
-        
-        public EntityType(string name, Guid projectId, string description, IEnumerable<EntityValue> values)
-        {
-            Name = name;
-            ProjectId = projectId;
-            Description = description;
-            _values = (values ?? throw new ArgumentNullException(nameof(values))).ToList();
         }
 
         public void AddValue(string value, string[]? synonyms)
         {
-            // TODO: validation
-            var entityValue = new EntityValue(value, Id, synonyms);
+            var entityValue = new EntityValue(value, synonyms);
             _values.Add(entityValue);
-        }
-
-        public void UpdateValues(IEnumerable<EntityValue> values)
-        {
-            _values.Clear();
-            var valuesToAdd = values.ToArray();
-            foreach (var value in valuesToAdd)
-            {
-                value.UpdateEntityTypeId(Id);
-            }
-            _values.AddRange(valuesToAdd);
         }
 
         public override string ToString() => Name;

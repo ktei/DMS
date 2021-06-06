@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -33,13 +34,14 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateProject
             {
                 // TODO: this should never happen
                 // consider adding logs here
-                throw new ForbiddenException(ProjectReadDenied);
+                throw new NotFoundException(ProjectNotFound);
             }
             project.UpdateWidgetTitle(request.WidgetTitle);
             project.UpdateWidgetColor(request.WidgetColor);
             project.UpdateWidgetDescription(request.WidgetDescription);
             project.UpdateFallbackMessage(request.FallbackMessage);
-            project.UpdateGreetingResponses(request.GreetingResponses);
+            project.UpdateGreetingResponses(
+                request.GreetingResponses.Select(gr => new GreetingResponse(project.Id, gr)));
             project.UpdateDomains(request.Domains);
             if (request.BusinessTimeStartUtc.HasValue)
             {

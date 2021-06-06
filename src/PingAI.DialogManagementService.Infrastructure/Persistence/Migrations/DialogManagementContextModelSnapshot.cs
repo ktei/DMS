@@ -500,7 +500,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("OrganisationId");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("ProjectId")
+                        .IsUnique();
 
                     b.ToTable("ProjectVersions", "chatbot");
                 });
@@ -554,70 +555,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.ToTable("Queries", "chatbot");
                 });
 
-            modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.QueryIntent", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("createdAt");
-
-                    b.Property<Guid>("IntentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("intentId");
-
-                    b.Property<Guid>("QueryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("queryId");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("updatedAt");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IntentId");
-
-                    b.HasIndex("QueryId");
-
-                    b.ToTable("QueryIntents", "chatbot");
-                });
-
-            modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.QueryResponse", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("createdAt");
-
-                    b.Property<Guid>("QueryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("queryId");
-
-                    b.Property<Guid>("ResponseId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("responseId");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("updatedAt");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QueryId");
-
-                    b.HasIndex("ResponseId");
-
-                    b.ToTable("QueryResponses", "chatbot");
-                });
-
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.Response", b =>
                 {
                     b.Property<Guid>("Id")
@@ -637,7 +574,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("projectId");
 
-                    b.Property<string>("ResolutionJson")
+                    b.Property<string>("Resolution")
+                        .IsRequired()
                         .HasColumnType("jsonb")
                         .HasColumnName("resolution");
 
@@ -731,6 +669,66 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users", "chatbot");
+                });
+
+            modelBuilder.Entity("QueryIntent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("createdAt");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updatedAt");
+
+                    b.Property<Guid?>("intentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("queryId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("intentId");
+
+                    b.HasIndex("queryId");
+
+                    b.ToTable("QueryIntents", "chatbot");
+                });
+
+            modelBuilder.Entity("QueryResponse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("createdAt");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updatedAt");
+
+                    b.Property<Guid?>("queryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("responseId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("queryId");
+
+                    b.HasIndex("responseId");
+
+                    b.ToTable("QueryResponses", "chatbot");
                 });
 
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.EntityName", b =>
@@ -858,8 +856,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("PingAI.DialogManagementService.Domain.Model.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
+                        .WithOne("ProjectVersion")
+                        .HasForeignKey("PingAI.DialogManagementService.Domain.Model.ProjectVersion", "ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -877,44 +875,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.QueryIntent", b =>
-                {
-                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Intent", "Intent")
-                        .WithMany("QueryIntents")
-                        .HasForeignKey("IntentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Query", "Query")
-                        .WithMany("QueryIntents")
-                        .HasForeignKey("QueryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Intent");
-
-                    b.Navigation("Query");
-                });
-
-            modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.QueryResponse", b =>
-                {
-                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Query", "Query")
-                        .WithMany("QueryResponses")
-                        .HasForeignKey("QueryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Response", "Response")
-                        .WithMany("QueryResponses")
-                        .HasForeignKey("ResponseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Query");
-
-                    b.Navigation("Response");
                 });
 
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.Response", b =>
@@ -939,6 +899,36 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
                     b.Navigation("Project");
                 });
 
+            modelBuilder.Entity("QueryIntent", b =>
+                {
+                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Intent", null)
+                        .WithMany()
+                        .HasForeignKey("intentId")
+                        .HasConstraintName("QueryIntents_intentId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Query", null)
+                        .WithMany()
+                        .HasForeignKey("queryId")
+                        .HasConstraintName("QueryIntents_queryId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QueryResponse", b =>
+                {
+                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Query", null)
+                        .WithMany()
+                        .HasForeignKey("queryId")
+                        .HasConstraintName("QueryResponses_queryId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("PingAI.DialogManagementService.Domain.Model.Response", null)
+                        .WithMany()
+                        .HasForeignKey("responseId")
+                        .HasConstraintName("QueryResponses_responseId_fkey")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.EntityType", b =>
                 {
                     b.Navigation("Values");
@@ -947,8 +937,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.Intent", b =>
                 {
                     b.Navigation("PhraseParts");
-
-                    b.Navigation("QueryIntents");
                 });
 
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.Organisation", b =>
@@ -970,21 +958,12 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Intents");
 
+                    b.Navigation("ProjectVersion")
+                        .IsRequired();
+
                     b.Navigation("Queries");
 
                     b.Navigation("Responses");
-                });
-
-            modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.Query", b =>
-                {
-                    b.Navigation("QueryIntents");
-
-                    b.Navigation("QueryResponses");
-                });
-
-            modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.Response", b =>
-                {
-                    b.Navigation("QueryResponses");
                 });
 
             modelBuilder.Entity("PingAI.DialogManagementService.Domain.Model.User", b =>

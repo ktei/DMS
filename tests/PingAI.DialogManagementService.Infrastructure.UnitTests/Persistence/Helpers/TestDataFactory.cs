@@ -32,8 +32,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.He
                 null);
             Organisation.AddProject(Project);
             await _context.AddRangeAsync(Organisation);
-            EntityName = new EntityName("hometown", Project.Id, true);
-            EntityType = new EntityType("city", Project.Id, "city name", null);
+            EntityName = new EntityName(Project.Id, "hometown", true);
+            EntityType = new EntityType(Project.Id, "city", "city name");
             await _context.AddRangeAsync(EntityName, EntityType);
             await _context.SaveChangesAsync();
         }

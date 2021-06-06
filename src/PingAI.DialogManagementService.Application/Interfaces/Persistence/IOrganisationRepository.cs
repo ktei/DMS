@@ -14,7 +14,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
 
         // TODO: if we really take off, we need to paginate this,
         // but we're far from that right now
-        Task<ReadOnlyCollection<Organisation>> ListAll();
-        Task<ReadOnlyCollection<Organisation>> ListByUserId(Guid userId);
+        Task<IReadOnlyList<Organisation>> ListAll();
+        Task<IReadOnlyList<Organisation>> ListByUserId(Guid userId);
     }
 }

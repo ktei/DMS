@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using PingAI.DialogManagementService.Api.Models.Intents;
 using PingAI.DialogManagementService.Api.Models.Responses;
@@ -19,36 +20,33 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         public ResponseDto[] Responses { get; set; }
 
 
-        public QueryDto(string queryId, string name, string projectId, ExpressionDto[] expressions, string description,
-            string[]? tags, int displayOrder, IntentDto[] intents, ResponseDto[] responses)
+        public QueryDto(string queryId, string name, string projectId, 
+            IEnumerable<ExpressionDto> expressions, string description,
+            IEnumerable<string>? tags, int displayOrder, 
+            IEnumerable<IntentDto> intents, 
+            IEnumerable<ResponseDto> responses)
         {
             QueryId = queryId;
             Name = name;
             ProjectId = projectId;
-            Expressions = expressions;
+            Expressions = expressions.ToArray();
             Description = description;
-            Tags = tags;
+            Tags = tags?.ToArray();
             DisplayOrder = displayOrder;
-            Intents = intents;
-            Responses = responses;
+            Intents = intents.ToArray();
+            Responses = responses.ToArray();
         }
 
-        public QueryDto(Query query) : this(query.Id.ToString(), query.Name, query.ProjectId.ToString(),
-            query.Expressions.Select(e => new ExpressionDto(e)).ToArray(),query.Description,
-            query.Tags, query.DisplayOrder,
-            query.QueryIntents.Select(i => 
-                new IntentDto(i.Intent ?? 
-                              throw new InvalidOperationException($"{nameof(i.Intent)} was not loaded"))).ToArray(),
-            query.QueryResponses.Select(r =>
-                new ResponseDto(r.Response ?? 
-                                throw new InvalidOperationException($"{nameof(r.Response)} was not loaded"))).ToArray())
+        public QueryDto(Query query)
         {
-            
-        }
-
-        public QueryDto()
-        {
-            
+            QueryId = query.Id.ToString();
+            Name = query.Name;
+            ProjectId = query.ProjectId.ToString();
+            Expressions = query.Expressions.Select(e => new ExpressionDto(e)).ToArray();
+            Intents = query.Intents.Select(i => new IntentDto(i)).ToArray();
+            Responses = query.Responses.Select(r => new ResponseDto(r)).ToArray();
+            Description = query.Description;
+            Tags = query.Tags?.ToArray();
         }
     }
 }

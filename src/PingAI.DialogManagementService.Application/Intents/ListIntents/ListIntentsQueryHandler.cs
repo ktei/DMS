@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -32,9 +33,9 @@ namespace PingAI.DialogManagementService.Application.Intents.ListIntents
             if (!canRead)
                 throw new ForbiddenException(ProjectReadDenied);
 
-            var results = await _intentRepository.GetIntentsByProjectId(request.ProjectId.Value);
+            var results = await _intentRepository.ListByProjectId(request.ProjectId.Value);
             
-            return results;
+            return results.ToList();
         }
     }
 }

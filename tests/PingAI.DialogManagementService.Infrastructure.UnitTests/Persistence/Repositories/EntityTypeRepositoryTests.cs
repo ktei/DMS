@@ -20,6 +20,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var sut = new EntityTypeRepository(context);
             var project = await context.Projects.Include(x => x.EntityTypes).FirstAsync();
 
+            context.ChangeTracker.Clear();
             var actual = await sut.ListByProjectId(project.Id);
 
             actual.Should().HaveCountGreaterOrEqualTo(project.EntityTypes.Count);

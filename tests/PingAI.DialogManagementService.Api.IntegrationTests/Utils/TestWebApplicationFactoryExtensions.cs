@@ -94,10 +94,10 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
             }
             var entityType = await context.EntityTypes.FirstOrDefaultAsync(e => e.Name == "TEST_city");
             var entityName = await context.EntityNames.FirstOrDefaultAsync(e => e.Name == "TEST_favouriteCity");
-            entityType ??= (await context.AddAsync(new EntityType( 
-                    "TEST_city", project.Id, "city name", null))).Entity;
-            entityName ??= (await context.AddAsync(new EntityName(
-                    "TEST_favouriteCity", project.Id, true))).Entity;
+            entityType ??= (await context.AddAsync(new EntityType(
+                project.Id, "TEST_city", "city name"))).Entity;
+            entityName ??= (await context.AddAsync(new EntityName(project.Id,
+                    "TEST_favouriteCity", true))).Entity;
             try
             {
                 await context.SaveChangesAsync();

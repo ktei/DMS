@@ -29,7 +29,7 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateDisplayOrders
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
 
-            var queries = await _queryRepository.GetQueriesByProjectId(request.ProjectId);
+            var queries = await _queryRepository.ListByProjectId(request.ProjectId);
             foreach (var query in queries)
             {
                 if (request.DisplayOrders.TryGetValue(query.Id, out var displayOrder))

@@ -1,4 +1,5 @@
 using System;
+using PingAI.DialogManagementService.Domain.Utils;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -10,15 +11,22 @@ namespace PingAI.DialogManagementService.Domain.Model
         public EntityType? EntityType { get; private set; }
         public string[]? Synonyms { get; private set; }
 
-        public EntityValue(string value, Guid entityTypeId, string[]? synonyms)
+        public EntityValue(Guid entityTypeId, string value, string[]? synonyms)
+        : this(value, synonyms)
         {
-            Value = value;
+            if (entityTypeId.IsEmpty())
+                throw new ArgumentException($"{nameof(entityTypeId)} cannot be empty.");
             EntityTypeId = entityTypeId;
+        }
+        
+        public EntityValue(string value, string[]? synonyms)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException($"{nameof(value)} cannot be empty.");
+            Value = value;
             Synonyms = synonyms;
         }
         
-        public void UpdateEntityTypeId(Guid entityTypeId) => EntityTypeId = entityTypeId;
-
         public override string ToString() => Value;
     }
 }

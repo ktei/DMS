@@ -8,6 +8,6 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
 {
     public interface IEntityTypeRepository
     {
-        Task<ReadOnlyCollection<EntityType>> ListByProjectId(Guid projectId);
+        Task<IReadOnlyList<EntityType>> ListByProjectId(Guid projectId);
     }
 }

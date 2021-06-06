@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using PingAI.DialogManagementService.Domain.Events;
+using PingAI.DialogManagementService.Domain.Utils;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -19,32 +20,39 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<PhrasePart> _phraseParts;
         public IReadOnlyList<PhrasePart> PhraseParts => _phraseParts.ToImmutableList();
 
-        private readonly List<QueryIntent> _queryIntents;
-        public IReadOnlyList<QueryIntent> QueryIntents => _queryIntents.ToImmutableList();
+        private readonly List<Query> _queries;
+        public IReadOnlyList<Query> Queries => _queries.ToImmutableList();
         
         public const int MaxNameLength = 100;
 
-        public Intent(string name, Guid projectId,
-            IntentType type)
+        public Intent(Guid projectId, string name, IntentType type) : this(name, type)
+        {
+            if (projectId.IsEmpty())
+                throw new ArgumentException($"{nameof(projectId)} cannot be empty.");
+            
+            ProjectId = projectId;
+        }
+        
+        public Intent(string name, IntentType type)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException($"{nameof(name)} cannot be empty");
+                throw new ArgumentException($"{nameof(name)} cannot be empty.");
             if (name.Trim().Length > MaxNameLength)
-                throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
+                throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}.");
             
             Name = name.Trim();
-            ProjectId = projectId;
             Type = type;
             _phraseParts = new List<PhrasePart>();
-            _queryIntents = new List<QueryIntent>();
+            _queries = new List<Query>();
         }
 
-        public Intent(string name, Guid projectId, IntentType type, IEnumerable<PhrasePart> phraseParts)
-            : this(name, projectId, type)
+        public void AddPhrase(Phrase phrase)
         {
-            UpdatePhrases(phraseParts);
+            if (phrase == null)
+                throw new ArgumentNullException(nameof(phrase));
+            _phraseParts.AddRange(phrase);
         }
-
+        
         public void UpdateName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -112,25 +120,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             }
         }
 
-        public void Delete()
-        {
-            // If this intent is going to be deleted,
-            // there's no point to have other events
-            ClearDomainEvents();
-            
-            // TODO: soft deletion should update DeletedAt
-            if (!DomainEvents.Any(e => e is IntentDeletedEvent))
-            {
-                AddDomainEvent(new IntentDeletedEvent(this));
-            }
-        }
-
         public override string ToString() => Name;
-    }
-
-    public enum IntentType
-    {
-        STANDARD,
-        GENERIC
     }
 }

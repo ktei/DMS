@@ -8,7 +8,7 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
     public class CreatePhrasePartDto
     {
         public int? Position { get; set; }
-        public string? Text { get; set; }
+        public string Text { get; set; }
         public string? Value { get; set; }
         public string Type { get; set; }
         public string? EntityName { get; set; }
@@ -37,7 +37,7 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
            
             // For ENTITY
             RuleFor(x => x.Text)
-                .NotNull()
+                .NotEmpty()
                 .When(x =>
                     string.Compare(x.Type, PhrasePartType.ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
                 .WithMessage("{PropertyName} must not be null given ENTITY type");

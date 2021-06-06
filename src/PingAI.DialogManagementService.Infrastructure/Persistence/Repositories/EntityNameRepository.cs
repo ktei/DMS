@@ -1,5 +1,6 @@
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -17,11 +18,11 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<ReadOnlyCollection<EntityName>> ListByProjectId(Guid projectId)
+        public async Task<IReadOnlyList<EntityName>> ListByProjectId(Guid projectId)
         {
             var results = await _context.EntityNames.Where(x => x.ProjectId == projectId)
                 .ToListAsync();
-            return results.AsReadOnly();
+            return results.ToImmutableList();
         }
 
         public async Task<EntityName> Add(EntityName entityName)

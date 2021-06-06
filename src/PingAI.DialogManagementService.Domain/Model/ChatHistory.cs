@@ -87,17 +87,4 @@ namespace PingAI.DialogManagementService.Domain.Model
             public string Name { get; set; }
         }
     }
-
-    public enum MatchingResult
-    {
-       Matched = 1,
-       MissingIntent,
-       MissingQuery
-    }
-    
-    public enum SessionStatus
-    {
-        CHATBOT,
-        HANDOVER
-    }
 }

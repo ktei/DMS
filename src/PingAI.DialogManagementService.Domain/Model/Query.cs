@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using PingAI.DialogManagementService.Domain.Utils;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -15,86 +16,85 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string Description { get; private set; }
         public string[]? Tags { get; private set; }
         public int DisplayOrder { get; private set; }
-
-        private readonly List<QueryIntent> _queryIntents;
-        public IReadOnlyList<QueryIntent> QueryIntents => _queryIntents.ToImmutableList();
-
-        private readonly List<QueryResponse> _queryResponses;
-        public IReadOnlyList<QueryResponse> QueryResponses => _queryResponses.ToImmutableList();
-
-        public IReadOnlyList<Intent> Intents => GetIntents();
-        public IReadOnlyList<Response> Responses => GetResponses();
+        private List<Intent> _intents;
+        public IReadOnlyList<Intent> Intents => _intents.ToImmutableList();
+        private List<Response> _responses;
+        public IReadOnlyList<Response> Responses => _responses.ToImmutableList();
         
         public const int MaxNameLength = 100;
         public const int MaxTagLength = 50;
+
+        private Query()
+        {
+        }
         
-        public Query(string name, Guid projectId, Expression[] expressions,
-            string description, string[]? tags, int displayOrder)
+        public Query(string name, IEnumerable<Expression> expressions,
+            string description, IEnumerable<string>? tags, int displayOrder)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException($"{nameof(name)} cannot be empty");
+                throw new ArgumentException($"{nameof(name)} cannot be empty.");
             if (name.Trim().Length > MaxNameLength)
-                throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
+                throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}.");
 
-            if (tags != null && tags.Any(t => t == null 
-                                              || t.Trim().Length == 0 || t.Trim().Length > MaxTagLength))
-                throw new ArgumentException(
-                    $"Some {nameof(Tags)} are not valid: empty tags and tags with " +
-                    $"length > {MaxTagLength} are not allowed");
+            if (tags != null)
+            {
+                var tagsToAdd = tags.ToArray();
+                if (tagsToAdd.Any(t => t == null
+                                                  || t.Trim().Length == 0 || t.Trim().Length > MaxTagLength))
+                    throw new ArgumentException(
+                        $"Some {nameof(Tags)} are not valid: empty tags and tags with " +
+                        $"length > {MaxTagLength} are not allowed.");
+
+                Tags = tagsToAdd.Select(t => t.Trim()).ToArray();
+            }
+            else
+            {
+                Tags = new string[0];
+            }
 
             Name = name.Trim();
-            ProjectId = projectId;
-            Expressions = expressions;
+            Expressions = expressions.ToArray();
             Description = description;
-            Tags = tags?.Select(t => t.Trim()).ToArray();
             DisplayOrder = displayOrder;
-            _queryIntents = new List<QueryIntent>();
-            _queryResponses = new List<QueryResponse>();
+            _intents = new List<Intent>();
+            _responses = new List<Response>();
+        }
+
+        public Query(string name, Guid projectId, IEnumerable<Expression> expressions,
+            string description, IEnumerable<string>? tags, int displayOrder)
+            : this(name, expressions, description, tags, displayOrder)
+        {
+            if (projectId.IsEmpty())
+                throw new ArithmeticException($"{nameof(projectId)} cannot be empty.");
+            ProjectId = projectId;
         }
 
         public void AddResponse(Response response)
         {
             _ = response ?? throw new ArgumentNullException(nameof(response));
-            _queryResponses.Add(new QueryResponse(Id, response));
+            _responses.Add(response);
         }
 
         public void ClearResponses()
         {
-            if (_queryResponses == null)
-                throw new InvalidOperationException($"Load {nameof(QueryResponses)} first");
+            if (_responses == null)
+                throw new InvalidOperationException($"Load {nameof(Responses)} first");
             
-            _queryResponses.Clear();
+            _responses.Clear();
         }
 
         public void AddIntent(Intent intent)
         {
             _ = intent ?? throw new ArgumentNullException(nameof(intent));
-            _queryIntents.Add(new QueryIntent(Id, intent));
+            _intents.Add(intent);
         }
         
         public void ClearIntents()
         {
-            if (_queryIntents == null)
-                throw new InvalidOperationException($"Load {nameof(QueryIntents)} first");
+            if (_intents == null)
+                throw new InvalidOperationException($"Load {nameof(Intents)} first");
 
-            foreach (var queryIntent in _queryIntents)
-            {
-                queryIntent.Intent!.Delete();
-            }
-            _queryIntents.Clear();
-        }
-
-        public void Delete()
-        {
-            if (_queryIntents == null)
-                throw new InvalidOperationException($"Load {nameof(QueryIntents)} first");
-
-            foreach (var intent in _queryIntents.Select(x => x.Intent))
-            {
-                if (intent == null)
-                    throw new InvalidOperationException($"Load {nameof(QueryIntents)}.Intent first");
-                intent.Delete();
-            }
+            _intents.Clear();
         }
 
         public void IncreaseDisplayOrder() => DisplayOrder += 1;
@@ -127,28 +127,6 @@ namespace PingAI.DialogManagementService.Domain.Model
                     nextDisplayOrder = query.DisplayOrder;
                 }
             }
-        }
-
-        private IReadOnlyList<Intent> GetIntents()
-        {
-            if (_queryIntents == null)
-                throw new InvalidOperationException($"Load {nameof(QueryIntents)} first");
-            
-            if (_queryIntents.Any(x => x.Intent == null))
-                throw new InvalidOperationException($"Load {nameof(QueryIntents)}.Intent first");
-
-            return _queryIntents.Select(x => x.Intent!).ToImmutableList();
-        }
-
-        private IReadOnlyList<Response> GetResponses()
-        {
-            if (_queryResponses == null)
-                throw new InvalidOperationException($"Load {nameof(QueryResponses)} first");
-            
-            if (_queryResponses.Any(x => x.Response == null))
-                throw new InvalidOperationException($"Load {nameof(QueryResponses)}.Response first");
-
-            return _queryResponses.Select(x => x.Response!).ToImmutableList();
         }
 
         public override string ToString() => Name;

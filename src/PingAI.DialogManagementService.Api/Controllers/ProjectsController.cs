@@ -47,7 +47,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 connections.Add("slack");
             return new IntegrationDto(connections.ToArray());
         }
-        
+
         [HttpGet("{projectId}")]
         public async Task<ActionResult<ProjectDto>> GetProject([FromRoute] Guid projectId)
         {
@@ -69,8 +69,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var greetingResponses = new List<Response>();
             if (request.GreetingMessage != null)
             {
-                var r = new Response(projectId, ResponseType.RTE, 0);
-                r.SetRteText(request.GreetingMessage, new Dictionary<string, EntityName>());
+                var r = new Response(projectId, Resolution.Factory.RteText(request.GreetingMessage), ResponseType.RTE,
+                    0);
                 greetingResponses.Add(r);
             }
 
@@ -79,12 +79,12 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 var responseOrder = 1;
                 foreach (var quickReply in request.QuickReplies)
                 {
-                    var r = new Response(projectId, ResponseType.QUICK_REPLY, responseOrder++);
-                    r.SetRteText(quickReply, new Dictionary<string, EntityName>());
+                    var r = new Response(projectId, Resolution.Factory.RteText(quickReply), ResponseType.QUICK_REPLY,
+                        responseOrder++);
                     greetingResponses.Add(r);
                 }
             }
-            
+
             var project = await _mediator.Send(new UpdateProjectCommand(projectId,
                 request.WidgetTitle, request.WidgetColor,
                 request.WidgetDescription, request.FallbackMessage,
@@ -118,3 +118,4 @@ namespace PingAI.DialogManagementService.Api.Controllers
         }
     }
 }
+

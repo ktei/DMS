@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -35,6 +34,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
             if (organisationWithSameName != null)
                 throw new BadRequestException($"Organisation with name '{request.Name}' already exists. " +
                                               "Please use a different name.");
+            
             var organisationToCreate = await _organisationRepository.Add(
                 new Organisation(request.Name, request.Description ?? string.Empty));
             if (!string.IsNullOrEmpty(request.Auth0UserId))
@@ -44,8 +44,8 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
                     throw new BadRequestException("User does not exist");
                 organisationToCreate.AddUser(user!);
             }
-            var defaultProject = CreateDefaultProject(organisationToCreate);
-            defaultProject = await _projectRepository.AddProject(defaultProject);
+            var defaultProject = await AddDefaultProject(organisationToCreate);
+            ConfigureDefaultProject(defaultProject);
             await _projectVersionRepository.AddProjectVersion(new ProjectVersion(defaultProject,
                 organisationToCreate.Id, defaultProject.Id, ProjectVersionNumber.NewDesignTime()));
             
@@ -53,24 +53,31 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
             return organisationToCreate;
         }
 
-        private static Project CreateDefaultProject(Organisation organisation) 
+        private async Task<Project> AddDefaultProject(Organisation organisation) 
         {
             var defaultProject = new Project("Default project", organisation.Id,
                 Defaults.WidgetTitle, Defaults.WidgetColor, Defaults.WidgetDescription,
                 Defaults.FallbackMessage, null, null,
                 Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc, Defaults.BusinessTimeEndUtc, null);
-            var greetingResponse = new Response(ResponseType.RTE, 0);
-            greetingResponse.SetRteText(Defaults.GreetingMessage, new Dictionary<string, EntityName>());
-            defaultProject.UpdateGreetingResponses(new Response[]
+
+            await _projectRepository.AddProject(defaultProject);
+            return defaultProject;
+        }
+
+        private static void ConfigureDefaultProject(Project project)
+        {
+            if (project.Id == Guid.Empty)
+                throw new ArgumentException($"{nameof(project)}.Id should not be empty.");
+            var defaultGreeting = new Response(project.Id, Resolution.Factory.RteText(Defaults.GreetingMessage), 
+                ResponseType.RTE, 0);
+            project.UpdateGreetingResponses(new[]
             {
-                greetingResponse
+                new GreetingResponse(project.Id, defaultGreeting)
             });
             foreach (var enquiryEntityName in Defaults.EnquiryEntityNames)
             {
-                defaultProject.AddEntityName(new EntityName(enquiryEntityName, Guid.Empty, true));
+                project.AddEntityName(new EntityName(project.Id, enquiryEntityName, true));
             }
-
-            return defaultProject;
         }
     }
 }

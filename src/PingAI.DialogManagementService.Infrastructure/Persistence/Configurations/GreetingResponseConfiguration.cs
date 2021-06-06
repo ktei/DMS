@@ -25,7 +25,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             builder.AttachTimestamps();
 
             builder.HasOne(o => o.Project)
-                .WithMany(o => o.GreetingResponses); 
+                .WithMany(o => o.GreetingResponses);
         }
     }
 }

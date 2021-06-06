@@ -1,4 +1,5 @@
 using System;
+using PingAI.DialogManagementService.Domain.Utils;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -20,6 +21,8 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public ProjectVersion(Guid projectId, Guid organisationId, Guid versionGroupId, ProjectVersionNumber version)
         {
+            if (projectId.IsEmpty())
+                throw new ArgumentException($"{nameof(projectId)} cannot be empty.");
             ProjectId = projectId;
             OrganisationId = organisationId;
             VersionGroupId = versionGroupId;

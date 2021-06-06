@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,24 +12,18 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
     public class CreateQueryCommandHandler : IRequestHandler<CreateQueryCommand, Query>
     {
         private readonly IQueryRepository _queryRepository;
-        private readonly IIntentRepository _intentRepository;
-        private readonly IResponseRepository _responseRepository;
         private readonly IEntityNameRepository _entityNameRepository;
-        private readonly IEntityTypeRepository _entityTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthorizationService _authorizationService;
 
-        public CreateQueryCommandHandler(IQueryRepository queryRepository, IIntentRepository intentRepository,
-            IResponseRepository responseRepository, IUnitOfWork unitOfWork, IAuthorizationService authorizationService,
-            IEntityNameRepository entityNameRepository, IEntityTypeRepository entityTypeRepository)
+        public CreateQueryCommandHandler(IQueryRepository queryRepository, IUnitOfWork unitOfWork,
+            IAuthorizationService authorizationService,
+            IEntityNameRepository entityNameRepository)
         {
             _queryRepository = queryRepository;
-            _intentRepository = intentRepository;
-            _responseRepository = responseRepository;
             _unitOfWork = unitOfWork;
             _authorizationService = authorizationService;
             _entityNameRepository = entityNameRepository;
-            _entityTypeRepository = entityTypeRepository;
         }
 
         public async Task<Query> Handle(CreateQueryCommand request, CancellationToken cancellationToken)
@@ -40,96 +32,50 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             if (!canWrite)
                 throw new ForbiddenException(ErrorDescriptions.ProjectWriteDenied);
 
-            var nextDisplayOrder = request.DisplayOrder ?? 
-                                   (await _queryRepository.GetMaxDisplayOrder(request.ProjectId)) + 1;
+            var queryDisplayOrder = (await _queryRepository.GetMaxDisplayOrder(request.ProjectId)) + 1;
             var query = new Query(request.Name, request.ProjectId, request.Expressions,
-                request.Description, request.Tags, nextDisplayOrder);
-            
-            // If request.DisplayOrder does have a value, it means
-            // we may need to update the DisplayOrders of other queries as well
-            if (request.DisplayOrder.HasValue)
+                request.Description, request.Tags, queryDisplayOrder);
+
+            var intent = new Intent(request.Name, IntentType.STANDARD);
+            var entityNames = await _entityNameRepository.ListByProjectId(request.ProjectId);
+
+            var phraseDisplayOrder = 0;
+            foreach (var groupedPhraseParts in request.PhraseParts.GroupBy(p => p.PhraseId))
             {
-                var existingQueries = await _queryRepository.GetQueriesByProjectId(request.ProjectId);
-                query.Insert(existingQueries);
-            }
-            if (request.IntentId.HasValue)
-            {
-                var intent = await _intentRepository.GetIntentById(request.IntentId.Value);
-                if (intent == null) throw new BadRequestException(ErrorDescriptions.IntentNotFound);
-                query.AddIntent(intent);
-            }
-            else if (request.Intent != null)
-            {
-                var entityNames = await _entityNameRepository.ListByProjectId(request.ProjectId);
-                var entityTypes = await _entityTypeRepository.ListByProjectId(request.ProjectId);
-                var entityTypeIds = entityTypes.Select(e => e.Id).ToArray();
-                var entityNamesToCreate = new List<EntityName>();
-                
-                foreach (var phrasePart in request.Intent.PhraseParts)
+                var phrase = new Phrase(phraseDisplayOrder++);
+                foreach (var phrasePart in groupedPhraseParts)
                 {
                     if (phrasePart.EntityName != null)
                     {
-                        var existingEntityName = entityNames.FirstOrDefault(e => 
-                            e.Name == phrasePart.EntityName.Name);
-                        if (existingEntityName != null)
-                        {
-                            phrasePart.UpdateEntityName(existingEntityName);
-                        }
-                        else
-                        {
-                            var newEntityName = new EntityName(phrasePart.EntityName.Name,
-                                request.ProjectId, true);
-                            phrasePart.UpdateEntityName(newEntityName);
-                            entityNamesToCreate.Add(newEntityName);
-                        }
+                        var existingEntityName = entityNames
+                            .FirstOrDefault(e => e.Name == phrasePart.EntityName);
+                        phrase.AppendEntity(phrasePart.Text,
+                            existingEntityName ?? new EntityName(phrasePart.EntityName, true));
                     }
-
-                    if (phrasePart.EntityTypeId.HasValue && !entityTypeIds.Contains(phrasePart.EntityTypeId.Value))
+                    else
                     {
-                        throw new BadRequestException(ErrorDescriptions.EntityTypeNotFound);
+                        phrase.AppendText(phrasePart.Text);
                     }
                 }
+                intent.AddPhrase(phrase);
+            }
+            query.AddIntent(intent);
 
-                foreach (var newEntityName in entityNamesToCreate)
+            foreach (var resp in request.Responses)
+            {
+                if (resp.RteText != null)
                 {
-                    await _entityNameRepository.Add(newEntityName);
+                    var resolution = Resolution.Factory.RteText(resp.RteText,
+                        entityNames.ToDictionary(x => x.Name));
+                    query.AddResponse(new Domain.Model.Response(resolution, ResponseType.RTE,
+                        resp.Order));
                 }
-                
-                query.AddIntent(new Intent(request.Intent.Name, query.ProjectId, request.Intent.Type,
-                    request.Intent.PhraseParts));
-            }
-            else
-            {
-                throw new BadRequestException("Missing intent and intentId, one of them should be specified.");
-            }
-
-            if (request.ResponseId.HasValue)
-            {
-                var response = await _responseRepository.GetResponseById(request.ResponseId.Value);
-                if (response == null) throw new BadRequestException(ErrorDescriptions.ResponseNotFound);
-                query.AddResponse(response);
-            }
-            else if (request.Responses?.Any() == true)
-            {
-                var entityNames = await _entityNameRepository.ListByProjectId(query.ProjectId);
-                for (var i = 0; i < request.Responses.Length; i++)
+                else if (resp.Form != null)
                 {
-                    if (request.RteText[i] != null)
-                    {
-                        request.Responses[i].SetRteText(request.RteText[i]!, 
-                            entityNames.ToDictionary(e => e.Name));
-                    }
+                    var resolution = Resolution.Factory.Form(resp.Form);
+                    query.AddResponse(new Domain.Model.Response(resolution, ResponseType.FORM,
+                        resp.Order));
                 }
-                
-                foreach (var response in request.Responses)
-                {
-                    query.AddResponse(new Response(response.Resolution,
-                        query.ProjectId, response.Type, response.Order));
-                }
-            }
-            else
-            {
-                throw new BadRequestException("Missing response and responseId, one of them should be specified.");
             }
 
             query = await _queryRepository.AddQuery(query);

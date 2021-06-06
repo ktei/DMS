@@ -32,7 +32,7 @@ namespace PingAI.DialogManagementService.Application.Intents.UpdateIntent
 
         public async Task<Intent> Handle(UpdateIntentCommand request, CancellationToken cancellationToken)
         {
-            var intent = await _intentRepository.GetIntentById(request.IntentId);
+            var intent = await _intentRepository.FindById(request.IntentId);
             if (intent == null)
                 throw new BadRequestException(IntentNotFound);
             var canRead = await _authorizationService.UserCanWriteProject(intent.ProjectId);
@@ -61,8 +61,8 @@ namespace PingAI.DialogManagementService.Application.Intents.UpdateIntent
                         }
                         else
                         {
-                            var newEntityName = new EntityName(phrasePart.EntityName.Name,
-                                intent.ProjectId, true);
+                            var newEntityName = new EntityName(intent.ProjectId, phrasePart.EntityName.Name,
+                                true);
                             phrasePart.UpdateEntityName(newEntityName);
                             entityNamesToCreate.Add(newEntityName);
                         }

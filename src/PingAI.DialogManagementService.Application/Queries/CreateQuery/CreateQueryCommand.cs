@@ -1,44 +1,68 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using MediatR;
 using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
 {
+    public class PhrasePart
+    {
+        public Guid PhraseId { get; }
+        public PhrasePartType Type { get; }
+        public int? Position { get; }
+        public string Text { get; }
+        public string? Value { get; }
+        public string? EntityName { get; }
+        public Guid? EntityTypeId { get; }
+
+        public PhrasePart(Guid phraseId, PhrasePartType type, int? position, string? text, string? value,
+            string? entityName)
+        {
+            PhraseId = phraseId;
+            Type = type;
+            Position = position;
+            Text = text;
+            Value = value;
+            EntityName = entityName;
+        }
+    }
+
+    public class Response
+    {
+        public string? RteText { get; }
+        public FormResolution? Form { get; }
+        public int Order { get; }
+
+        public Response(string? rteText, FormResolution? form, int order)
+        {
+            RteText = rteText;
+            Form = form;
+            Order = order;
+        }
+    }
+    
     public class CreateQueryCommand : IRequest<Query>
     {
-        public string Name { get; set; }
-        public Guid ProjectId { get; set; }
-        public Expression[] Expressions { get; set; }
-        public string Description { get; set; }
-        public string[]? Tags { get; set; }
-        public int? DisplayOrder { get; set; }
-        public Guid? IntentId { get; set; }
-        public Intent? Intent { get; set; }
-        public Guid? ResponseId { get; set; }
-        public Response[]? Responses { get; set; }
-        public string?[] RteText { get; set; }
+        public string Name { get; }
+        public Guid ProjectId { get; }
+        public IReadOnlyList<PhrasePart> PhraseParts { get; }
+        public IReadOnlyList<Expression> Expressions { get; }
+        public IReadOnlyList<Response> Responses { get; }
+        public string Description { get; }
+        public IReadOnlyList<string>? Tags { get; }
 
-        public CreateQueryCommand(string name, Guid projectId, Expression[] expressions, string description,
-            string[]? tags, int? displayOrder, Guid? intentId, Intent? intent, Guid? responseId, Response[]? responses,
-            string?[] rteText)
+        public CreateQueryCommand(string name, Guid projectId, IEnumerable<PhrasePart> phraseParts,
+            IEnumerable<Expression> expressions, IEnumerable<Response> responses, string description, IEnumerable<string>? tags)
         {
             Name = name;
             ProjectId = projectId;
-            Expressions = expressions;
+            PhraseParts = phraseParts.ToImmutableList();
+            Expressions = expressions.ToImmutableList();
+            Responses = responses.ToImmutableList();
             Description = description;
-            Tags = tags;
-            DisplayOrder = displayOrder;
-            IntentId = intentId;
-            Intent = intent;
-            ResponseId = responseId;
-            Responses = responses;
-            RteText = rteText;
-        }
-
-        public CreateQueryCommand()
-        {
-            
+            Tags = tags?.ToImmutableList();
         }
     }
 }

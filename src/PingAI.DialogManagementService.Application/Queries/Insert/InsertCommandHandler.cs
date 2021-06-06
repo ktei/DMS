@@ -33,7 +33,7 @@ namespace PingAI.DialogManagementService.Application.Queries.Insert
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
 
-            var queries = await _queryRepository.GetQueriesByProjectId(query.ProjectId);
+            var queries = await _queryRepository.ListByProjectId(query.ProjectId);
             query.Insert(queries, request.DisplayOrder);
             
             await _unitOfWork.SaveChanges();

@@ -1,105 +1,80 @@
-using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
-using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
-using PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Helpers;
+using PingAI.DialogManagementService.TestingUtil.Persistence;
 using Xunit;
-using static Xunit.Assert;
 
 namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Repositories
 {
-    public class IntentRepositoryTests : IAsyncLifetime
+    public class IntentRepositoryTests : RepositoryTestBase
     {
-        private readonly DialogManagementContextFactory _dialogManagementContextFactory;
-        private readonly TestDataFactory _testDataFactory;
-        
-        public IntentRepositoryTests()
+        public IntentRepositoryTests(SharedDatabaseFixture fixture) : base(fixture)
         {
-            _dialogManagementContextFactory = new DialogManagementContextFactory();
-            _testDataFactory = new TestDataFactory(_dialogManagementContextFactory.CreateDbContext(new string[] { }));
         }
 
         [Fact]
-        public async Task GetIntentsByProjectId()
+        public async Task ListByProjectId()
         {
-            // Arrange
-            await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
-            var project = _testDataFactory.Project;
-            var intent1 = new Intent("generic", project.Id, IntentType.GENERIC);
-            var intent2 = new Intent("standard", project.Id, IntentType.STANDARD);
-            await context.AddRangeAsync(intent1, intent2);
-            await context.SaveChangesAsync();
+            var context = Fixture.CreateContext();
             var sut = new IntentRepository(context);
-            
-            // Act
-            var actual = await sut.GetIntentsByProjectId(project.Id);
+            var project = await context.Projects.FirstAsync();
 
-            // Assert
-            
-            // clean up
-            context.Intents.RemoveRange(intent1, intent2);
-            await context.SaveChangesAsync();
-            
-            Equal(2, actual.Count);
+            context.ChangeTracker.Clear();
+            var actual = await sut.ListByProjectId(project.Id);
+
+            actual.Should().HaveCount(1);
         }
 
         [Fact]
-        public async Task GetIntent()
+        public async Task FindById()
         {
-            // TODO
-        }
-
-        [Fact]
-        public async Task AddIntentWithPhraseParts()
-        {
-            // Arrange
-            await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
-            var project = _testDataFactory.Project;
-            var intent = new Intent("welcome",
-                project.Id, IntentType.STANDARD);
+            var context = Fixture.CreateContext();
             var sut = new IntentRepository(context);
+            var intent = await context.Intents.FirstAsync();
 
-            // Act
-            var phraseId1 = Guid.NewGuid();
-            var phraseId2 = Guid.NewGuid();
-            var phraseId3 = Guid.NewGuid();
-            intent.UpdatePhrases(new[]
-            {
-                new PhrasePart(intent.Id, phraseId1, 0, "Hello, World!",
-                    null, PhrasePartType.TEXT, default(Guid?), default, 1),
-                
-                new PhrasePart(intent.Id, phraseId2, 0, "The city is ",
-                    null, PhrasePartType.TEXT, default(Guid?), default, 2),
-                new PhrasePart(intent.Id, phraseId2, 1, "Melbourne",
-                    null, PhrasePartType.ENTITY, _testDataFactory.EntityName.Id,
-                    _testDataFactory.EntityType.Id, 2),
-                
-                new PhrasePart(intent.Id, phraseId3, 0, "My city is Kyoto",
-                    null, PhrasePartType.TEXT, default(Guid?), default, 3),
-                new PhrasePart(intent.Id, phraseId3, null, null,
-                    "Kyoto", PhrasePartType.CONSTANT_ENTITY, _testDataFactory.EntityName.Id,
-                    _testDataFactory.EntityType.Id, 3)
-            });
-            await sut.AddIntent(intent);
-            await context.SaveChangesAsync();
-            var actual = await context.Intents
-                .Include(x => x.PhraseParts)
-                .SingleAsync(x => x.Id == intent.Id);
+            context.ChangeTracker.Clear();
+            var actual = await sut.FindById(intent.Id);
 
-            // clean up
-            context.RemoveRange(intent.PhraseParts);
-            context.Remove(intent);
-            await context.SaveChangesAsync();
-
-            // Assert
-            Equal(intent.Id, actual.Id);
-            Equal(5, actual.PhraseParts.Count);
+            actual.Should().NotBeNull();
         }
 
-        public Task InitializeAsync() => _testDataFactory.Setup();
+        [Fact]
+        public async Task Add()
+        {
+            var context = Fixture.CreateContext();
+            var sut = new IntentRepository(context);
+            var project = await context.Projects.FirstAsync();
+            var entityName = await context.EntityNames.FirstAsync();
+            var intent = new Intent(project.Id, "TEST_INTENT", IntentType.STANDARD);
+            intent.AddPhrase(new Phrase(0)
+                .AppendText("Hello, this is my ")
+                .AppendEntity("entity", entityName));
 
-        public Task DisposeAsync() => _testDataFactory.Cleanup();
+            await sut.Add(intent);
+            
+            context.ChangeTracker.Clear();
+            var actual = context.Intents.FirstOrDefaultAsync(x => x.Id == intent.Id);
+            actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task Remove()
+        {
+            var context = Fixture.CreateContext();
+            var sut = new IntentRepository(context);
+            var project = await context.Projects.FirstAsync();
+            var intent = new Intent(project.Id, "TEST_INTENT", IntentType.STANDARD);
+            await context.AddAsync(intent);
+            await context.SaveChangesAsync();
+
+            sut.Remove(intent);
+            await context.SaveChangesAsync();
+            
+            context.ChangeTracker.Clear();
+            var actual = await context.Intents.FirstOrDefaultAsync(x => x.Id == intent.Id);
+            actual.Should().BeNull();
+        }
     }
 }

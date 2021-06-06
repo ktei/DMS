@@ -23,21 +23,22 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             return query;
         }
 
-        public Task<Query?> GetQueryById(Guid queryId) =>
-            _context.Queries
-                .Include(x => x.QueryIntents)
-                .ThenInclude(x => x.Intent)
+        public async Task<Query?> GetQueryById(Guid queryId)
+        {
+            var query = await _context.Queries
+                .AsSplitQuery()
+                .Include(x => x.Intents)
                 .ThenInclude(x => x.PhraseParts)
                 .ThenInclude(x => x.EntityName)
-                
-                .Include(x => x.QueryIntents)
-                .ThenInclude(x => x.Intent)
+
+                .Include(x => x.Intents)
                 .ThenInclude(x => x.PhraseParts)
                 .ThenInclude(x => x.EntityType)
 
-                .Include(x => x.QueryResponses)
-                .ThenInclude(x => x.Response)
+                .Include(x => x.Responses)
                 .FirstOrDefaultAsync(x => x.Id == queryId);
+            return query;
+        }
 
         public async Task<Query> AddQuery(Query query)
         {
@@ -45,27 +46,26 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             return result.Entity;
         }
 
-        public Task<List<Query>> GetQueriesByProjectId(Guid projectId)
+        public Task<List<Query>> ListByProjectId(Guid projectId)
         {
             return _context.Queries.Where(q => q.ProjectId == projectId)
                 .ToListAsync();
         }
 
-        public async Task<List<Query>> GetQueriesByProjectId(Guid projectId, ResponseType? responseType)
+        public async Task<List<Query>> ListByProjectId(Guid projectId, ResponseType? responseType)
         {
             var query = _context.Queries
-                .Include(x => x.QueryIntents)
-                .ThenInclude(x => x.Intent)
+                .AsSplitQuery()
+
+                .Include(x => x.Intents)
                 .ThenInclude(x => x.PhraseParts)
                 .ThenInclude(x => x.EntityName)
 
-                .Include(x => x.QueryIntents)
-                .ThenInclude(x => x.Intent)
+                .Include(x => x.Intents)
                 .ThenInclude(x => x.PhraseParts)
                 .ThenInclude(x => x.EntityType)
 
-                .Include(x => x.QueryResponses)
-                .ThenInclude(x => x.Response)
+                .Include(x => x.Responses)
                 .Where(x => x.ProjectId == projectId);
 
             // TODO: we shouldn't compare enums with "ToString", but
@@ -76,15 +76,15 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             if (responseType == ResponseType.RTE)
             {
                 // RTE query means all responses should be RTE
-                query = query.Where(x => x.QueryResponses.All(
-                    qr => qr.Response!.Type.ToString() == ResponseType.RTE.ToString() ||
-                          qr.Response!.Type.ToString() == ResponseType.QUICK_REPLY.ToString()));
+                query = query.Where(x => x.Responses.All(
+                    qr => qr.Type == ResponseType.RTE ||
+                          qr.Type == ResponseType.QUICK_REPLY));
             }
             else if (responseType == ResponseType.HANDOVER || responseType == ResponseType.FORM)
             {
                 // otherwise, we filter by response type
-                query = query.Where(x => x.QueryResponses.Any(
-                    qr => qr.Response!.Type.ToString() == responseType.ToString()));
+                query = query.Where(x => x.Responses.Any(
+                    qr => qr.Type == responseType));
             }
 
             var results = await query.OrderBy(x => x.DisplayOrder)

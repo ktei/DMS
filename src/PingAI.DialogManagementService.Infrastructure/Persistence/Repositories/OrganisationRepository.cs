@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,20 +41,20 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             return result.Entity;
         }
 
-        public async Task<ReadOnlyCollection<Organisation>> ListAll()
+        public async Task<IReadOnlyList<Organisation>> ListAll()
         {
             var results = await _context.Organisations
                 .OrderBy(o => o.Name)
                 .ToListAsync();
-            return results.AsReadOnly();
+            return results.ToImmutableList();
         }
 
-        public async Task<ReadOnlyCollection<Organisation>> ListByUserId(Guid userId)
+        public async Task<IReadOnlyList<Organisation>> ListByUserId(Guid userId)
         {
             var results = await _context.Organisations
                 .Where(o => o.OrganisationUsers.Any(x => x.UserId == userId))
                 .ToListAsync();
-            return results.AsReadOnly();
+            return results.ToImmutableList();
         }
     }
 }
