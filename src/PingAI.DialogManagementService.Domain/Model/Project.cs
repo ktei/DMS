@@ -433,7 +433,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             public string? GreetingMessage { get; set; }
             public string[]? QuickReplies { get; set; }
             public string[]? Enquiries { get; set; }
-            public ApiKey? ApiKey { get; set; }
             public string[]? Domains { get; set; }
             public string BusinessTimezone { get; set; }
             public DateTime? BusinessTimeStartUtc { get; set; }

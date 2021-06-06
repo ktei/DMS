@@ -36,6 +36,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             yield return Type;
         }
 
-        public override string ToString() => Text ?? EntityNameId?.ToString() ?? string.Empty;
+        public override string ToString() => Text ?? EntityNameId?.ToString() ?? base.ToString();
     }
 }
