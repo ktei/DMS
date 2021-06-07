@@ -57,6 +57,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public async Task<Project?> FindLatestVersion(Guid designTimeId)
         {
             var projectVersion = await _context.ProjectVersions
+                .Include(x => x.Project).ThenInclude(x => x.ProjectVersion)
                 .Where(x => x.VersionGroupId == designTimeId)
                 .OrderBy("version DESC")
                 .FirstOrDefaultAsync();

@@ -77,7 +77,8 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         {
             var context = Fixture.CreateContext();
             var sut = new ProjectRepository(context);
-            var project = await context.Projects.FirstAsync(x => x.ProjectVersion.Version == ProjectVersionNumber.DesignTime);
+            var project = await context.Projects
+                .FirstAsync(x => x.ProjectVersion!.Version == ProjectVersionNumber.DesignTime);
             var latestVersion = await context.ProjectVersions
                 .Where(x => x.VersionGroupId == project.Id)
                 .OrderBy("version DESC")

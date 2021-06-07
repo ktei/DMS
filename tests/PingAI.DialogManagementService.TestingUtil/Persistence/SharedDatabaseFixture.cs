@@ -1,6 +1,5 @@
 using System;
 using System.Data.Common;
-using System.Linq;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -61,21 +60,11 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                     context.Add(organisation);
                     
                     // seed Projects
-                    var project = new Project(organisation.Id, Guid.NewGuid().ToString(),
-                        Defaults.WidgetTitle,
-                        Defaults.WidgetColor, Defaults.WidgetDescription,
-                        Defaults.FallbackMessage, null, null,
-                        Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
-                        Defaults.BusinessTimeEndUtc, null);
+                    var project = Project.CreateWithDefaults(organisation.Id);
                     project.AddGreetingResponse(new Response(Resolution.Factory.RteText("Hello, and welcome!"),
                         ResponseType.RTE, 0));
                     context.Add(project);
-                    
-                    // seed ProjectVersions
-                    var projectVersion = new ProjectVersion(project.Id,
-                        organisation.Id, project.Id,
-                        ProjectVersionNumber.NewDesignTime());
-                    context.Add(projectVersion);
+                    project.StampVersion(ProjectVersionNumber.DesignTime);
                     
                     // seed EntityTypes
                     var foodEntityType = new EntityType(project.Id, "Food", 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
@@ -18,10 +19,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
 
         public async Task<User?> GetUserByAuth0Id(string auth0Id)
         {
-            throw new NotImplementedException("ThenInclude Projects won't work well, need to find designTime project");
             var user = await _context.Users
                 .AsNoTracking()
-                .Include(x => x.Organisations).ThenInclude(x => x.Projects)
+                .Include(x => x.Organisations)
                 .FirstOrDefaultAsync(x => x.Auth0Id == auth0Id);
             return user;
         }

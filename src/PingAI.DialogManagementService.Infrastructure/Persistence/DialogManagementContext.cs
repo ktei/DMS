@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +30,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.EnableDetailedErrors();
+            optionsBuilder.EnableSensitiveDataLogging();
             optionsBuilder.UseLoggerFactory(GetLoggerFactory(LogLevel.Debug));
         }
 
@@ -96,8 +96,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectVersion> ProjectVersions { get; set; }
         public DbSet<User> Users { get; set; }
-        // public DbSet<OrganisationUser> OrganisationUsers { get; set; }
-        // public DbSet<QueryIntent> QueryIntents { get; set; }
         public DbSet<Intent> Intents { get; set; }
         public DbSet<PhrasePart> PhraseParts { get; set; }
         public DbSet<EntityType> EntityTypes { get; set; }
@@ -107,7 +105,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public DbSet<Query> Queries { get; set; }
         public DbSet<SlackWorkspace> SlackWorkspaces { get; set; }
         public DbSet<ChatHistory> ChatHistories { get; set; }
-
+        
         public override int SaveChanges()
         {
             UpdateTimestamps();
@@ -132,19 +130,17 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 
                 if (entity.State == EntityState.Added)
                 {
-                    if (entity.Entity is QueryIntent)
+                    switch (entity.Entity)
                     {
-                        entity.Property("P1").CurrentValue = Guid.NewGuid();
+                        case QueryIntent _:
+                        case QueryResponse _:
+                        case OrganisationUser _:
+                            entity.Property("P1").CurrentValue = Guid.NewGuid();
+                            break;
+                        default:
+                            entity.Property("CreatedAt").CurrentValue = timestamp;
+                            break;
                     }
-                    else if (entity.Entity is QueryResponse)
-                    {
-                        entity.Property("P1").CurrentValue = Guid.NewGuid();
-                    }
-                    else if (entity.Entity is OrganisationUser)
-                    {
-                        entity.Property("P1").CurrentValue = Guid.NewGuid();
-                    }
-                    entity.Property("CreatedAt").CurrentValue = timestamp;
                 }
 
                 entity.Property("UpdatedAt").CurrentValue = timestamp;

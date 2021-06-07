@@ -20,7 +20,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         private readonly List<PhrasePart> _phraseParts;
         public IReadOnlyList<PhrasePart> PhraseParts => _phraseParts.ToImmutableList();
 
-        public List<Query> Queries { get; set; }
+        private readonly List<Query> _queries;
+        public IReadOnlyList<Query> Queries => _queries.ToImmutableList();
         
         public const int MaxNameLength = 100;
 
@@ -42,7 +43,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             Name = name.Trim();
             Type = type;
             _phraseParts = new List<PhrasePart>();
-            Queries = new List<Query>();
+            _queries = new List<Query>();
         }
 
         public void AddPhrase(Phrase phrase)

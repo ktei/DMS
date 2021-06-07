@@ -29,20 +29,6 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         }
        
         [Fact]
-        public async Task FindById()
-        {
-            var context = Fixture.CreateContext();
-            var sut = new OrganisationRepository(context);
-            var organisation = await context.Organisations.FirstAsync();
-
-            context.ChangeTracker.Clear();
-            var actual = await sut.FindById(organisation.Id);
-
-            actual.Should().NotBeNull();
-            actual!.Users.Should().HaveCountGreaterOrEqualTo(1);
-        }
-
-        [Fact]
         public async Task Add()
         {
             var context = Fixture.CreateContext();

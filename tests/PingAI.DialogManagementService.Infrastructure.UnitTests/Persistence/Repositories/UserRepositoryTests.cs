@@ -1,54 +1,36 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
 using PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Helpers;
+using PingAI.DialogManagementService.TestingUtil.Persistence;
 using Xunit;
 using static Xunit.Assert;
 
 namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Repositories
 {
-    public class UserRepositoryTests : IAsyncLifetime
+    public class UserRepositoryTests : RepositoryTestBase
     {
-        private readonly DialogManagementContextFactory _dialogManagementContextFactory;
-        private readonly TestDataFactory _testDataFactory;
-                
-        public UserRepositoryTests()
+        public UserRepositoryTests(SharedDatabaseFixture fixture) : base(fixture)
         {
-            _dialogManagementContextFactory = new DialogManagementContextFactory();
-            _testDataFactory = new TestDataFactory(_dialogManagementContextFactory.CreateDbContext(new string[] { }));
         }
 
         [Fact]
         public async Task GetUserByAuth0Id()
         {
-            // Arrange
-            await using var context = _dialogManagementContextFactory.CreateDbContext(new string[]{});
+            var context = Fixture.CreateContext();
             var sut = new UserRepository(context);
-            var organisation = _testDataFactory.Organisation;
-            context.Attach(organisation);
-            var user = new User("myuser", Guid.NewGuid().ToString());
-            organisation.AddUser(user);
-            await context.SaveChangesAsync();
-
-            // Act
+            var user = await context.Users.Include(x => x.Organisations).FirstAsync();
+            
+            context.ChangeTracker.Clear();
             var actual = await sut.GetUserByAuth0Id(user.Auth0Id);
 
-            // Assert
-            
-            // clean up
-            organisation.RemoveUser(user);
-            context.Remove(user);
-            await context.SaveChangesAsync();
-            
-            NotNull(actual);
-            Equal(user.Id, actual!.Id);
-            Equal(user.Auth0Id, actual.Auth0Id);
+            actual.Should().NotBeNull();
+            actual!.Organisations.Should().HaveCount(user.Organisations.Count);
         }
-
-        public Task InitializeAsync() => _testDataFactory.Setup();
-
-        public Task DisposeAsync() => _testDataFactory.Cleanup();
     }
 }

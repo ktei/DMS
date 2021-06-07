@@ -39,6 +39,10 @@ namespace PingAI.DialogManagementService.Domain.Model
             _queries = new List<Query>();
         }
 
+        private Response()
+        {
+        }
+
         public string GetDisplayText()
         {
             var sb = new StringBuilder();
