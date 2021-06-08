@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,13 +33,29 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             if (!canWrite)
                 throw new ForbiddenException(ErrorDescriptions.ProjectWriteDenied);
 
-            var queryDisplayOrder = (await _queryRepository.GetMaxDisplayOrder(request.ProjectId)) + 1;
+            var displayOrder = (await _queryRepository.GetMaxDisplayOrder(request.ProjectId)) + 1;
             var query = new Query(request.ProjectId, request.Name, request.Expressions,
-                request.Description, request.Tags, queryDisplayOrder);
+                request.Description, request.Tags, displayOrder);
 
-            var intent = new Intent(request.Name, IntentType.STANDARD);
             var entityNames = await _entityNameRepository.ListByProjectId(request.ProjectId);
 
+            var intent = CreateIntent(request, entityNames);
+
+            query.AddIntent(intent);
+
+            foreach (var response in CreateResponses(request, entityNames))
+            {
+                query.AddResponse(response);
+            }
+
+            await _queryRepository.Add(query);
+            await _unitOfWork.SaveChanges();
+            return query;
+        }
+
+        private static Intent CreateIntent(CreateQueryCommand request, IReadOnlyList<EntityName> entityNames)
+        {
+            var intent = new Intent(request.Name, IntentType.STANDARD);
             var phraseDisplayOrder = 0;
             foreach (var groupedPhraseParts in request.PhraseParts.GroupBy(p => p.PhraseId))
             {
@@ -57,30 +74,33 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
                         phrase.AppendText(phrasePart.Text);
                     }
                 }
+
                 intent.AddPhrase(phrase);
             }
-            query.AddIntent(intent);
 
+            return intent;
+        }
+
+        private IEnumerable<Domain.Model.Response> CreateResponses(CreateQueryCommand request,
+            IReadOnlyList<EntityName> entityNames)
+        {
             foreach (var resp in request.Responses)
             {
                 if (resp.RteText != null)
                 {
                     var resolution = Resolution.Factory.RteText(resp.RteText,
                         entityNames.ToDictionary(x => x.Name));
-                    query.AddResponse(new Domain.Model.Response(resolution, ResponseType.RTE,
-                        resp.Order));
+                    yield return new Domain.Model.Response(resolution, ResponseType.RTE,
+                        resp.Order);
                 }
                 else if (resp.Form != null)
                 {
                     var resolution = Resolution.Factory.Form(resp.Form);
-                    query.AddResponse(new Domain.Model.Response(resolution, ResponseType.FORM,
-                        resp.Order));
+                    yield return new Domain.Model.Response(resolution, ResponseType.FORM,
+                        resp.Order);
                 }
+                // TODO: webhook
             }
-
-            query = await _queryRepository.Add(query);
-            await _unitOfWork.SaveChanges();
-            return query;
         }
     }
 }

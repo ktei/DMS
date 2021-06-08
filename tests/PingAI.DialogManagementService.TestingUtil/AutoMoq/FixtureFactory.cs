@@ -3,9 +3,9 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using Moq;
 
-namespace PingAI.DialogManagementService.Application.UnitTests.Helpers
+namespace PingAI.DialogManagementService.TestingUtil.AutoMoq
 {
-    internal static class FixtureFactory
+    public static class FixtureFactory
     {
         public static T CreateSut<T>(Action<IFixture>? configureFixture = null) where T : class
         {

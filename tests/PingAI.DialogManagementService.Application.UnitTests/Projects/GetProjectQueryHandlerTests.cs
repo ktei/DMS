@@ -8,8 +8,8 @@ using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Caching;
 using PingAI.DialogManagementService.Application.Projects.GetProject;
 using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.TestingUtil.AutoMoq;
 using Xunit;
-using static PingAI.DialogManagementService.Application.UnitTests.Helpers.FixtureFactory;
 using static Moq.It;
 
 namespace PingAI.DialogManagementService.Application.UnitTests.Projects
@@ -27,7 +27,7 @@ namespace PingAI.DialogManagementService.Application.UnitTests.Projects
                 WidgetColor = Defaults.WidgetColor,
                 BusinessTimezone = "Australia/Sydney"
             };
-            var sut = CreateSut<GetProjectQueryHandler>(fixture =>
+            var sut = FixtureFactory.CreateSut<GetProjectQueryHandler>(fixture =>
             {
                 fixture.InjectMock<IAuthorizationService>(m =>
                     m.Setup(s => s.UserCanReadProject(IsAny<Guid>()))

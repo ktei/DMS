@@ -77,5 +77,44 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
 
             actual.Should().HaveCountGreaterOrEqualTo(1);
         }
+
+        [Fact]
+        public async Task Remove()
+        {
+            var context = Fixture.CreateContext();
+            var sut = new QueryRepository(context);
+            var project = await context.Projects.FirstAsync();
+            var query = new Query(project.Id, Guid.NewGuid().ToString(), new Expression[0],
+                Guid.NewGuid().ToString(), null, 40);
+            await context.AddAsync(query);
+            
+            sut.Remove(query);
+            await context.SaveChangesAsync();
+            context.ChangeTracker.Clear();
+            var actual = await context.Queries.AnyAsync(q => q.Id == query.Id);
+
+            actual.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task GetMaxDisplayOrder()
+        {
+            var context = Fixture.CreateContext();
+            var sut = new QueryRepository(context);
+            var project = await context.Projects.FirstAsync();
+            var q1 = new Query(project.Id, Guid.NewGuid().ToString(), new Expression[0],
+                Guid.NewGuid().ToString(), null, 40);
+            var q2 = new Query(project.Id, Guid.NewGuid().ToString(), new Expression[0],
+                Guid.NewGuid().ToString(), null, 39);
+            var q3 = new Query(project.Id, Guid.NewGuid().ToString(), new Expression[0],
+                Guid.NewGuid().ToString(), null, 21);
+            await context.AddRangeAsync(q1, q2, q3);
+            await context.SaveChangesAsync();
+
+            context.ChangeTracker.Clear();
+            var actual = await sut.GetMaxDisplayOrder(project.Id);
+
+            actual.Should().Be(40);
+        }
     }
 }

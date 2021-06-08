@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\PingAI.DialogManagementService.Application\PingAI.DialogManagementService.Application.csproj" />
+    <ProjectReference Include="..\PingAI.DialogManagementService.TestingUtil\PingAI.DialogManagementService.TestingUtil.csproj" />
   </ItemGroup>
 
 </Project>
