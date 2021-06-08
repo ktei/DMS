@@ -47,18 +47,17 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
 
                 using (var context = CreateContext())
                 {
-                    context.Database.EnsureDeleted();
-                    context.Database.EnsureCreated();
-                   
+                    context.EnsureSchemaDeleted();
+                    context.EnsureSchemaCreated();
+
                     // seed Organisations
                     var organisation = new Organisation(Guid.NewGuid().ToString(), "TEST");
                     
                     // seed Users
-                    var user = new User(Guid.NewGuid().ToString(), "AUTH0_ID");
+                    var user = new User(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
                     organisation.AddUser(user);
                     
                     context.Add(organisation);
-                    
                     // seed Projects
                     var project = Project.CreateWithDefaults(organisation.Id);
                     project.AddGreetingResponse(new Response(Resolution.Factory.RteText("Hello, and welcome!"),

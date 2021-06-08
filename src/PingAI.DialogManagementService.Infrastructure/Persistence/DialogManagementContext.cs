@@ -137,10 +137,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
                         case OrganisationUser _:
                             entity.Property("P1").CurrentValue = Guid.NewGuid();
                             break;
-                        default:
-                            entity.Property("CreatedAt").CurrentValue = timestamp;
-                            break;
                     }
+                    entity.Property("CreatedAt").CurrentValue = timestamp;
                 }
 
                 entity.Property("UpdatedAt").CurrentValue = timestamp;

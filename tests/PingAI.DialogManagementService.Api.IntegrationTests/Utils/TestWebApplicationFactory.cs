@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
-using PingAI.DialogManagementService.Infrastructure.Services.Nlu;
 
 namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
 {
@@ -22,27 +20,27 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
                          typeof(DbContextOptions<DialogManagementContext>));
-                services.Remove(descriptor);
+                if (descriptor != null)
+                {
+                    services.Remove(descriptor);
+                }
 
                 // change connection string to your local DB's connection string
                 services.AddDbContext<DialogManagementContext>(optionsBuilder =>
                     optionsBuilder.UseNpgsql(
                         "Host=localhost;Database=postgres;Username=postgres;Password=admin"));
-                
+
                 // uncomment this if you want to test the integration with NLU service
                 // but you need to run local NLU service at port 5678
                 // services.AddHttpClient<INluService, NluService>(client =>
                 // {
                 //     client.BaseAddress = new Uri("http://localhost:5678");
                 // });
-                
+
                 // uncomment this if you want to mock NluService
                 services.AddTransient(_ => MockNluService());
-                
-                services.AddStackExchangeRedisCache(options =>
-                {
-                    options.Configuration = "localhost:6379";
-                });
+
+                services.AddStackExchangeRedisCache(options => { options.Configuration = "localhost:6379"; });
             });
         }
 
