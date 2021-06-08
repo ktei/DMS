@@ -33,7 +33,7 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
                 throw new ForbiddenException(ErrorDescriptions.ProjectWriteDenied);
 
             var queryDisplayOrder = (await _queryRepository.GetMaxDisplayOrder(request.ProjectId)) + 1;
-            var query = new Query(request.Name, request.ProjectId, request.Expressions,
+            var query = new Query(request.ProjectId, request.Name, request.Expressions,
                 request.Description, request.Tags, queryDisplayOrder);
 
             var intent = new Intent(request.Name, IntentType.STANDARD);
@@ -78,7 +78,7 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
                 }
             }
 
-            query = await _queryRepository.AddQuery(query);
+            query = await _queryRepository.Add(query);
             await _unitOfWork.SaveChanges();
             return query;
         }

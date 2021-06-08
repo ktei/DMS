@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +18,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<Query?> GetQueryByIdWithoutJoins(Guid queryId)
-        {
-            var query = await _context.Queries.FirstOrDefaultAsync(q => q.Id == queryId);
-            return query;
-        }
-
-        public async Task<Query?> GetQueryById(Guid queryId)
+        public async Task<Query?> FindById(Guid queryId)
         {
             var query = await _context.Queries
                 .AsSplitQuery()
@@ -39,20 +34,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .FirstOrDefaultAsync(x => x.Id == queryId);
             return query;
         }
-
-        public async Task<Query> AddQuery(Query query)
-        {
-            var result = await _context.Queries.AddAsync(query);
-            return result.Entity;
-        }
-
-        public Task<List<Query>> ListByProjectId(Guid projectId)
-        {
-            return _context.Queries.Where(q => q.ProjectId == projectId)
-                .ToListAsync();
-        }
-
-        public async Task<List<Query>> ListByProjectId(Guid projectId, ResponseType? responseType)
+        
+        public async Task<IReadOnlyList<Query>> ListByProjectId(Guid projectId, ResponseType? responseType)
         {
             var query = _context.Queries
                 .AsSplitQuery()
@@ -71,29 +54,44 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             // TODO: we shouldn't compare enums with "ToString", but
             // without it the code throws runtime exception complaining
             // it can't find enum_Response_type
-            
-            // TODO: this logic is not gonna hold soon
-            if (responseType == ResponseType.RTE)
+
+            switch (responseType)
             {
-                // RTE query means all responses should be RTE
-                query = query.Where(x => x.Responses.All(
-                    qr => qr.Type == ResponseType.RTE ||
-                          qr.Type == ResponseType.QUICK_REPLY));
-            }
-            else if (responseType == ResponseType.HANDOVER || responseType == ResponseType.FORM)
-            {
-                // otherwise, we filter by response type
-                query = query.Where(x => x.Responses.Any(
-                    qr => qr.Type == responseType));
+                // TODO: this logic is not gonna hold soon
+                case ResponseType.RTE:
+                    // RTE query means all responses should be RTE
+                    query = query.Where(x => x.Responses.All(
+                        qr => qr.Type == ResponseType.RTE ||
+                              qr.Type == ResponseType.QUICK_REPLY));
+                    break;
+                case ResponseType.HANDOVER:
+                case ResponseType.FORM:
+                    // otherwise, we filter by response type
+                    query = query.Where(x => x.Responses.Any(
+                        qr => qr.Type == responseType));
+                    break;
             }
 
             var results = await query.OrderBy(x => x.DisplayOrder)
                 .ToListAsync();
 
-            return results;
+            return results.ToImmutableList();
         }
 
-        public void RemoveQuery(Query query)
+        public async Task<Query> Add(Query query)
+        {
+            var result = await _context.Queries.AddAsync(query);
+            return result.Entity;
+        }
+
+        public async Task<IReadOnlyList<Query>> ListByProjectIdWithoutJoins(Guid projectId)
+        {
+            var results = await _context.Queries.Where(q => q.ProjectId == projectId)
+                .ToListAsync();
+            return results.ToImmutableList();
+        }
+
+        public void Remove(Query query)
         {
             _context.Queries.Remove(query);
         }

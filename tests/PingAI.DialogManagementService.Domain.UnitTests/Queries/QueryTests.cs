@@ -29,7 +29,7 @@ namespace PingAI.DialogManagementService.Domain.UnitTests.Queries
         }
 
         private static Query CreateQueryWithDisplayOrder(int displayOrder) => new Query(
-            Guid.NewGuid().ToString(), Guid.Parse("0c8b446c-142b-42b6-8e16-44d545f03de2"),
+            Guid.Parse("0c8b446c-142b-42b6-8e16-44d545f03de2"), Guid.NewGuid().ToString(),
             new Expression[0], Guid.NewGuid().ToString(), null, displayOrder);
     }
 }

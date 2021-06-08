@@ -8,12 +8,11 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
 {
     public interface IQueryRepository
     {
-        Task<Query?> GetQueryByIdWithoutJoins(Guid queryId);
-        Task<Query?> GetQueryById(Guid queryId);
-        Task<Query> AddQuery(Query query);
-        Task<List<Query>> ListByProjectId(Guid projectId);
-        Task<List<Query>> ListByProjectId(Guid projectId, ResponseType? responseType);
-        void RemoveQuery(Query query);
+        Task<Query?> FindById(Guid queryId);
+        Task<IReadOnlyList<Query>> ListByProjectId(Guid projectId, ResponseType? responseType);
+        Task<Query> Add(Query query);
+        Task<IReadOnlyList<Query>> ListByProjectIdWithoutJoins(Guid projectId);
+        void Remove(Query query);
         Task<int> GetMaxDisplayOrder(Guid projectId);
     }
 }

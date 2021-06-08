@@ -6,7 +6,7 @@ namespace PingAI.DialogManagementService.Application.Interfaces.Persistence
 {
     public interface ISlackWorkspaceRepository
     {
-        Task<SlackWorkspace?> GetSlackWorkspaceByProjectId(Guid projectId);
-        Task<SlackWorkspace> AddSlackWorkspace(SlackWorkspace slackWorkspace);
+        Task<SlackWorkspace?> FindByProjectId(Guid projectId);
+        Task<SlackWorkspace> Add(SlackWorkspace slackWorkspace);
     }
 }

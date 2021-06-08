@@ -106,9 +106,9 @@ namespace PingAI.DialogManagementService.Domain.Model
             _greetingResponses = new List<GreetingResponse>();
         }
 
-        private Project()
-        {
-        }
+        // private Project()
+        // {
+        // }
 
         public static Project CreateWithDefaults(Guid organisationId) =>
             new Project(organisationId, Guid.NewGuid().ToString(),

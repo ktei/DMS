@@ -95,7 +95,7 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                         ResponseType.RTE, 0);
                     
                     // seed Queries
-                    var query = new Query("ORDER_FOOD_QUERY", project.Id, new Expression[0], "SEEDED",
+                    var query = new Query(project.Id, "ORDER_FOOD_QUERY", new Expression[0], "SEEDED",
                         null, 0);
                     query.AddIntent(orderDeliveryIntent);
                     query.AddResponse(orderDeliveryResponse);

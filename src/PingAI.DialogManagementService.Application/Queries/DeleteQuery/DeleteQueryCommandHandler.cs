@@ -25,7 +25,7 @@ namespace PingAI.DialogManagementService.Application.Queries.DeleteQuery
 
         protected override async Task Handle(DeleteQueryCommand request, CancellationToken cancellationToken)
         {
-            var query = await _queryRepository.GetQueryById(request.QueryId);
+            var query = await _queryRepository.FindById(request.QueryId);
             if (query == null)
                 return;
             var canWrite = await _authorizationService.UserCanWriteProject(query.ProjectId);
@@ -36,7 +36,7 @@ namespace PingAI.DialogManagementService.Application.Queries.DeleteQuery
             throw new NotImplementedException("query delete");
             
             // query.Delete();
-            _queryRepository.RemoveQuery(query);
+            _queryRepository.Remove(query);
 
             await _unitOfWork.SaveChanges();
         }

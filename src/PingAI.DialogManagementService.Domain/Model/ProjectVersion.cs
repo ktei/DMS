@@ -9,18 +9,13 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public Guid OrganisationId { get; private set; }
 
-        public Guid ProjectId { get; set; }
+        public Guid ProjectId { get; private set; }
 
-        public Project Project { get; set; }
+        public Project Project { get; private set; }
 
         public Guid VersionGroupId { get; private set; }
         
         public ProjectVersionNumber Version { get; private set; }
-
-        private ProjectVersion()
-        {
-            
-        }
 
         public ProjectVersion(Guid projectId, Guid organisationId, Guid versionGroupId, ProjectVersionNumber version)
         {

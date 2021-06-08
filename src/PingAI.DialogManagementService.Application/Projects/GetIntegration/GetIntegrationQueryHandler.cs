@@ -25,7 +25,7 @@ namespace PingAI.DialogManagementService.Application.Projects.GetIntegration
             if (!canRead)
                 throw new ForbiddenException(ErrorDescriptions.ProjectReadDenied);
 
-            var slackWorkspace = await _slackWorkspaceRepository.GetSlackWorkspaceByProjectId(request.ProjectId);
+            var slackWorkspace = await _slackWorkspaceRepository.FindByProjectId(request.ProjectId);
             return new IntegrationResult
             {
                 SlackWorkspace = slackWorkspace

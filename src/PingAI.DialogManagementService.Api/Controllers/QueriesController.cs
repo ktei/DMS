@@ -11,10 +11,8 @@ using PingAI.DialogManagementService.Api.Models.Queries;
 using PingAI.DialogManagementService.Application.Queries.CreateQuery;
 using PingAI.DialogManagementService.Application.Queries.DeleteQuery;
 using PingAI.DialogManagementService.Application.Queries.GetQuery;
-using PingAI.DialogManagementService.Application.Queries.Insert;
 using PingAI.DialogManagementService.Application.Queries.ListQueries;
 using PingAI.DialogManagementService.Application.Queries.UpdateDisplayOrders;
-using PingAI.DialogManagementService.Application.Queries.UpdateQuery;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
 using PhrasePart = PingAI.DialogManagementService.Application.Queries.CreateQuery.PhrasePart;
@@ -90,15 +88,6 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 new Expression[0], responses, request.Description ?? request.Name, request.Tags);
             var query = await _mediator.Send(createQueryCommand);
             return new QueryDto(query);
-        }
-
-        [HttpPost("insert")]
-        public async Task<IActionResult> Insert([FromBody] InsertRequest request)
-        {
-            var command = new InsertCommand(
-                Guid.Parse(request.QueryId), request.DisplayOrder);
-            await _mediator.Send(command);
-            return Ok();
         }
 
         [HttpPost("displayOrders")]

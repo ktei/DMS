@@ -47,10 +47,10 @@ namespace PingAI.DialogManagementService.Application.Integration.Slack
                 throw new BadRequestException($"Failed to connect to Slack: {slackResponse.Error}");
             }
 
-            var slackWorkspace = await _slackWorkspaceRepository.GetSlackWorkspaceByProjectId(request.ProjectId);
+            var slackWorkspace = await _slackWorkspaceRepository.FindByProjectId(request.ProjectId);
             if (slackWorkspace == null)
             {
-                slackWorkspace = await _slackWorkspaceRepository.AddSlackWorkspace(
+                slackWorkspace = await _slackWorkspaceRepository.Add(
                     new SlackWorkspace(request.ProjectId, slackResponse.AccessToken!,
                         slackResponse.IncomingWebhook!.Url,
                         slackResponse.Team.Id));

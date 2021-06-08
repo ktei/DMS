@@ -1,15 +1,9 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using PingAI.DialogManagementService.Domain.Model;
-using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
-using PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Helpers;
 using PingAI.DialogManagementService.TestingUtil.Persistence;
 using Xunit;
-using static Xunit.Assert;
 
 namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Repositories
 {
@@ -28,7 +22,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             
             context.ChangeTracker.Clear();
             var actual = await sut.GetUserByAuth0Id(user.Auth0Id);
-
+            
             actual.Should().NotBeNull();
             actual!.Organisations.Should().HaveCount(user.Organisations.Count);
         }

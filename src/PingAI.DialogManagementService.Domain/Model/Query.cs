@@ -23,11 +23,10 @@ namespace PingAI.DialogManagementService.Domain.Model
         
         public const int MaxNameLength = 100;
         public const int MaxTagLength = 50;
-
-        private Query()
-        {
-        }
         
+        // Needed by EF
+        private Query(){}
+
         public Query(string name, IEnumerable<Expression> expressions,
             string description, IEnumerable<string>? tags, int displayOrder)
         {
@@ -60,7 +59,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             _responses = new List<Response>();
         }
 
-        public Query(string name, Guid projectId, IEnumerable<Expression> expressions,
+        public Query(Guid projectId, string name, IEnumerable<Expression> expressions,
             string description, IEnumerable<string>? tags, int displayOrder)
             : this(name, expressions, description, tags, displayOrder)
         {

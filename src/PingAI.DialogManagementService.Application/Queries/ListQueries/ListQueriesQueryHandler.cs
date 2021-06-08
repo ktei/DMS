@@ -13,7 +13,7 @@ using static PingAI.DialogManagementService.Domain.ErrorHandling.ErrorDescriptio
 
 namespace PingAI.DialogManagementService.Application.Queries.ListQueries
 {
-    public class ListQueriesQueryHandler : IRequestHandler<ListQueriesQuery, List<Query>>
+    public class ListQueriesQueryHandler : IRequestHandler<ListQueriesQuery, IReadOnlyList<Query>>
     {
         private readonly IQueryRepository _queryRepository;
         private readonly IAuthorizationService _authorizationService;
@@ -27,7 +27,7 @@ namespace PingAI.DialogManagementService.Application.Queries.ListQueries
             _projectVersionRepository = projectVersionRepository;
         }
 
-        public async Task<List<Query>> Handle(ListQueriesQuery request, CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<Query>> Handle(ListQueriesQuery request, CancellationToken cancellationToken)
         {
             var projectId = request.ProjectId;
             

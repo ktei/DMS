@@ -30,7 +30,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var sut = new SlackWorkspaceRepository(context);
             
             // Act
-            var slackWorkspace = await sut.AddSlackWorkspace(
+            var slackWorkspace = await sut.Add(
                 new SlackWorkspace(project.Id, "accesstoken", "http://webhook.com",
                     "team_123"));
             await context.SaveChangesAsync();

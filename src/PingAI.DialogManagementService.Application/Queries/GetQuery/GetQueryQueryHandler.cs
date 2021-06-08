@@ -22,7 +22,7 @@ namespace PingAI.DialogManagementService.Application.Queries.GetQuery
         
         public async Task<Query> Handle(GetQueryQuery request, CancellationToken cancellationToken)
         {
-            var query = await _queryRepository.GetQueryById(request.QueryId);
+            var query = await _queryRepository.FindById(request.QueryId);
             if (query == null)
                 throw new BadRequestException(QueryNotFound);
             var canWrite = await _authorizationService.UserCanWriteProject(query.ProjectId);

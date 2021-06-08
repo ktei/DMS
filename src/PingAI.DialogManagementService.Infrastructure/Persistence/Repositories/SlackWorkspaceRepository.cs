@@ -15,13 +15,13 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public Task<SlackWorkspace?> GetSlackWorkspaceByProjectId(Guid projectId)
+        public Task<SlackWorkspace?> FindByProjectId(Guid projectId)
         {
             return _context.SlackWorkspaces
                 .FirstOrDefaultAsync(x => x.ProjectId == projectId);
         }
 
-        public async Task<SlackWorkspace> AddSlackWorkspace(SlackWorkspace slackWorkspace)
+        public async Task<SlackWorkspace> Add(SlackWorkspace slackWorkspace)
         {
             _ = slackWorkspace ?? throw new ArgumentNullException(nameof(slackWorkspace));
             return (await _context.SlackWorkspaces.AddAsync(slackWorkspace)).Entity;
