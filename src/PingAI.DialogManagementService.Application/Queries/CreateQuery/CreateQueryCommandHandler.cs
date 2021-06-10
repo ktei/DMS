@@ -55,7 +55,7 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
 
         private static Intent CreateIntent(CreateQueryCommand request, IReadOnlyList<EntityName> entityNames)
         {
-            var intent = new Intent(request.Name, IntentType.STANDARD);
+            var intent = new Intent(request.ProjectId, request.Name, IntentType.STANDARD);
             var phraseDisplayOrder = 0;
             foreach (var groupedPhraseParts in request.PhraseParts.GroupBy(p => p.PhraseId))
             {
@@ -90,13 +90,13 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
                 {
                     var resolution = Resolution.Factory.RteText(resp.RteText,
                         entityNames.ToDictionary(x => x.Name));
-                    yield return new Domain.Model.Response(resolution, ResponseType.RTE,
+                    yield return new Domain.Model.Response(request.ProjectId, resolution, ResponseType.RTE,
                         resp.Order);
                 }
                 else if (resp.Form != null)
                 {
                     var resolution = Resolution.Factory.Form(resp.Form);
-                    yield return new Domain.Model.Response(resolution, ResponseType.FORM,
+                    yield return new Domain.Model.Response(request.ProjectId, resolution, ResponseType.FORM,
                         resp.Order);
                 }
                 // TODO: webhook

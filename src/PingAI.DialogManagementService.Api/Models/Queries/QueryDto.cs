@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using PingAI.DialogManagementService.Api.Models.Intents;
@@ -18,7 +17,6 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         public int DisplayOrder { get; set; }
         public IntentDto[] Intents { get; set; }
         public ResponseDto[] Responses { get; set; }
-
 
         public QueryDto(string queryId, string name, string projectId, 
             IEnumerable<ExpressionDto> expressions, string description,
@@ -47,6 +45,12 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
             Responses = query.Responses.Select(r => new ResponseDto(r)).ToArray();
             Description = query.Description;
             Tags = query.Tags?.ToArray();
+        }
+
+        // This is only needed by System.Text.Json
+        public QueryDto()
+        {
+            
         }
     }
 }

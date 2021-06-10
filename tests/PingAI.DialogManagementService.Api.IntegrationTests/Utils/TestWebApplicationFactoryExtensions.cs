@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 
@@ -30,6 +31,8 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                             .AddScheme<AuthenticationSchemeOptions, TestUserAuthHandler>(
                                 "Test", options => { });
                         configureTestServices?.Invoke(services);
+                        services.TryAddSingleton(TestUserIdProvider.FirstUser);
+                        services.AddTransient<TestUserFinder>();
                     });
                 })
                 .CreateClient(new WebApplicationFactoryClientOptions
