@@ -13,10 +13,11 @@ using PingAI.DialogManagementService.Application.Queries.DeleteQuery;
 using PingAI.DialogManagementService.Application.Queries.GetQuery;
 using PingAI.DialogManagementService.Application.Queries.ListQueries;
 using PingAI.DialogManagementService.Application.Queries.UpdateDisplayOrders;
+using PingAI.DialogManagementService.Application.Queries.UpdateQuery;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
-using PhrasePart = PingAI.DialogManagementService.Application.Queries.CreateQuery.PhrasePart;
-using Response = PingAI.DialogManagementService.Application.Queries.CreateQuery.Response;
+using PhrasePart = PingAI.DialogManagementService.Application.Queries.Shared.PhrasePart;
+using Response = PingAI.DialogManagementService.Application.Queries.Shared.Response;
 
 namespace PingAI.DialogManagementService.Api.Controllers
 {
@@ -84,7 +85,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 return new Response(r.RteText, formResolution, r.Order);
             }).ToArray();
             var createQueryCommand = new CreateQueryCommand(
-                request.Name, Guid.Parse(request.ProjectId), phraseParts,
+                request.Name, projectId, phraseParts,
                 new Expression[0], responses, request.Description ?? request.Name, request.Tags);
             var query = await _mediator.Send(createQueryCommand);
             return new QueryDto(query);
@@ -98,26 +99,30 @@ namespace PingAI.DialogManagementService.Api.Controllers
             return Ok();
         }
 
-        // [MapToApiVersion("1.1")]
-        // [HttpPut("{queryId}")]
-        // public async Task<ActionResult<UpdateQueryResponse>> UpdateQueryV1_1(
-        //     [FromRoute] Guid queryId,
-        //     [FromBody] UpdateQueryRequestV1_1 request)
-        // {
-        //     var phraseParts = FlattenPhraseParts(request.Intent.PhraseParts);
-        //     var responses = request.Responses.Select(r =>
-        //     {
-        //         var fields = r.Form?.Fields.Select(f => new FormResolution.Field(f.DisplayName, f.Name));
-        //         return new Response(r.RteText, fields == null ? null : new FormResolution(fields), r.Order);
-        //     }).ToArray();
-        //     var query = await _mediator.Send(new UpdateQueryCommand(
-        //         queryId,
-        //         request.Name,
-        //         new Expression[0], request.Description ?? request.Name, request.Tags,
-        //         request.DisplayOrder, null, intent, null, responses,
-        //         request.Responses.Select(r => r.RteText).ToArray()));
-        //     return new UpdateQueryResponse(query);
-        // }
+        [MapToApiVersion("1.1")]
+        [HttpPut("{queryId}")]
+        public async Task<ActionResult<QueryDto>> UpdateQueryV1_1(
+            [FromRoute] Guid queryId,
+            [FromBody] UpdateQueryRequestV1_1 request)
+        {
+            var phraseParts = FlattenPhraseParts(request.Intent.PhraseParts).ToArray();
+            var responses = request.Responses.Select(r =>
+            {
+                var formResolution = r.Form == null
+                    ? null
+                    : new FormResolution(
+                        r.Form.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
+                return new Response(r.RteText, formResolution, r.Order);
+            }).ToArray();
+            var query = await _mediator.Send(new UpdateQueryCommand(
+                queryId,
+                request.Name,
+                phraseParts,
+                new Expression[0],
+                responses, request.Description ?? request.Name,
+                request.Tags, request.DisplayOrder));
+            return new QueryDto(query);
+        }
 
         private static IEnumerable<PhrasePart> FlattenPhraseParts(IEnumerable<CreatePhrasePartDto[]> partsGroups)
         {

@@ -52,8 +52,15 @@ namespace PingAI.DialogManagementService.Domain.Model
                 throw new ArgumentNullException(nameof(phrase));
             _phraseParts.AddRange(phrase);
         }
+
+        public void ClearPhrases()
+        {
+            if (_phraseParts == null)
+                throw new InvalidOperationException($"Load {nameof(PhraseParts)} first.");
+            _phraseParts.Clear();
+        }
         
-        public void UpdateName(string name)
+        public void Rename(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -71,23 +78,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             AddIntentUpdatedEvent();
         }
 
-        public void UpdatePhrases(IEnumerable<PhrasePart> phraseParts)
-        {
-            _phraseParts.Clear();
-            var partsToAdd = phraseParts.ToArray();
-            foreach (var groupedParts in partsToAdd.GroupBy(p => p.PhraseId))
-            {
-                var position = 0;
-                foreach (var part in groupedParts)
-                {
-                    part.UpdatePosition(position++);
-                    _phraseParts.Add(part);
-                }
-            }
-
-            AddIntentUpdatedEvent();
-        }
-
         private void AddIntentUpdatedEvent()
         {
             // Updated event only makes sense when there is no Deleted event
@@ -96,7 +86,8 @@ namespace PingAI.DialogManagementService.Domain.Model
 
             // Deduplicate
             var oldUpdateEvent = DomainEvents.FirstOrDefault(e => e is IntentUpdatedEvent);
-            RemoveDomainEvent(oldUpdateEvent);
+            if (oldUpdateEvent != null)
+                RemoveDomainEvent(oldUpdateEvent);
             AddDomainEvent(new IntentUpdatedEvent(this));
         }
 

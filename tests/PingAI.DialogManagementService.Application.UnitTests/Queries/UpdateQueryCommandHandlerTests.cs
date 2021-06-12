@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
-using PingAI.DialogManagementService.Application.Queries.CreateQuery;
+using PingAI.DialogManagementService.Application.Queries.UpdateQuery;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.TestingUtil.AutoMoq;
 using Xunit;
@@ -13,25 +13,30 @@ using Response = PingAI.DialogManagementService.Application.Queries.Shared.Respo
 
 namespace PingAI.DialogManagementService.Application.UnitTests.Queries
 {
-    public class CreateQueryCommandHandlerTests
+    public class UpdateQueryCommandHandlerTests
     {
         [Fact]
-        public async Task CreateQuery()
+        public async Task UpdateQuery()
         {
-            var command = new CreateQueryCommand("q1", Guid.NewGuid(),
+            var command = new UpdateQueryCommand(Guid.NewGuid(), "query",
                 new[]
                 {
                     new PhrasePart(Guid.NewGuid(), PhrasePartType.TEXT, 0, "Hello", null, null)
-                }, new Expression[0], new Response[]
+                }, new Expression[0],
+                new[]
                 {
                     new Response("rte response", null, 0)
-                }, "test", null);
-            var sut = FixtureFactory.CreateSut<CreateQueryCommandHandler>(fixture =>
+                }, "test", null, 0
+            );
+            var sut = FixtureFactory.CreateSut<UpdateQueryCommandHandler>(fixture =>
             {
+                fixture.InjectMock<IQueryRepository>(m => m.Setup(x =>
+                    x.FindById(It.IsAny<Guid>())).ReturnsAsync(new Query(Guid.NewGuid(),
+                    "query", new Expression[0], "query", null, 0)));
                 fixture.InjectMock<IEntityNameRepository>(m => m.Setup(x => x.ListByProjectId(It.IsAny<Guid>()))
                     .ReturnsAsync(new EntityName[0]));
             });
-            
+
             var query = await sut.Handle(command, CancellationToken.None);
 
             query.Should().NotBeNull();

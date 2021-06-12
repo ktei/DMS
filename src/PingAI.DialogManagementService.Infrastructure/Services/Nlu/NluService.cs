@@ -1,9 +1,12 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
+using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Utils;
+using PhrasePart = PingAI.DialogManagementService.Application.Interfaces.Services.Nlu.PhrasePart;
 
 namespace PingAI.DialogManagementService.Infrastructure.Services.Nlu
 {
@@ -15,18 +18,35 @@ namespace PingAI.DialogManagementService.Infrastructure.Services.Nlu
         {
             _httpClient = httpClient;
         }
-        
-        public async Task<SaveIntentResponse> SaveIntent(SaveIntentRequest request)
+
+        public async Task SaveIntent(Intent intent)
         {
             var httpResponse = await _httpClient.PutAsJsonAsync(
-                BuildApiPath("Intents", request.ProjectId),
-                request);
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                return await httpResponse.Content.ReadFromJsonAsync<SaveIntentResponse>();
-            }
+                BuildApiPath("Intents", intent.ProjectId),
+                new SaveIntentRequest
+                {
 
-            throw await httpResponse.AsDomainException();
+                    IntentId = intent.Id,
+                    Name = intent.Name,
+                    ProjectId = intent.ProjectId,
+                    TrainingPhrases = intent.PhraseParts.GroupBy(p => p.PhraseId)
+                        .Select(g => new TrainingPhrase
+                        {
+                            Parts = g.Select(p => new PhrasePart
+                            {
+                                EntityName = p.EntityName?.Name,
+                                EntityType = p.EntityType?.Name,
+                                EntityValue = p.Value,
+                                Text = p.Text,
+                                Type = p.Type.ToString()
+                            }).ToList()
+                        }).ToList()
+
+                });
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw await httpResponse.AsDomainException();
+            }
         }
 
         public async Task DeleteIntent(Guid projectId, Guid intentId)

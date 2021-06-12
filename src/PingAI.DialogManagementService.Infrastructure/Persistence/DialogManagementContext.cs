@@ -1,9 +1,11 @@
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using Npgsql.NameTranslation;
@@ -20,11 +22,61 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         static DialogManagementContext() => MapEnums();
 
         private readonly IMediator _mediator;
+        private IDbContextTransaction? _currentTransaction;
 
         public DialogManagementContext(DbContextOptions<DialogManagementContext> options, IMediator mediator)
             : base(options)
         {
             _mediator = mediator;
+        }
+        
+        public async Task BeginTransactionAsync()
+        {
+            if (_currentTransaction != null) return;
+
+            _currentTransaction = await Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+        }
+        
+        public async Task CommitTransactionAsync(Func<Task> beforeCommit)
+        {
+            if (_currentTransaction == null)
+                throw new InvalidOperationException("No transaction exists.");
+
+            try
+            {
+                await SaveChangesAsync();
+                await beforeCommit();
+                await _currentTransaction.CommitAsync();
+            }
+            catch
+            {
+                RollbackTransaction();
+                throw;
+            }
+            finally
+            {
+                if (_currentTransaction != null)
+                {
+                    _currentTransaction.Dispose();
+                    _currentTransaction = null;
+                }
+            }
+        }
+
+        public void RollbackTransaction()
+        {
+            try
+            {
+                _currentTransaction?.Rollback();
+            }
+            finally
+            {
+                if (_currentTransaction != null)
+                {
+                    _currentTransaction.Dispose();
+                    _currentTransaction = null;
+                }
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
