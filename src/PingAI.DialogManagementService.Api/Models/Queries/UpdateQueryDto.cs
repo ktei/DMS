@@ -4,7 +4,7 @@ using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Api.Models.Queries
 {
-    public class UpdateQueryRequestV1_1
+    public class UpdateQueryDto
     {
         public string Name { get; set; }
         public string? Description { get; set; }
@@ -14,9 +14,9 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
         public CreateResponseDto[] Responses { get; set; }
     }
     
-    public class UpdateQueryRequestV1_1Validator : AbstractValidator<UpdateQueryRequestV1_1>
+    public class UpdateQueryDtoValidator : AbstractValidator<UpdateQueryDto>
     {
-        public UpdateQueryRequestV1_1Validator()
+        public UpdateQueryDtoValidator()
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
@@ -24,7 +24,7 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
             RuleForEach(x => x.Tags).NotEmpty()
                 .MaximumLength(Query.MaxTagLength);
             RuleFor(x => x.Intent)
-                .Cascade(CascadeMode.StopOnFirstFailure)
+                .Cascade(CascadeMode.Stop)
                 .NotNull()
                 .SetValidator(new CreateIntentDtoValidator());
             RuleFor(x => x.Responses)

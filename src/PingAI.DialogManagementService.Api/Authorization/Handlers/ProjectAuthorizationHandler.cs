@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization.Infrastructure;
 using PingAI.DialogManagementService.Api.Authorization.Utils;
 using PingAI.DialogManagementService.Application.Interfaces.Configuration;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
+using PingAI.DialogManagementService.Domain.Repositories;
 
 namespace PingAI.DialogManagementService.Api.Authorization.Handlers
 {

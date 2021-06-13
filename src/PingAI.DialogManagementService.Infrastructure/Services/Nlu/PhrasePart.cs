@@ -1,6 +1,4 @@
-using PingAI.DialogManagementService.Domain.Model;
-
-namespace PingAI.DialogManagementService.Application.Interfaces.Services.Nlu
+namespace PingAI.DialogManagementService.Infrastructure.Services.Nlu
 {
     public class PhrasePart
     {

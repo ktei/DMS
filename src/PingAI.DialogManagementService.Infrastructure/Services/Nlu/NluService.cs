@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Utils;
-using PhrasePart = PingAI.DialogManagementService.Application.Interfaces.Services.Nlu.PhrasePart;
+using PhrasePart = PingAI.DialogManagementService.Infrastructure.Services.Nlu.PhrasePart;
 
 namespace PingAI.DialogManagementService.Infrastructure.Services.Nlu
 {

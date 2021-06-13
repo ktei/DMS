@@ -4,6 +4,7 @@ using MediatR;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Domain.Repositories;
 using static PingAI.DialogManagementService.Domain.ErrorHandling.ErrorDescriptions;
 
 namespace PingAI.DialogManagementService.Application.Admin.Projects

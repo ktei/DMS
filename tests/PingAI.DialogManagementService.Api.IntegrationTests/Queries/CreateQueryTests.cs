@@ -22,7 +22,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
         }
 
         [Fact]
-        public async Task CreateFaqQuery()
+        public async Task CreateQuery()
         {
             var context = Fixture.CreateContext();
             var project = await context.Projects.FirstAsync();
@@ -41,9 +41,9 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             createdQuery.Responses.Should().HaveCount(2);
         }
 
-        private static CreateQueryRequestV1_1 BuildRequest(Guid projectId)
+        private static CreateQueryDto BuildRequest(Guid projectId)
         {
-            return new CreateQueryRequestV1_1
+            return new CreateQueryDto
             {
                 ProjectId = projectId.ToString(),
                 Name = Guid.NewGuid().ToString(),

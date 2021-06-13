@@ -72,7 +72,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
 
         [MapToApiVersion("1.1")]
         [HttpPost]
-        public async Task<ActionResult<QueryDto>> CreateQuery([FromBody] CreateQueryRequestV1_1 request)
+        public async Task<ActionResult<QueryDto>> CreateQuery([FromBody] CreateQueryDto request)
         {
             var projectId = Guid.Parse(request.ProjectId);
             var phraseParts = FlattenPhraseParts(request.Intent.PhraseParts).ToArray();
@@ -103,7 +103,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
         [HttpPut("{queryId}")]
         public async Task<ActionResult<QueryDto>> UpdateQuery(
             [FromRoute] Guid queryId,
-            [FromBody] UpdateQueryRequestV1_1 request)
+            [FromBody] UpdateQueryDto request)
         {
             var phraseParts = FlattenPhraseParts(request.Intent.PhraseParts).ToArray();
             var responses = request.Responses.Select(r =>

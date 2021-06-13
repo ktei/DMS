@@ -1,5 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -48,10 +50,9 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
 
         private static INluService MockNluService()
         {
-            var mock = new Mock<INluService>();
-            mock.Setup(x => x.SaveIntent(It.IsAny<Intent>()))
-                .Returns(Task.CompletedTask);
-            return mock.Object;
+            var fixture = new Fixture().Customize(new AutoMoqCustomization {ConfigureMembers = true});
+            return fixture.Create<INluService>();
         }
     }
 }
+

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Domain.Repositories;
 
 namespace PingAI.DialogManagementService.Application.Admin.Projects
 {

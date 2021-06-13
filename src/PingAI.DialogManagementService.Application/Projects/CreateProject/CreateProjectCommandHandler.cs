@@ -6,23 +6,25 @@ using System.Threading.Tasks;
 using MediatR;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
+using PingAI.DialogManagementService.Application.Interfaces.Services.Security;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Domain.Repositories;
 
 namespace PingAI.DialogManagementService.Application.Projects.CreateProject
 {
     public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Project>
     {
-        private readonly IRequestContext _requestContext;
+        private readonly IIdentityContext _identityContext;
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _uow;
 
         public CreateProjectCommandHandler(
-            IRequestContext requestContext, IOrganisationRepository organisationRepository, IUnitOfWork uow,
+            IIdentityContext identityContext, IOrganisationRepository organisationRepository, IUnitOfWork uow,
             IProjectRepository projectRepository)
         {
-            _requestContext = requestContext;
+            _identityContext = identityContext;
             _organisationRepository = organisationRepository;
             _uow = uow;
             _projectRepository = projectRepository;
@@ -30,7 +32,7 @@ namespace PingAI.DialogManagementService.Application.Projects.CreateProject
 
         public async Task<Project> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
-            var user = await _requestContext.GetUser();
+            var user = await _identityContext.GetUser();
             if (!user.Organisations.Any())
                 throw new BadRequestException($"User {user.Id} has no organisations");
            

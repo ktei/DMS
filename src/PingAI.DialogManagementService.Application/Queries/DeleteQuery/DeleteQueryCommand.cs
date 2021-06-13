@@ -5,16 +5,11 @@ namespace PingAI.DialogManagementService.Application.Queries.DeleteQuery
 {
     public class DeleteQueryCommand : IRequest
     {
-        public Guid QueryId { get; set; }
+        public Guid QueryId { get; }
 
         public DeleteQueryCommand(Guid queryId)
         {
             QueryId = queryId;
-        }
-
-        public DeleteQueryCommand()
-        {
-            
         }
     }
 }

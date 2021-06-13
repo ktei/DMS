@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using MediatR;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
+using PingAI.DialogManagementService.Application.Interfaces.Services.Security;
 using PingAI.DialogManagementService.Application.Utils;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Domain.Repositories;
 using static PingAI.DialogManagementService.Domain.ErrorHandling.ErrorDescriptions;
 
 namespace PingAI.DialogManagementService.Application.Projects.PublishProject
@@ -17,16 +19,16 @@ namespace PingAI.DialogManagementService.Application.Projects.PublishProject
     public class PublishProjectCommandHandler : IRequestHandler<PublishProjectCommand, Project>
     {
         private readonly IAuthorizationService _authorizationService;
-        private readonly IRequestContext _requestContext;
+        private readonly IIdentityContext _identityContext;
         private readonly IProjectRepository _projectRepository;
         private readonly IProjectVersionRepository _projectVersionRepository;
         private readonly IUnitOfWork _uow;
 
-        public PublishProjectCommandHandler(IAuthorizationService authorizationService, IRequestContext requestContext,
+        public PublishProjectCommandHandler(IAuthorizationService authorizationService, IIdentityContext identityContext,
             IProjectRepository projectRepository, IProjectVersionRepository projectVersionRepository, IUnitOfWork uow)
         {
             _authorizationService = authorizationService;
-            _requestContext = requestContext;
+            _identityContext = identityContext;
             _projectRepository = projectRepository;
             _projectVersionRepository = projectVersionRepository;
             _uow = uow;

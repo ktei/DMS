@@ -1,23 +1,23 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using PingAI.DialogManagementService.Application.Interfaces.Persistence;
-using PingAI.DialogManagementService.Application.Interfaces.Services;
+using PingAI.DialogManagementService.Application.Interfaces.Services.Security;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Domain.Repositories;
 
 namespace PingAI.DialogManagementService.Api.Authorization.Services
 {
-    public class HttpRequestContext : IRequestContext
+    public class HttpIdentityContext : IIdentityContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserRepository _userRepository;
 
-        public HttpRequestContext(IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
+        public HttpIdentityContext(IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
         {
             _httpContextAccessor = httpContextAccessor;
             _userRepository = userRepository;
         }
-       
+
         /// <summary>
         /// Get user who made current request 
         /// </summary>
@@ -30,7 +30,7 @@ namespace PingAI.DialogManagementService.Api.Authorization.Services
             var user = await _userRepository.GetUserByAuth0Id(_httpContextAccessor.HttpContext.User.Identity.Name!);
             if (user == null)
                 throw new UnauthorizedException("Unauthenticated request");
-            return user!;
+            return user;
         }
     }
 }

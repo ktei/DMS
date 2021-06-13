@@ -34,9 +34,11 @@ using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Caching;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
+using PingAI.DialogManagementService.Application.Interfaces.Services.Security;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Slack;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Storage;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
+using PingAI.DialogManagementService.Domain.Repositories;
 using PingAI.DialogManagementService.Domain.Utils;
 using PingAI.DialogManagementService.Infrastructure.Configuration;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
@@ -45,7 +47,7 @@ using PingAI.DialogManagementService.Infrastructure.Services.Nlu;
 using PingAI.DialogManagementService.Infrastructure.Services.Slack;
 using PingAI.DialogManagementService.Infrastructure.Services.Storage;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using IAuthorizationService = PingAI.DialogManagementService.Application.Interfaces.Services.IAuthorizationService;
+using IAuthorizationService = PingAI.DialogManagementService.Application.Interfaces.Services.Security.IAuthorizationService;
 
 namespace PingAI.DialogManagementService.Api
 {
@@ -130,7 +132,7 @@ namespace PingAI.DialogManagementService.Api
             services.AddScoped<IAuthorizationHandler, AdministratorOnlyAuthorizationHandler>();
             services.AddHttpContextAccessor();
             services.AddTransient<IAuthorizationService, AuthorizationService>();
-            services.AddTransient<IRequestContext, HttpRequestContext>();
+            services.AddTransient<IIdentityContext, HttpIdentityContext>();
 
             services.AddSwaggerGen(options =>
             {

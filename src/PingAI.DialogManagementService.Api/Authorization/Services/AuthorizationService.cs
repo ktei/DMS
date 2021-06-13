@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using PingAI.DialogManagementService.Api.Authorization.Requirements;
-using IAuthorizationService = PingAI.DialogManagementService.Application.Interfaces.Services.IAuthorizationService;
+using IAuthorizationService = PingAI.DialogManagementService.Application.Interfaces.Services.Security.IAuthorizationService;
 
 namespace PingAI.DialogManagementService.Api.Authorization.Services
 {
-    public class AuthorizationService : IAuthorizationService
+    public class AuthorizationService : Application.Interfaces.Services.Security.IAuthorizationService
     {
         private readonly Microsoft.AspNetCore.Authorization.IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;

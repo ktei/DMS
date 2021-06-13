@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace PingAI.DialogManagementService.Application.Interfaces.Services
+namespace PingAI.DialogManagementService.Application.Interfaces.Services.Security
 {
     public interface IAuthorizationService
     {

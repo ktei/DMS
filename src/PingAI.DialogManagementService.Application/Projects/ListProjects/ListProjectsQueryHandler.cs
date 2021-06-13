@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using MediatR;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services;
+using PingAI.DialogManagementService.Application.Interfaces.Services.Security;
 using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Domain.Repositories;
 
 namespace PingAI.DialogManagementService.Application.Projects.ListProjects
 {
@@ -14,14 +16,14 @@ namespace PingAI.DialogManagementService.Application.Projects.ListProjects
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IAuthorizationService _authorizationService;
-        private readonly IRequestContext _requestContext;
+        private readonly IIdentityContext _identityContext;
 
         public ListProjectsQueryHandler(IProjectRepository projectRepository,
-            IRequestContext requestContext,
+            IIdentityContext identityContext,
             IAuthorizationService authorizationService)
         {
             _projectRepository = projectRepository;
-            _requestContext = requestContext;
+            _identityContext = identityContext;
             _authorizationService = authorizationService;
         }
 
@@ -35,7 +37,7 @@ namespace PingAI.DialogManagementService.Application.Projects.ListProjects
             }
             else
             {
-                var user = await _requestContext.GetUser();
+                var user = await _identityContext.GetUser();
                 if (user.Organisations.Any())
                 {
                     // TODO: what if user has multiple organisations?

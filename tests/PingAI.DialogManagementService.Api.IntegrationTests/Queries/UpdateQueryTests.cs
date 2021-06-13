@@ -22,7 +22,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
         }
 
         [Fact]
-        public async Task UpdateFaqQuery()
+        public async Task UpdateQuery()
         {
             var context = Fixture.CreateContext();
             var project = await context.Projects.FirstAsync();
@@ -42,9 +42,9 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             updatedQuery.Responses.Should().HaveCount(2);
         }
 
-        private static UpdateQueryRequestV1_1 BuildRequest()
+        private static UpdateQueryDto BuildRequest()
         {
-            return new UpdateQueryRequestV1_1
+            return new UpdateQueryDto
             {
                 Name = Guid.NewGuid().ToString(),
                 DisplayOrder = 0,
