@@ -81,9 +81,9 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.EnableDetailedErrors();
-            optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseLoggerFactory(GetLoggerFactory(LogLevel.Debug));
+            // optionsBuilder.EnableDetailedErrors();
+            // optionsBuilder.EnableSensitiveDataLogging();
+            // optionsBuilder.UseLoggerFactory(GetLoggerFactory(LogLevel.Debug));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

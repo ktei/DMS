@@ -1,52 +1,35 @@
-// using System;
-// using System.Threading.Tasks;
-// using PingAI.DialogManagementService.Domain.Model;
-// using PingAI.DialogManagementService.Infrastructure.Persistence;
-// using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
-// using Xunit;
-// using static Xunit.Assert;
-//
-// namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Repositories
-// {
-//     public class ProjectVersionRepositoryTests
-//     {
-//         private readonly DialogManagementContextFactory _dialogManagementContextFactory;
-//
-//         public ProjectVersionRepositoryTests()
-//         {
-//             _dialogManagementContextFactory = new DialogManagementContextFactory();
-//         }
-//
-//         [Fact]
-//         public async Task GetDesignTimeVersionsByOrganisationId()
-//         {
-//             // Arrange
-//             await using var context = _dialogManagementContextFactory.CreateDbContext(new string[] { });
-//             var organisation =
-//                 new Organisation(Guid.NewGuid().ToString(), "test");
-//             var project = new Project(organisation.Id, "test",   "title", Defaults.WidgetColor,
-//                 "description", "fallback message", new string[] { },
-//                 null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
-//                 Defaults.BusinessTimeEndUtc, null);
-//             organisation.AddProject(project);
-//             var projectVersion = new ProjectVersion(project, organisation.Id,
-//                 Guid.NewGuid(), ProjectVersionNumber.NewDesignTime());
-//             organisation.AddProjectVersion(projectVersion);
-//             await context.AddAsync(organisation);
-//             await context.SaveChangesAsync();
-//             var sut = new ProjectVersionRepository(context);
-//             
-//             // Act
-//             var actual = await sut.GetDesignTimeVersionsByOrganisationId(organisation.Id);
-//             
-//             // cleanup
-//             context.RemoveRange(organisation, project, projectVersion);
-//             await context.SaveChangesAsync();
-//             
-//             // Assert
-//             Single(actual);
-//             Equal(actual[0].ProjectId, project.Id);
-//             Equal(ProjectVersionNumber.DesignTime, actual[0].Version);
-//         }
-//     }
-// }
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
+using PingAI.DialogManagementService.TestingUtil.Persistence;
+using Xunit;
+
+namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Repositories
+{
+    public class ProjectVersionRepositoryTests : RepositoryTestBase
+    {
+        public ProjectVersionRepositoryTests(SharedDatabaseFixture fixture) : base(fixture)
+        {
+        }
+
+        [Fact]
+        public async Task FindLatestByProjectId()
+        {
+            var context = Fixture.CreateContext();
+            var project = await context.Projects.Include(p => p.ProjectVersion).FirstAsync();
+            var projectV2 = Project.CreateWithDefaults(project.OrganisationId);
+            await context.AddAsync(projectV2);
+            var projectVersion = await context.AddAsync(new ProjectVersion(projectV2.Id,
+                projectV2.OrganisationId, project.Id, project.ProjectVersion!.Version.Next()));
+            await context.SaveChangesAsync();
+            var sut = new ProjectVersionRepository(context);
+
+            var actual = await sut.FindLatestByProjectId(project.Id);
+
+            actual.Should().NotBeNull();
+            actual!.Id.Should().Be(projectVersion.Entity.Id);
+        }
+    }
+}

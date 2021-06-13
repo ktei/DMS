@@ -6,6 +6,6 @@ namespace PingAI.DialogManagementService.Domain.Repositories
 {
     public interface IProjectVersionRepository
     {
-        Task<ProjectVersion?> GetLatestVersionByProjectId(Guid projectId);
+        Task<ProjectVersion?> FindLatestByProjectId(Guid projectId);
     }
 }

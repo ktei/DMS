@@ -34,7 +34,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<QueryListItemDto>>> ListQueries([FromQuery] Guid? projectId,
+        public async Task<ActionResult<QueryListItemDto[]>> ListQueries([FromQuery] Guid? projectId,
             [FromQuery] string? queryType,
             [FromQuery] bool? runtime)
         {
@@ -49,7 +49,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
 
             var query = new ListQueriesQuery(projectId.Value, queryType, runtime == true);
             var queries = await _mediator.Send(query);
-            return new ListQueriesResponse(queries.Select(q => new QueryListItemDto(q)));
+            return queries.Select(q => new QueryListItemDto(q)).ToArray();
         }
 
         private static readonly string[] ValidQueryTypes =

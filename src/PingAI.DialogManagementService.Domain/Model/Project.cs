@@ -106,10 +106,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             _greetingResponses = new List<GreetingResponse>();
         }
 
-        // private Project()
-        // {
-        // }
-
         public static Project CreateWithDefaults(Guid organisationId) =>
             new Project(organisationId, Guid.NewGuid().ToString(),
                 Defaults.WidgetTitle, Defaults.WidgetColor,
@@ -117,20 +113,9 @@ namespace PingAI.DialogManagementService.Domain.Model
                 null, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
 
-        public void StampVersion(int versionNumber)
+        public void MarkAsDesignTime()
         {
-            if (versionNumber < 0)
-                throw new ArgumentException(
-                    $"Invalid {versionNumber}. Must be greater than or equal to {ProjectVersionNumber.DesignTime}");
-            if (versionNumber == 0)
-            {
-                ProjectVersion = ProjectVersion.NewDesignTime(this);
-            }
-            else
-            {
-                ProjectVersion = ProjectVersion.NewRuntime(this,
-                    new ProjectVersionNumber(versionNumber));
-            }
+            ProjectVersion = ProjectVersion.NewDesignTime(this);
         }
         
         public void UpdateWidgetTitle(string widgetTitle)

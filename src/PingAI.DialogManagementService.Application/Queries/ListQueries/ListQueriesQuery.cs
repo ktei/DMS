@@ -5,21 +5,17 @@ using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Application.Queries.ListQueries
 {
-    public class ListQueriesQuery : IRequest<List<Query>>
+    public class ListQueriesQuery : IRequest<IReadOnlyList<Query>>
     {
-        public Guid ProjectId { get; set; }
-        public string? QueryType { get; set; }
-        public bool Runtime { get; set; }
+        public Guid ProjectId { get; }
+        public string? QueryType { get; }
+        public bool Runtime { get; }
 
         public ListQueriesQuery(Guid projectId, string? queryType, bool runtime)
         {
             ProjectId = projectId;
             QueryType = queryType;
             Runtime = runtime;
-        }
-
-        public ListQueriesQuery()
-        {
         }
     }
 }

@@ -1,12 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using PingAI.DialogManagementService.Application.Interfaces.Persistence;
-using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Security;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
@@ -33,12 +28,12 @@ namespace PingAI.DialogManagementService.Application.Queries.ListQueries
         {
             var projectId = request.ProjectId;
             
-            // Some API consumer such as chatbot-runtime wants to query
+            // Some API consumer such as chatbot runtime wants to query
             // the latest published (runtime) project's queries
             if (request.Runtime)
             {
                 var latestProjectVersion =
-                    await _projectVersionRepository.GetLatestVersionByProjectId(projectId);
+                    await _projectVersionRepository.FindLatestByProjectId(projectId);
                 if (latestProjectVersion != null)
                 {
                     projectId = latestProjectVersion.ProjectId;

@@ -63,7 +63,7 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                     project.AddGreetingResponse(new Response(Resolution.Factory.RteText("Hello, and welcome!"),
                         ResponseType.RTE, 0));
                     context.Add(project);
-                    project.StampVersion(ProjectVersionNumber.DesignTime);
+                    project.MarkAsDesignTime();
                     
                     // seed EntityTypes
                     var foodEntityType = new EntityType(project.Id, "Food", 

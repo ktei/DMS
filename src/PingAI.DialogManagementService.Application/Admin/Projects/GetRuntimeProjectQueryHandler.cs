@@ -23,7 +23,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Projects
 
         public async Task<Project> Handle(GetRuntimeProjectQuery request, CancellationToken cancellationToken)
         {
-            var projectVersion = await _projectVersionRepository.GetLatestVersionByProjectId(request.DesignTimeProjectId);
+            var projectVersion = await _projectVersionRepository.FindLatestByProjectId(request.DesignTimeProjectId);
             if (projectVersion == null)
                 throw new BadRequestException(ProjectNotFound);
             var project = await _projectRepository.FindById(projectVersion.ProjectId);
