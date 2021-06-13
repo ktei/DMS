@@ -14,38 +14,38 @@ using Xunit;
 
 namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
 {
-    public class CreateQueryTests : ApiTestBase
+    public class UpdateQueryTests : ApiTestBase
     {
-        public CreateQueryTests(TestWebApplicationFactory factory, SharedDatabaseFixture fixture) : base(factory,
+        public UpdateQueryTests(TestWebApplicationFactory factory, SharedDatabaseFixture fixture) : base(factory,
             fixture)
         {
         }
 
         [Fact]
-        public async Task CreateFaqQuery()
+        public async Task UpdateFaqQuery()
         {
             var context = Fixture.CreateContext();
             var project = await context.Projects.FirstAsync();
-            var request = BuildRequest(project.Id);
+            var query = await context.Queries.FirstAsync(x => x.ProjectId == project.Id);
             var client = Factory.CreateUserAuthenticatedClient();
+            var request = BuildRequest();
 
-            var httpResponse = await client.PostAsJsonAsync(
-                "/dms/api/v1.1/queries", request
+            var httpResponse = await client.PutAsJsonAsync(
+                $"/dms/api/v1.1/queries/{query.Id}", request
             );
 
             httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-            var createdQuery = await httpResponse.Content.ReadFromJsonAsync<QueryDto>();
-            createdQuery.Should().NotBeNull();
-            createdQuery!.Intents.Should().HaveCount(1);
-            createdQuery.Intents.First().PhraseParts.Should().HaveCount(4);
-            createdQuery.Responses.Should().HaveCount(2);
+            var updatedQuery = await httpResponse.Content.ReadFromJsonAsync<QueryDto>();
+            updatedQuery.Should().NotBeNull();
+            updatedQuery!.Intents.Should().HaveCount(1);
+            updatedQuery.Intents.First().PhraseParts.Should().HaveCount(4);
+            updatedQuery.Responses.Should().HaveCount(2);
         }
 
-        private static CreateQueryRequestV1_1 BuildRequest(Guid projectId)
+        private static UpdateQueryRequestV1_1 BuildRequest()
         {
-            return new CreateQueryRequestV1_1
+            return new UpdateQueryRequestV1_1
             {
-                ProjectId = projectId.ToString(),
                 Name = Guid.NewGuid().ToString(),
                 DisplayOrder = 0,
                 Description = "description",

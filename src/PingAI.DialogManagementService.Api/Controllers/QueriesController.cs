@@ -101,7 +101,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
 
         [MapToApiVersion("1.1")]
         [HttpPut("{queryId}")]
-        public async Task<ActionResult<QueryDto>> UpdateQueryV1_1(
+        public async Task<ActionResult<QueryDto>> UpdateQuery(
             [FromRoute] Guid queryId,
             [FromBody] UpdateQueryRequestV1_1 request)
         {
