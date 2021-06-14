@@ -30,6 +30,11 @@ namespace PingAI.DialogManagementService.Domain.Model
         public static ProjectVersion NewDesignTime(Project project) =>
             new ProjectVersion(project, project.Id, ProjectVersionNumber.NewDesignTime());
 
+        public ProjectVersion Next(Guid projectId)
+        {
+            return new ProjectVersion(projectId, OrganisationId, VersionGroupId, Version.Next());
+        }
+
         private ProjectVersion(Project project, Guid versionGroupId, ProjectVersionNumber version)
         {
             Project = project ?? throw new ArgumentNullException(nameof(project));

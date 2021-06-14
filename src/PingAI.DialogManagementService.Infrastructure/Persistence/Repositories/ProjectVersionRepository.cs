@@ -28,5 +28,11 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .OrderBy("version DESC")
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<ProjectVersion> Add(ProjectVersion projectVersion)
+        {
+            var result = await _context.AddAsync(projectVersion ?? throw new ArgumentNullException(nameof(projectVersion)));
+            return result.Entity;
+        }
     }
 }
