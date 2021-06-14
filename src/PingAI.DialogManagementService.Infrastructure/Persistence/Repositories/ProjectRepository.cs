@@ -77,7 +77,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .Include(p => p.EntityTypes).ThenInclude(x => x.Values)
                 .Include(p => p.Intents).ThenInclude(i => i.PhraseParts)
                 .Include(p => p.Responses)
-                .Include(p => p.Queries)
+                .Include(p => p.Queries).ThenInclude(q => q.Intents)
+                .Include(p => p.Queries).ThenInclude(q => q.Responses)
                 .Include(p => p.GreetingResponses).ThenInclude(x => x.Response)
                 .FirstOrDefaultAsync(x => x.Id == id);
             return project;

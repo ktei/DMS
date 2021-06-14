@@ -29,7 +29,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         }
 
         public PhrasePart(Guid phraseId, int? position, string? text, string? value,
-            PhrasePartType type, EntityName? entityName, Guid? entityTypeId, int displayOrder)
+            PhrasePartType type, EntityName? entityName, EntityType? entityType, int displayOrder)
         {
             if (Text?.Length > MaxTextLength)
                 throw new ArgumentException($"Max length of {nameof(Text)} is {MaxTextLength}");
@@ -43,7 +43,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             Value = value;
             Type = type;
             EntityName = entityName;
-            EntityTypeId = entityTypeId;
+            EntityType = entityType;
             DisplayOrder = displayOrder;
         }
         

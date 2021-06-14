@@ -38,7 +38,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var context = Fixture.CreateContext();
             var sut = new QueryRepository(context);
             var organisation = await context.Organisations.FirstAsync();
-            var project = Project.CreateWithDefaults(organisation.Id);
+            var project = Project.CreateWithDefaults(organisation.Id, Guid.NewGuid().ToString());
             await context.AddAsync(project);
             project.MarkAsDesignTime();
             var rteQuery = new Query(project.Id, Guid.NewGuid().ToString(), new Expression[0],

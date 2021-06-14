@@ -106,8 +106,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             _greetingResponses = new List<GreetingResponse>();
         }
 
-        public static Project CreateWithDefaults(Guid organisationId) =>
-            new Project(organisationId, Guid.NewGuid().ToString(),
+        public static Project CreateWithDefaults(Guid organisationId, string name) =>
+            new Project(organisationId, name,
                 Defaults.WidgetTitle, Defaults.WidgetColor,
                 Defaults.WidgetDescription, Defaults.FallbackMessage,
                 null, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
@@ -269,150 +269,150 @@ namespace PingAI.DialogManagementService.Domain.Model
         }
 
         /// <summary>
-        /// Export current project by copying it to a new project and return the copy
+        /// Import the given project by copying all its child entities such as intents,
+        /// queries, responses etc.
         /// </summary>
-        /// <returns>The project copy</returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        public void Export(Project target)
+        public void Import(Project target)
         {
             _ = target ?? throw new ArgumentNullException(nameof(target));
             if (Id == Guid.Empty)
             {
-                throw new InvalidOperationException("Transient project cannot be published");
+                throw new InvalidOperationException("Project must have a non-empty (GUID) Id " +
+                                                    "before importing another project.");
             }
 
             if (target.Id == Guid.Empty)
                 throw new InvalidOperationException($"Target project must have a non-empty (GUID) Id.");
 
-            if (_entityNames == null)
-                throw new InvalidOperationException($"Load {nameof(EntityNames)} before publishing");
-            if (_entityTypes == null)
-                throw new InvalidOperationException($"Load {nameof(EntityTypes)} before publishing");
-            if (_intents == null)
-                throw new InvalidOperationException($"Load {nameof(Intents)} before publishing");
-            if (_responses == null)
-                throw new InvalidOperationException($"Load {nameof(Responses)} before publishing");
-            if (_queries == null)
-                throw new InvalidOperationException($"Load {nameof(Queries)} before publishing");
-            if (_greetingResponses == null)
-                throw new InvalidOperationException($"Load {nameof(GreetingResponses)} before publishing");
-
-            // TODO:
-            throw new NotImplementedException();
-
-            // var entityNamesCopy =
-            //     _entityNames.ToDictionary(n => n.Id, 
-            //         n => new EntityName(n.Name, target.Id, n.CanBeReferenced));
-            // var entityTypesCopy =
-            //     _entityTypes.ToDictionary(e => e.Id,
-            //         e => new EntityType(e.Name, target.Id,
-            //             e.Description,
-            //             e.Values.Select(v => new EntityValue(v.Value, v.Synonyms))));
-            //
-            // PhrasePart CopyPhrasePart(Intent i, PhrasePart p) =>
-            //     new PhrasePart(i.Id, p.PhraseId, p.Position,
-            //         p.Text, p.Value, p.Type, p.EntityNameId.HasValue ? entityNamesCopy[p.EntityNameId.Value] : default,
-            //         p.EntityTypeId.HasValue ? entityTypesCopy[p.EntityTypeId.Value] : default, p.DisplayOrder);
-            //
-            // Intent CopyIntent(Intent i)
-            // {
-            //     var intent = new Intent(i.Name, Guid.Empty, i.Type, i.PhraseParts.Select(p => CopyPhrasePart(i, p)));
-            //     intent.ClearDomainEvents(); // we don't want to trigger IntentUpdatedEvent;
-            //                                 // we only want to copy intents to a different DMS project
-            //     return intent;
-            // }
-            //
-            // static Response CopyResponse(Response r) =>
-            //     new Response(r.Resolution, Guid.Empty, r.Type, r.Order);
-            //
-            // var projectToPublish = new Project($"{Name}__{Guid.NewGuid()}",
-            //     OrganisationId, 
-            //     WidgetTitle, WidgetColor!,
-            //     WidgetDescription, FallbackMessage, 
-            //     Enquiries, Domains?.ToArray(), BusinessTimezone, BusinessTimeStartUtc,
-            //     BusinessTimeEndUtc, BusinessEmail);
-            //
-            // var intentsCopy = _intents.ToDictionary(i => i.Id, CopyIntent);
-            // var responsesCopy = _responses.ToDictionary(r => r.Id, CopyResponse);
-            //
-            // foreach (var entityName in _entityNames)
-            // {
-            //     projectToPublish.AddEntityName(entityNamesCopy[entityName.Id]);
-            // }
-            //
-            // foreach (var entityType in _entityTypes)
-            // {
-            //     projectToPublish.AddEntityType(entityTypesCopy[entityType.Id]);
-            // }
-            //
-            // foreach (var intent in _intents)
-            // {
-            //     projectToPublish.AddIntent(intentsCopy[intent.Id]);
-            // }
-            //
-            // foreach (var response in _responses)
-            // {
-            //     projectToPublish.AddResponse(responsesCopy[response.Id]);
-            // }
-            //
-            // foreach (var query in _queries)
-            // {
-            //     var q = new Query(query.Name, Guid.Empty,
-            //         query.Expressions.ToArray(), query.Description,
-            //         query.Tags?.ToArray(), query.DisplayOrder);
-            //     foreach (var qi in query.QueryIntents)
-            //     {
-            //         q.AddIntent(intentsCopy[qi.IntentId]);
-            //     }
-            //
-            //     foreach (var qr in query.QueryResponses)
-            //     {
-            //         q.AddResponse(responsesCopy[qr.ResponseId]);
-            //     }
-            //     projectToPublish.AddQuery(q);
-            // }
-            //
-            // foreach (var greetingResponse in _greetingResponses)
-            // {
-            //     if (greetingResponse.Response == null)
-            //         throw new InvalidOperationException($"{nameof(greetingResponse.Response)} must be loaded");
-            //     var responseCopy = responsesCopy[greetingResponse.ResponseId]; // CopyResponse(greetingResponse.Response!);
-            //     projectToPublish.AddGreetingResponse(new GreetingResponse(this, responseCopy));
-            // }
-            //
-            // AddProjectPublishedEvent(projectToPublish);
-            //
-            // return projectToPublish;
+            if (target.EntityNames == null)
+                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(EntityNames)} before importing.");
+            if (target.EntityTypes == null)
+                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(EntityTypes)} before importing.");
+            if (target.Intents == null)
+                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(Intents)} before importing.");
+            if (target.Responses == null)
+                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(Responses)} before importing.");
+            if (target.Queries == null)
+                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(Queries)} before importing.");
+            if (target.GreetingResponses == null)
+                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(GreetingResponses)} before importing.");
+            
+            CopyProperties(target);
+            var entityNames = CopyEntityNames(target);
+            var entityTypes = CopyEntityTypes(target);
+            var intents = CopyIntents(target, entityNames, entityTypes);
+            var responses = CopyResponses(target);
+            CopyQueries(target, intents, responses);
+            CopyGreetingResponses(target, responses);
         }
 
-        private Dictionary<Guid, EntityName> CopyEntityNames(Guid targetProjectId)
+        private void CopyProperties(Project target)
         {
-            var entityNamesCopy =
-                _entityNames.ToDictionary(n => n.Id,
-                    n => new EntityName(targetProjectId, n.Name, n.CanBeReferenced));
-            return entityNamesCopy;
+            WidgetTitle = target.WidgetTitle;
+            WidgetColor = target.WidgetColor;
+            WidgetDescription = target.WidgetDescription;
+            FallbackMessage = target.FallbackMessage;
+            Enquiries = target.Enquiries;
+            Domains = target.Domains;
+            BusinessTimezone = target.BusinessTimezone;
+            BusinessTimeStartUtc = target.BusinessTimeStartUtc;
+            BusinessTimeEndUtc = target.BusinessTimeEndUtc;
+            BusinessEmail = target.BusinessEmail;
         }
 
-        private Dictionary<Guid, EntityType> CopyEntityTypes(Guid targetProjectId)
+        private Dictionary<Guid, EntityName> CopyEntityNames(Project target)
         {
-            // TODO:
-            throw new NotImplementedException();
-            // var entityTypesCopy =
-            //     _entityTypes.ToDictionary(e => e.Id,
-            //         e => new EntityType(e.Name, targetProjectId,
-            //             e.Description,
-            //             e.Values.Select(v => new EntityValue(v.Value, v.Synonyms))));
-            // return entityTypesCopy;
+            var entityNameMap = new Dictionary<Guid, EntityName>();
+            foreach (var entityName in target.EntityNames)
+            {
+                var copy = new EntityName(Id, entityName.Name, entityName.CanBeReferenced);
+                AddEntityName(copy);
+                entityNameMap.Add(entityName.Id, copy);
+            }
+
+            return entityNameMap;
+        }
+        
+        private Dictionary<Guid, EntityType> CopyEntityTypes(Project target)
+        {
+            var entityTypeMap = new Dictionary<Guid, EntityType>();
+            foreach (var entityType in target.EntityTypes)
+            {
+                var copy = new EntityType(Id, entityType.Name, entityType.Description);
+                AddEntityType(copy);
+                entityTypeMap.Add(entityType.Id, copy);
+            }
+
+            return entityTypeMap;
         }
 
-        // private Dictionary<Guid, Intent> CopyIntents(Guid targetProjectId)
-        // {
-        //     var copies = new Dictionary<Guid, Intent>();
-        //     foreach (var intent in _intents)
-        //     {
-        //         
-        //     }
-        // }
+        private Dictionary<Guid, Intent> CopyIntents(Project target,
+            Dictionary<Guid, EntityName> entityNames,
+            Dictionary<Guid, EntityType> entityTypes)
+        {
+            var intentMap = new Dictionary<Guid, Intent>();
+            foreach (var intent in target.Intents)
+            {
+                var copy = new Intent(Id, intent.Name, intent.Type);
+                foreach (var phrasePart in intent.PhraseParts)
+                {
+                    var partCopy = new PhrasePart(phrasePart.PhraseId,
+                        phrasePart.Position, phrasePart.Text,
+                        phrasePart.Value, phrasePart.Type,
+                        phrasePart.EntityNameId.HasValue ? entityNames[phrasePart.EntityNameId.Value] : null,
+                        phrasePart.EntityTypeId.HasValue ? entityTypes[phrasePart.EntityTypeId.Value] : null,
+                        phrasePart.DisplayOrder);
+                    copy.AddPhrasePart(partCopy);
+                }
+                intentMap.Add(intent.Id, copy);
+                AddIntent(copy);
+            }
+
+            return intentMap;
+        }
+
+        private Dictionary<Guid, Response> CopyResponses(Project target)
+        {
+            var responseMap = new Dictionary<Guid, Response>();
+            foreach (var response in target.Responses)
+            {
+                var copy = new Response(Id, response.Resolution, response.Type, response.Order);
+                responseMap.Add(response.Id, copy);
+                AddResponse(copy);
+            }
+
+            return responseMap;
+        }
+
+        private void CopyQueries(Project target, Dictionary<Guid, Intent> intents,
+            Dictionary<Guid, Response> responses)
+        {
+            foreach (var query in target.Queries)
+            {
+                var copy = new Query(Id, query.Name, query.Expressions,
+                    query.Description, query.Tags, query.DisplayOrder);
+                foreach (var intent in query.Intents)
+                {
+                    copy.AddIntent(intents[intent.Id]);
+                }
+
+                foreach (var response in query.Responses)
+                {
+                    copy.AddResponse(responses[response.Id]);
+                }
+
+                AddQuery(copy);
+            }
+        }
+
+        private void CopyGreetingResponses(Project target, Dictionary<Guid, Response> responses)
+        {
+            foreach (var greetingResponse in target.GreetingResponses)
+            {
+                var copy = new GreetingResponse(this, responses[greetingResponse.ResponseId]);
+                _greetingResponses.Add(copy);
+            }
+        }
 
         private void AddProjectPublishedEvent(Project publishedProjectId)
         {

@@ -13,6 +13,7 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
     {
         private static readonly object Lock = new object();
         private static bool _databaseInitialized;
+        public const string DefaultProjectName = "TEST_DEFAULT";
 
         public DbConnection Connection { get; }
         
@@ -59,7 +60,7 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                     
                     context.Add(organisation);
                     // seed Projects
-                    var project = Project.CreateWithDefaults(organisation.Id);
+                    var project = Project.CreateWithDefaults(organisation.Id, "TEST_DEFAULT");
                     project.AddGreetingResponse(new Response(Resolution.Factory.RteText("Hello, and welcome!"),
                         ResponseType.RTE, 0));
                     context.Add(project);

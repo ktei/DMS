@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         {
             var context = Fixture.CreateContext();
             var project = await context.Projects.Include(p => p.ProjectVersion).FirstAsync();
-            var projectV2 = Project.CreateWithDefaults(project.OrganisationId);
+            var projectV2 = Project.CreateWithDefaults(project.OrganisationId, Guid.NewGuid().ToString());
             await context.AddAsync(projectV2);
             var projectVersion = await context.AddAsync(new ProjectVersion(projectV2.Id,
                 projectV2.OrganisationId, project.Id, project.ProjectVersion!.Version.Next()));

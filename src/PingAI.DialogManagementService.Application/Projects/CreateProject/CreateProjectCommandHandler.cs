@@ -44,7 +44,7 @@ namespace PingAI.DialogManagementService.Application.Projects.CreateProject
             if (nameExists)
                 throw new BadRequestException($"Project with same name '{request.Name}' already exists");
 
-            var project = Project.CreateWithDefaults(organisation.Id);
+            var project = Project.CreateWithDefaults(organisation.Id, $"{organisation.Name} - default project");
             await _projectRepository.Add(project);
             // organisation.AddProjectVersion(new ProjectVersion(project, organisation.Id, 
             //     Guid.NewGuid(), ProjectVersionNumber.NewDesignTime()));

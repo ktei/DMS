@@ -16,9 +16,9 @@ namespace PingAI.DialogManagementService.Domain.Model
         public string Description { get; private set; }
         public string[]? Tags { get; private set; }
         public int DisplayOrder { get; private set; }
-        private List<Intent> _intents;
+        private readonly List<Intent> _intents;
         public IReadOnlyList<Intent> Intents => _intents.ToImmutableList();
-        private List<Response> _responses;
+        private readonly List<Response> _responses;
         public IReadOnlyList<Response> Responses => _responses.ToImmutableList();
         
         public const int MaxNameLength = 100;
@@ -71,13 +71,15 @@ namespace PingAI.DialogManagementService.Domain.Model
         public void AddResponse(Response response)
         {
             _ = response ?? throw new ArgumentNullException(nameof(response));
+            if (_responses == null)
+                throw new InvalidOperationException($"Load {nameof(Responses)} first.");
             _responses.Add(response);
         }
 
         public void ClearResponses()
         {
             if (_responses == null)
-                throw new InvalidOperationException($"Load {nameof(Responses)} first");
+                throw new InvalidOperationException($"Load {nameof(Responses)} first.");
             
             _responses.Clear();
         }
@@ -85,6 +87,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         public void AddIntent(Intent intent)
         {
             _ = intent ?? throw new ArgumentNullException(nameof(intent));
+            if (_intents == null)
+                throw new InvalidOperationException($"Load {nameof(Intents)} first.");
             _intents.Add(intent);
         }
         
@@ -96,8 +100,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             _intents.Clear();
         }
 
-        public void IncreaseDisplayOrder() => DisplayOrder += 1;
-
         public void UpdateDisplayOrder(int displayOrder)
         {
             if (displayOrder < 0)
@@ -105,29 +107,6 @@ namespace PingAI.DialogManagementService.Domain.Model
             DisplayOrder = displayOrder;
         }
         
-        /// <summary>
-        /// Insert a query with a given DisplayOrder into a list of queries, updating
-        /// DisplayOrders of the existing queries
-        /// </summary>
-        public void Insert(IEnumerable<Query> existingQueries, int? displayOrder = null)
-        {
-            if (displayOrder != null)
-            {
-                DisplayOrder = displayOrder.Value;
-            }
-            var nextDisplayOrder = DisplayOrder;
-            var queriesToLoop = existingQueries.Where(q => q != this).ToList();
-            foreach (var query in queriesToLoop 
-                .OrderBy(x => x.DisplayOrder))
-            {
-                if (query.DisplayOrder == nextDisplayOrder)
-                {
-                    query.IncreaseDisplayOrder();
-                    nextDisplayOrder = query.DisplayOrder;
-                }
-            }
-        }
-
         public override string ToString() => Name;
     }
 }

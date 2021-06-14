@@ -56,7 +56,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
 
         private async Task<Project> AddDefaultProject(Organisation organisation)
         {
-            var defaultProject = Project.CreateWithDefaults(organisation.Id);
+            var defaultProject = Project.CreateWithDefaults(organisation.Id, $"{organisation.Name} - default project");
             await _projectRepository.Add(defaultProject);
             return defaultProject;
         }

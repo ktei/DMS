@@ -83,7 +83,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 .Where(x => x.VersionGroupId == project.Id)
                 .OrderBy("version DESC")
                 .FirstAsync();
-            var publishedProject = Project.CreateWithDefaults(project.OrganisationId);
+            var publishedProject = Project.CreateWithDefaults(project.OrganisationId, Guid.NewGuid().ToString());
             await context.AddAsync(publishedProject);
             await context.AddAsync(new ProjectVersion(publishedProject.Id,
                 project.OrganisationId, project.Id, latestVersion.Version.Next()));
@@ -102,7 +102,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var context = Fixture.CreateContext();
             var sut = new ProjectRepository(context);
             var organisation = await context.Organisations.FirstAsync();
-            var project = Project.CreateWithDefaults(organisation.Id);
+            var project = Project.CreateWithDefaults(organisation.Id, Guid.NewGuid().ToString());
 
             await sut.Add(project);
             await context.SaveChangesAsync();
@@ -110,6 +110,31 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             context.ChangeTracker.Clear();
             var actual = context.Projects.FirstOrDefaultAsync(x => x.Id == project.Id);
             actual.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task ImportFromAnotherProjectAndSaveIt()
+        {
+            var context = Fixture.CreateContext();
+            var sut = new ProjectRepository(context);
+            var firstProject = await context.Projects.FirstAsync(x => x.Name == SharedDatabaseFixture.DefaultProjectName);
+            var project = await sut.FindByIdWithJoins(firstProject.Id);
+            var project2 = Project.CreateWithDefaults(project!.OrganisationId, Guid.NewGuid().ToString());
+            await context.AddAsync(project2);
+            project2.Import(project);
+            await sut.Add(project2);
+
+            await context.SaveChangesAsync();
+            
+            context.ChangeTracker.Clear();
+            var actual = await sut.FindByIdWithJoins(project2.Id);
+            actual.Should().NotBeNull();
+            actual!.Intents.Should().HaveCount(project.Intents.Count);
+            actual.Responses.Should().HaveCount(project.Responses.Count);
+            actual.Queries.Should().HaveCount(project.Queries.Count);
+            actual.GreetingResponses.Should().HaveCount(project.GreetingResponses.Count);
+            actual.EntityNames.Should().HaveCount(project.EntityNames.Count);
+            actual.EntityTypes.Should().HaveCount(project.EntityTypes.Count);
         }
     }
 }

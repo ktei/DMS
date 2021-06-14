@@ -78,6 +78,13 @@ namespace PingAI.DialogManagementService.Domain.Model
             AddIntentUpdatedEvent();
         }
 
+        internal void AddPhrasePart(PhrasePart part)
+        {
+            if (_phraseParts == null)
+                throw new InvalidOperationException($"Load {PhraseParts} first.");
+            _phraseParts.Add(part ?? throw new ArgumentNullException(nameof(part)));
+        }
+
         private void AddIntentUpdatedEvent()
         {
             // Updated event only makes sense when there is no Deleted event

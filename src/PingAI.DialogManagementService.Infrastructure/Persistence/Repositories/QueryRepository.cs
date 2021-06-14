@@ -18,7 +18,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         {
             _context = context;
         }
-
+        
         public async Task<Query?> FindById(Guid queryId)
         {
             var query = await _context.Queries
