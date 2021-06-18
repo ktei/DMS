@@ -73,6 +73,16 @@ namespace PingAI.DialogManagementService.Domain.Model
             // UpdateGreetingResponses(greetingResponses.Select(gr => new GreetingResponse(this, gr)));
         }
 
+        public Project(Guid id, Guid organisationId, string name, string? widgetTitle, string widgetColor,
+            string? widgetDescription, string? fallbackMessage, string[]? enquiries,
+            string[]? domains, string businessTimezone, DateTime? businessTimeStartUtc,
+            DateTime? businessTimeEndUtc, string? businessEmail) : this(organisationId, name, widgetTitle,
+            widgetColor, widgetDescription, fallbackMessage, enquiries, domains, businessTimezone,
+            businessTimeStartUtc, businessTimeEndUtc, businessEmail)
+        {
+            Id = id;
+        }
+
         public Project(Guid organisationId, string name, string? widgetTitle, string widgetColor,
             string? widgetDescription, string? fallbackMessage, string[]? enquiries,
             string[]? domains, string businessTimezone, DateTime? businessTimeStartUtc,
