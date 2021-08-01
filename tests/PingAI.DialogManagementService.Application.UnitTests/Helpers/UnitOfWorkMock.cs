@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Moq;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
+using PingAI.DialogManagementService.Domain.Model;
 
 namespace PingAI.DialogManagementService.Application.UnitTests.Helpers
 {
@@ -9,7 +10,17 @@ namespace PingAI.DialogManagementService.Application.UnitTests.Helpers
     {
         public Mock<Func<Task>>? SaveChangesMock { get; set; }
         public Mock<Func<Task>>? ExecuteTransactionMock { get; set; }
-        
+
+        public int GetContextHashCode()
+        {
+            return 0;
+        }
+
+        public Task<User> GetUser(string auth0Id)
+        {
+            return null;
+        }
+
         public Task SaveChanges()
         {
             if (SaveChangesMock != null)

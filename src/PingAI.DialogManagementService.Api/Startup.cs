@@ -201,7 +201,7 @@ namespace PingAI.DialogManagementService.Api
             services.AddMediatR(typeof(UpdateProjectCommand));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
-            services.AddDbContext<DialogManagementContext>(options =>
+            services.AddDbContextPool<DialogManagementContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DialogManagement")));
             
             // Amazon services
@@ -211,19 +211,19 @@ namespace PingAI.DialogManagementService.Api
 
             
             // TODO: DI these in a smarter way (Autofac for example)
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IProjectRepository, ProjectRepository>();
-            services.AddTransient<IOrganisationRepository, OrganisationRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IIntentRepository, IntentRepository>();
-            services.AddTransient<IEntityTypeRepository, EntityTypeRepository>();
-            services.AddTransient<IEntityNameRepository, EntityNameRepository>();
-            services.AddTransient<IResponseRepository, ResponseRepository>();
-            services.AddTransient<IQueryRepository, QueryRepository>();
-            services.AddTransient<IProjectVersionRepository, ProjectVersionRepository>();
-            services.AddTransient<ISlackWorkspaceRepository, SlackWorkspaceRepository>();
-            services.AddTransient<IChatHistoryRepository, ChatHistoryRepository>();
-            services.AddTransient<IS3Service, S3Service>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IOrganisationRepository, OrganisationRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IIntentRepository, IntentRepository>();
+            services.AddScoped<IEntityTypeRepository, EntityTypeRepository>();
+            services.AddScoped<IEntityNameRepository, EntityNameRepository>();
+            services.AddScoped<IResponseRepository, ResponseRepository>();
+            services.AddScoped<IQueryRepository, QueryRepository>();
+            services.AddScoped<IProjectVersionRepository, ProjectVersionRepository>();
+            services.AddScoped<ISlackWorkspaceRepository, SlackWorkspaceRepository>();
+            services.AddScoped<IChatHistoryRepository, ChatHistoryRepository>();
+            services.AddScoped<IS3Service, S3Service>();
 
             services.AddHttpClient<INluService, NluService>(client =>
             {

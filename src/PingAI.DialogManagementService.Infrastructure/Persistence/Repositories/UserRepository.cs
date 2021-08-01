@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Domain.Repositories;
 
@@ -21,7 +19,6 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public async Task<User?> GetUserByAuth0Id(string auth0Id)
         {
             var user = await _context.Users
-                .AsNoTracking()
                 .Include(x => x.Organisations)
                 .FirstOrDefaultAsync(x => x.Auth0Id == auth0Id);
             return user;

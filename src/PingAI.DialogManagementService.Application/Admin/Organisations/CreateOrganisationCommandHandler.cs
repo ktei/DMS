@@ -13,19 +13,14 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
     {
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IProjectRepository _projectRepository;
-        private readonly IProjectVersionRepository _projectVersionRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public CreateOrganisationCommandHandler(
-            IOrganisationRepository organisationRepository, IUnitOfWork unitOfWork, IUserRepository userRepository,
-            IProjectRepository projectRepository, IProjectVersionRepository projectVersionRepository)
+            IOrganisationRepository organisationRepository, IUnitOfWork unitOfWork, IUserRepository userRepository)
         {
             _organisationRepository = organisationRepository;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
-            _projectRepository = projectRepository;
-            _projectVersionRepository = projectVersionRepository;
         }
 
         public async Task<Organisation> Handle(CreateOrganisationCommand request, CancellationToken cancellationToken)
@@ -35,37 +30,28 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
             if (organisationWithSameName != null)
                 throw new BadRequestException($"Organisation with name '{request.Name}' already exists. " +
                                               "Please use a different name.");
-            
-            var organisationToCreate = await _organisationRepository.Add(
-                new Organisation(request.Name, request.Description ?? string.Empty));
+
+            var organisation = new Organisation(request.Name, request.Description ?? string.Empty);
             if (!string.IsNullOrEmpty(request.Auth0UserId))
             {
                 var user = await _userRepository.GetUserByAuth0Id(request.Auth0UserId!);
                 if (user == null)
                     throw new BadRequestException("User does not exist");
-                organisationToCreate.AddUser(user!);
+                organisation.AddUser(user!);
             }
-            var defaultProject = await AddDefaultProject(organisationToCreate);
-            ConfigureDefaultProject(defaultProject);
-            // await _projectVersionRepository.AddProjectVersion(new ProjectVersion(defaultProject,
-            //     organisationToCreate.Id, defaultProject.Id, ProjectVersionNumber.NewDesignTime()));
-            
-            await _unitOfWork.SaveChanges();
-            return organisationToCreate;
-        }
-
-        private async Task<Project> AddDefaultProject(Organisation organisation)
-        {
             var defaultProject = Project.CreateWithDefaults(organisation.Id, $"{organisation.Name} - default project");
-            await _projectRepository.Add(defaultProject);
-            return defaultProject;
+            ConfigureDefaultProject(defaultProject);
+            organisation.AddProject(defaultProject);
+            
+            await _organisationRepository.Add(organisation);
+            await _unitOfWork.SaveChanges();
+            return organisation;
         }
 
         private static void ConfigureDefaultProject(Project project)
         {
             if (project.Id == Guid.Empty)
                 throw new ArgumentException($"{nameof(project)}.Id should not be empty.");
-            project.SetGreetingMessage(Defaults.GreetingMessage);
             foreach (var enquiryEntityName in Defaults.EnquiryEntityNames)
             {
                 project.AddEntityName(new EntityName(project.Id, enquiryEntityName, true));

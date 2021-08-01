@@ -13,7 +13,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
             var optionsBuilder = new DbContextOptionsBuilder<DialogManagementContext>();
             optionsBuilder.UseNpgsql(
                 "Host=localhost;Database=postgres;Username=postgres;Password=admin");
-            return new DialogManagementContext(optionsBuilder.Options, new MeidatR());
+            return new DialogManagementContext(optionsBuilder.Options);
         }
         
         private class MeidatR : IMediator

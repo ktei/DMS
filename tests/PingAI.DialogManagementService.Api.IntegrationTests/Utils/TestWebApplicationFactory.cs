@@ -23,14 +23,14 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
                 // we want to use the db for testing
                 var descriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
-                         typeof(DbContextOptions<DialogManagementContext>));
+                         typeof(DialogManagementContext));
                 if (descriptor != null)
                 {
                     services.Remove(descriptor);
                 }
 
                 // change connection string to your local DB's connection string
-                services.AddDbContext<DialogManagementContext>(optionsBuilder =>
+                services.AddDbContextPool<DialogManagementContext>(optionsBuilder =>
                     optionsBuilder.UseNpgsql(
                         "Host=localhost;Database=postgres;Username=postgres;Password=admin"));
 

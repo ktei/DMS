@@ -92,13 +92,17 @@ namespace PingAI.DialogManagementService.Domain.Model
             _greetingResponses = new List<GreetingResponse>();
         }
 
-        public static Project CreateWithDefaults(Guid organisationId, string name) =>
-            new Project(organisationId, name,
+        public static Project CreateWithDefaults(Guid organisationId, string name)
+        {
+            var project = new Project(organisationId, name,
                 Defaults.WidgetTitle, Defaults.WidgetColor,
                 Defaults.WidgetDescription, Defaults.FallbackMessage,
                 null, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
-        
+            project.SetGreetingMessage(Defaults.GreetingMessage);
+            return project;
+        }
+
         public static Project FromCache(ProjectCache projectCache)
         {
             var project = new Project(

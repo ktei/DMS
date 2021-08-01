@@ -30,7 +30,7 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                 .UseNpgsql(Connection, options =>
                 {
                     options.UseAdminDatabase("rui");
-                }).Options, Mock.Of<IMediator>());
+                }).Options);
 
             if (transaction != null)
             {

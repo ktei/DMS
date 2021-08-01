@@ -21,13 +21,11 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public const string DefaultSchema = "chatbot";
         static DialogManagementContext() => MapEnums();
 
-        private readonly IMediator _mediator;
         private IDbContextTransaction? _currentTransaction;
 
-        public DialogManagementContext(DbContextOptions<DialogManagementContext> options, IMediator mediator)
+        public DialogManagementContext(DbContextOptions<DialogManagementContext> options)
             : base(options)
         {
-            _mediator = mediator;
         }
         
         public async Task BeginTransactionAsync()
@@ -167,14 +165,14 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             UpdateTimestamps();
-            await _mediator.DispatchDomainEvents(this);
             return await base.SaveChangesAsync(cancellationToken);
         }
 
         private void UpdateTimestamps()
         {
             var entities = ChangeTracker.Entries()
-                .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified);
+                .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified)
+                .ToList();
 
             foreach (var entity in entities)
             {

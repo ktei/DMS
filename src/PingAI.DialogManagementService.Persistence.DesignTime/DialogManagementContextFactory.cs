@@ -13,7 +13,7 @@ namespace PingAI.DialogManagementService.Persistence.DesignTime
             var optionsBuilder = new DbContextOptionsBuilder<DialogManagementContext>();
             optionsBuilder.UseNpgsql(
                 "Host=localhost;Database=postgres;Username=postgres;Password=admin");
-            return new DialogManagementContext(optionsBuilder.Options, Mock.Of<IMediator>());
+            return new DialogManagementContext(optionsBuilder.Options);
         }
     }
 }

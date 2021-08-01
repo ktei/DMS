@@ -14,7 +14,7 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
             var optionsBuilder = new DbContextOptionsBuilder<DialogManagementContext>();
             optionsBuilder.UseNpgsql(
                 "Host=localhost;Database=postgres;Username=postgres;Password=admin");
-            return new DialogManagementContext(optionsBuilder.Options, Mock.Of<IMediator>());
+            return new DialogManagementContext(optionsBuilder.Options);
         }
 
         public static void EnsureSchemaDeleted(this DialogManagementContext context)
