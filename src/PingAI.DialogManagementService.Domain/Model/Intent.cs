@@ -39,7 +39,8 @@ namespace PingAI.DialogManagementService.Domain.Model
                 throw new ArgumentException($"{nameof(name)} cannot be empty.");
             if (name.Trim().Length > MaxNameLength)
                 throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}.");
-            
+
+            Id = Guid.NewGuid();
             Name = name.Trim();
             Type = type;
             _phraseParts = new List<PhrasePart>();

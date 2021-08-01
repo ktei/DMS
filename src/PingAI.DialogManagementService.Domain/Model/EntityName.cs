@@ -31,6 +31,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             if (name.Trim().Length > MaxNameLength)
                 throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}.");
 
+            Id = Guid.NewGuid();
             _name = name.Trim();
             _canBeReferenced = canBeReferenced;
         }

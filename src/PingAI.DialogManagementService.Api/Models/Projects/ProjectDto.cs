@@ -28,8 +28,10 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
 
         public ProjectDto(string projectId, string name, string? widgetTitle, string widgetColor,
             string? widgetDescription,
-            string? fallbackMessage, string? greetingMessage, string[]? quickReplies, string[] enquiries, string? apiKey, string[] domains,
-            string? businessTimeStart, string? businessTimeEnd, string businessTimezone, string? businessEmail)
+            string? fallbackMessage, string? greetingMessage, 
+            string[]? quickReplies, string[] enquiries, string? apiKey, string[] domains,
+            string? businessTimeStart, string? businessTimeEnd, 
+            string businessTimezone, string? businessEmail)
         {
             ProjectId = projectId;
             Name = name;
@@ -82,6 +84,11 @@ namespace PingAI.DialogManagementService.Api.Models.Projects
 
             GreetingResponses = project.GreetingResponses.Select(gr => new ResponseDto(gr.Response!))
                 .ToArray();
+        }
+
+        public ProjectDto()
+        {
+            
         }
 
         public static DateTime? TryConvertStringToUtc(string s) =>

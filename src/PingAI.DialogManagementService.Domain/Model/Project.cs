@@ -46,33 +46,6 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public const int MaxNameLength = 250;
 
-        public Project(Cache cache) : this(cache.OrganisationId, cache.Name,
-            cache.WidgetTitle, cache.WidgetColor!, cache.WidgetDescription, cache.FallbackMessage, 
-            cache.Enquiries,
-            cache.Domains, cache.BusinessTimezone, cache.BusinessTimeStartUtc,
-            cache.BusinessTimeEndUtc, cache.BusinessEmail)
-        {
-            Id = cache.Id;
-
-            var greetingResponses = new List<Response>();
-            if (cache.GreetingMessage != null)
-            {
-                var r = new Response(Resolution.Factory.RteText(cache.GreetingMessage), ResponseType.RTE, 0);
-                greetingResponses.Add(r);
-            }
-
-            var order = 1;
-            foreach (var qr in cache.QuickReplies ?? new string[0])
-            {
-                var r = new Response(Resolution.Factory.RteText(qr), ResponseType.QUICK_REPLY, order++);
-                greetingResponses.Add(r);
-            }
-            
-            // TODO:
-            throw new NotImplementedException();
-            // UpdateGreetingResponses(greetingResponses.Select(gr => new GreetingResponse(this, gr)));
-        }
-
         public Project(Guid id, Guid organisationId, string name, string? widgetTitle, string widgetColor,
             string? widgetDescription, string? fallbackMessage, string[]? enquiries,
             string[]? domains, string businessTimezone, DateTime? businessTimeStartUtc,
@@ -95,7 +68,8 @@ namespace PingAI.DialogManagementService.Domain.Model
             
             if (string.IsNullOrWhiteSpace(widgetColor))
                 throw new ArgumentException($"{nameof(widgetColor)} cannot be empty");
-            
+
+            Id = Guid.NewGuid();
             OrganisationId = organisationId;
             Name = name.Trim();
             WidgetTitle = widgetTitle;
@@ -122,6 +96,42 @@ namespace PingAI.DialogManagementService.Domain.Model
                 Defaults.WidgetDescription, Defaults.FallbackMessage,
                 null, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
+        
+        public static Project FromCache(ProjectCache projectCache)
+        {
+            var project = new Project(
+                projectCache.OrganisationId, 
+                projectCache.Name,
+                projectCache.WidgetTitle, 
+                projectCache.WidgetColor!, 
+                projectCache.WidgetDescription,
+                projectCache.FallbackMessage,
+                projectCache.Enquiries,
+                projectCache.Domains, 
+                projectCache.BusinessTimezone, 
+                projectCache.BusinessTimeStartUtc,
+                projectCache.BusinessTimeEndUtc, 
+                projectCache.BusinessEmail);
+            
+            var greetingResponses = new List<Response>();
+            if (projectCache.GreetingMessage != null)
+            {
+                var r = new Response(Resolution.Factory.RteText(projectCache.GreetingMessage), ResponseType.RTE, 0);
+                greetingResponses.Add(r);
+            }
+
+            var order = 1;
+            foreach (var qr in projectCache.QuickReplies ?? new string[0])
+            {
+                var r = new Response(Resolution.Factory.RteText(qr), ResponseType.QUICK_REPLY, order++);
+                greetingResponses.Add(r);
+            }
+
+            project._greetingResponses.AddRange(
+                greetingResponses.Select(gr => new GreetingResponse(project, gr)));
+
+            return project;
+        }
 
         public void MarkAsDesignTime()
         {
@@ -441,62 +451,5 @@ namespace PingAI.DialogManagementService.Domain.Model
         }
         
         public override string ToString() => Name;
-        
-        public class Cache
-        {
-            public Guid Id { get; set; }
-            public string Name { get; set; }
-            public Guid OrganisationId { get; set; }
-            public string? WidgetTitle { get; set; }
-            public string? WidgetColor { get; set; }
-            public string? WidgetDescription { get; set; }
-            public string? FallbackMessage { get; set; }
-            public string? GreetingMessage { get; set; }
-            public string[]? QuickReplies { get; set; }
-            public string[]? Enquiries { get; set; }
-            public string[]? Domains { get; set; }
-            public string BusinessTimezone { get; set; }
-            public DateTime? BusinessTimeStartUtc { get; set; }
-            public DateTime? BusinessTimeEndUtc { get; set; }
-            public string? BusinessEmail { get; set; }
-            public DateTime CreatedAt { get; set; }
-
-            public static string MakeKey(Guid projectId) => $"{nameof(Project)}_{projectId}";
-
-            public Cache(Project project)
-            {
-                Id = project.Id;
-                Name = project.Name;
-                OrganisationId = project.OrganisationId;
-                WidgetTitle = project.WidgetTitle;
-                WidgetColor = project.WidgetColor;
-                WidgetDescription = project.WidgetDescription;
-                FallbackMessage = project.FallbackMessage;
-                Enquiries = project.Enquiries;
-                Domains = project.Domains;
-                BusinessTimezone = project.BusinessTimezone;
-                BusinessTimeStartUtc = project.BusinessTimeStartUtc;
-                BusinessTimeEndUtc = project.BusinessTimeEndUtc;
-                BusinessEmail = project.BusinessEmail;
-                
-                GreetingMessage = project.GreetingResponses.FirstOrDefault(gr => 
-                        gr.Response!.Type == ResponseType.RTE)?.Response!.GetDisplayText();
-                var quickReplies = new List<string>();
-                foreach (var gr in project.GreetingResponses
-                    .Where(x => x.Response!.Type == ResponseType.QUICK_REPLY)
-                    .OrderBy(x => x.Response!.Order))
-                {
-                    quickReplies.Add(gr.Response!.GetDisplayText());
-                }
-
-                QuickReplies = quickReplies.ToArray();
-
-            }
-
-            public Cache()
-            {
-                
-            }
-        }
     }
 }

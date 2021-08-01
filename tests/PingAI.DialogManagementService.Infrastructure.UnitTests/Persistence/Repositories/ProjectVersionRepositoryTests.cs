@@ -21,16 +21,17 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var context = Fixture.CreateContext();
             var project = await context.Projects.Include(p => p.ProjectVersion).FirstAsync();
             var projectV2 = Project.CreateWithDefaults(project.OrganisationId, Guid.NewGuid().ToString());
-            await context.AddAsync(projectV2);
-            var projectVersion = await context.AddAsync(new ProjectVersion(projectV2.Id,
-                projectV2.OrganisationId, project.Id, project.ProjectVersion!.Version.Next()));
+            var projectVersion = new ProjectVersion(projectV2.Id,
+                projectV2.OrganisationId, project.Id, project.ProjectVersion!.Version.Next());
+            await context.AddRangeAsync(projectV2, projectVersion);
             await context.SaveChangesAsync();
             var sut = new ProjectVersionRepository(context);
 
+            context.ChangeTracker.Clear();
             var actual = await sut.FindLatestByProjectId(project.Id);
 
             actual.Should().NotBeNull();
-            actual!.Id.Should().Be(projectVersion.Entity.Id);
+            actual!.Id.Should().Be(projectVersion.Id);
         }
     }
 }

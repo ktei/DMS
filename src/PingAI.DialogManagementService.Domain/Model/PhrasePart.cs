@@ -37,6 +37,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             if (Value?.Length > MaxValueLength)
                 throw new ArgumentException($"Max length of {nameof(Value)} is {MaxValueLength}");
             
+            Id = Guid.NewGuid();
             PhraseId = phraseId;
             Position = position;
             Text = text;

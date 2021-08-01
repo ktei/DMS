@@ -32,6 +32,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public Response(Resolution resolution, ResponseType type,
             int order)
         {
+            Id = Guid.NewGuid();
             Resolution = resolution ?? throw new ArgumentNullException(nameof(resolution));
             Type = type;
             Order = order;

@@ -28,6 +28,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             if (name.Trim().Length > MaxNameLength)
                 throw new ArgumentException($"Max length of {nameof(name)} is {MaxNameLength}");
             
+            Id = Guid.NewGuid();
             Name = name.Trim();
             Description = description;
             _projects = new List<Project>();

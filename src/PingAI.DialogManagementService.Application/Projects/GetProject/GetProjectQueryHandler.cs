@@ -1,8 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using PingAI.DialogManagementService.Application.Interfaces.Persistence;
-using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Caching;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Security;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
@@ -32,9 +30,9 @@ namespace PingAI.DialogManagementService.Application.Projects.GetProject
             if (!canRead)
                 throw new ForbiddenException(ProjectReadDenied);
 
-            var cachedProject = await _cacheService.GetObject<Project.Cache>(Domain.Model.Project.Cache.MakeKey(request.ProjectId));
+            var cachedProject = await _cacheService.GetObject<ProjectCache>(ProjectCache.MakeKey(request.ProjectId));
             if (cachedProject != null)
-                return new Project(cachedProject);
+                return Project.FromCache(cachedProject);
             
             var project = await _projectRepository.FindById(request.ProjectId);
             if (project == null)
@@ -42,8 +40,8 @@ namespace PingAI.DialogManagementService.Application.Projects.GetProject
                 throw new ForbiddenException(ProjectReadDenied);
             }
             
-            var cache = new Project.Cache(project);
-            await _cacheService.SetObject(Project.Cache.MakeKey(request.ProjectId), cache);
+            var cache = ProjectCache.FromProject(project);
+            await _cacheService.SetObject(cache.GetKey(), cache);
 
             return project;
         }

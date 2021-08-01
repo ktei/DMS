@@ -19,6 +19,7 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public GreetingResponse(Project project, Response response)
         {
+            Id = Guid.NewGuid();
             Project = project;
             Response = response;
             CreatedAt = DateTime.UtcNow;

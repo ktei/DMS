@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using PingAI.DialogManagementService.Application.Interfaces.Persistence;
-using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Security;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Domain.Repositories;
@@ -38,16 +36,16 @@ namespace PingAI.DialogManagementService.Application.Projects.ListProjects
             else
             {
                 var user = await _identityContext.GetUser();
-                if (user.Organisations.Any())
+                // TODO: what if user has multiple organisations?
+                var organisation = user.Organisations.FirstOrDefault();
+                if (organisation != null)
                 {
-                    // TODO: what if user has multiple organisations?
-                    var organisation = user.Organisations.First();
                     projects = await _projectRepository.ListByOrganisationId(organisation.Id);
                 }
                 else
                 {
                     throw new InvalidOperationException($"User {user.Id} does not belong to any organisation, " +
-                                                        $"hence no project being found.");
+                                                        "hence no project being found.");
                 }
             }
 

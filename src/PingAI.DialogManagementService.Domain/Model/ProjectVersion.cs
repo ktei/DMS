@@ -21,6 +21,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             if (projectId.IsEmpty())
                 throw new ArgumentException($"{nameof(projectId)} cannot be empty.");
+            Id = Guid.NewGuid();
             ProjectId = projectId;
             OrganisationId = organisationId;
             VersionGroupId = versionGroupId;
@@ -38,6 +39,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         private ProjectVersion(Project project, Guid versionGroupId, ProjectVersionNumber version)
         {
             Project = project ?? throw new ArgumentNullException(nameof(project));
+            Id = Guid.NewGuid();
             OrganisationId = project.OrganisationId;
             VersionGroupId = versionGroupId;
             Version = version;

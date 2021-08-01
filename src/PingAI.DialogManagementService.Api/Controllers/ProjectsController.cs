@@ -37,6 +37,13 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var projects = await _mediator.Send(new ListProjectsQuery());
             return projects.Select(p => new ProjectListItemDto(p)).ToList();
         }
+        
+        [HttpGet("{projectId}")]
+        public async Task<ActionResult<ProjectDto>> GetProject([FromRoute] Guid projectId)
+        {
+            var project = await _mediator.Send(new GetProjectQuery(projectId));
+            return new ProjectDto(project);
+        }
 
         [HttpGet("{projectId}/integration")]
         public async Task<ActionResult<IntegrationDto>> GetIntegration([FromRoute] Guid projectId)
@@ -46,13 +53,6 @@ namespace PingAI.DialogManagementService.Api.Controllers
             if (integration.SlackWorkspace != null)
                 connections.Add("slack");
             return new IntegrationDto(connections.ToArray());
-        }
-
-        [HttpGet("{projectId}")]
-        public async Task<ActionResult<ProjectDto>> GetProject([FromRoute] Guid projectId)
-        {
-            var project = await _mediator.Send(new GetProjectQuery(projectId));
-            return new ProjectDto(project);
         }
 
         [HttpPut("{projectId}")]

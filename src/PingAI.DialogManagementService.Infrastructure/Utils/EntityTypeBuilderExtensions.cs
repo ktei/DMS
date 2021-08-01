@@ -9,7 +9,8 @@ namespace PingAI.DialogManagementService.Infrastructure.Utils
         public static void AddId<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class
         {
             builder.Property<Guid>("Id")
-                .HasColumnName("id");
+                .HasColumnName("id")
+                .ValueGeneratedNever();
             builder.HasKey("Id");
         }
 

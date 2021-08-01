@@ -84,8 +84,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
                 .OrderBy("version DESC")
                 .FirstAsync();
             var publishedProject = Project.CreateWithDefaults(project.OrganisationId, Guid.NewGuid().ToString());
-            await context.AddAsync(publishedProject);
-            await context.AddAsync(new ProjectVersion(publishedProject.Id,
+            await context.AddRangeAsync(publishedProject, new ProjectVersion(publishedProject.Id,
                 project.OrganisationId, project.Id, latestVersion.Version.Next()));
             await context.SaveChangesAsync();
 
@@ -120,7 +119,6 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var firstProject = await context.Projects.FirstAsync(x => x.Name == SharedDatabaseFixture.DefaultProjectName);
             var project = await sut.FindByIdWithJoins(firstProject.Id);
             var project2 = Project.CreateWithDefaults(project!.OrganisationId, Guid.NewGuid().ToString());
-            await context.AddAsync(project2);
             project2.Import(project);
             await sut.Add(project2);
 

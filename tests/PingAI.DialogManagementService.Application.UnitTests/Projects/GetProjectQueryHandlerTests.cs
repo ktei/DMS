@@ -22,7 +22,7 @@ namespace PingAI.DialogManagementService.Application.UnitTests.Projects
         public async Task ReturnProjectInCacheIfAvailable()
         {
             Mock<IProjectRepository> projectRepoMock = new Mock<IProjectRepository>();
-            var cachedProject = new Project.Cache
+            var cachedProject = new ProjectCache
             {
                 Id = Guid.NewGuid(),
                 Name = "CACHED_PROJECT",
@@ -35,7 +35,7 @@ namespace PingAI.DialogManagementService.Application.UnitTests.Projects
                     m.Setup(s => s.UserCanReadProject(IsAny<Guid>()))
                         .ReturnsAsync(true));
                 fixture.InjectMock<ICacheService>(m =>
-                    m.Setup(s => s.GetObject<Project.Cache>(IsAny<string>(), default))
+                    m.Setup(s => s.GetObject<ProjectCache>(IsAny<string>(), default))
                         .ReturnsAsync(cachedProject));
                 fixture.Inject(projectRepoMock);
             });

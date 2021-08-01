@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Domain.Repositories;
 
@@ -16,10 +15,11 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public Task<SlackWorkspace?> FindByProjectId(Guid projectId)
+        public async Task<SlackWorkspace?> FindByProjectId(Guid projectId)
         {
-            return _context.SlackWorkspaces
+            var slackWorkspace = await _context.SlackWorkspaces
                 .FirstOrDefaultAsync(x => x.ProjectId == projectId);
+            return slackWorkspace;
         }
 
         public async Task<SlackWorkspace> Add(SlackWorkspace slackWorkspace)

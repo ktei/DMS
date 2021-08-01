@@ -19,7 +19,8 @@ namespace PingAI.DialogManagementService.Application.Projects.Handlers
         public Task Handle(ProjectUpdatedEvent notification, CancellationToken cancellationToken)
         {
             var project = notification.Project;
-            return _cacheService.SetObject(Project.Cache.MakeKey(project.Id), new Project.Cache(project));
+            var cache = ProjectCache.FromProject(project);
+            return _cacheService.SetObject(cache.GetKey(), cache);
         }
     }
 }

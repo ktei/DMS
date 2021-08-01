@@ -23,6 +23,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentException($"{nameof(value)} cannot be empty.");
+
+            Id = Guid.NewGuid();
             Value = value;
             Synonyms = synonyms;
         }

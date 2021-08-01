@@ -21,19 +21,11 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
-        public Task<List<Project>> GetProjectsByIds(IEnumerable<Guid> projectIds)
-        {
-            _ = projectIds ?? throw new ArgumentNullException(nameof(projectIds));
-            var projects = _context.Projects
-                .Include(p => p.Organisation)
-                .Where(p => projectIds.Contains(p.Id))
-                .OrderBy(p => p.Name);
-            return projects.ToListAsync();
-        }
-
         public async Task<IReadOnlyList<Project>> ListByOrganisationId(Guid organisationId)
         {
-            var results = await _context.Projects.Where(x => x.ProjectVersion.Version == ProjectVersionNumber.DesignTime
+            var results = await _context.Projects
+                .Include(x => x.Organisation)
+                .Where(x => x.ProjectVersion.Version == ProjectVersionNumber.DesignTime
                                          && x.OrganisationId == organisationId)
                 .ToListAsync();
             return results.ToImmutableList();
@@ -42,6 +34,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public async Task<IReadOnlyList<Project>> ListAll()
         {
             var results = await _context.Projects
+                .Include(x => x.Organisation)
                 .Where(x => x.ProjectVersion.Version == ProjectVersionNumber.DesignTime).ToListAsync();
             return results.ToImmutableList();
         }
@@ -49,7 +42,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public async Task<Project?> FindById(Guid id)
         {
             var project = await _context.Projects
-                .Include(p => p.GreetingResponses)
+                .Include(p => p.GreetingResponses).ThenInclude(x => x.Response)
                 .Include(p => p.ProjectVersion)
                 .FirstOrDefaultAsync(x => x.Id == id);
             return project;

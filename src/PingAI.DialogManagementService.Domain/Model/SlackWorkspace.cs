@@ -14,6 +14,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public SlackWorkspace(Guid projectId, string oAuthAccessToken, string webhookUrl,
             string teamId)
         {
+            Id = Guid.NewGuid();
             ProjectId = projectId;
             OAuthAccessToken = oAuthAccessToken;
             WebhookUrl = webhookUrl;

@@ -20,7 +20,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException($"{nameof(name)} cannot be empty");
-            
+
+            Id = Guid.NewGuid();
             Name = name;
             Auth0Id = auth0Id;
             _organisations = new List<Organisation>();

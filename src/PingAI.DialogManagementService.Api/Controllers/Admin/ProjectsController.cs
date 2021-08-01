@@ -6,7 +6,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PingAI.DialogManagementService.Api.Models.Projects;
 using PingAI.DialogManagementService.Application.Admin.Projects;
-using PingAI.DialogManagementService.Application.Interfaces.Persistence;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Caching;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
@@ -38,17 +37,17 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
             [FromServices] IProjectRepository projectRepository,
             [FromServices] ICacheService cacheService)
         {
-            var cachedProject = await cacheService.GetObject<Project.Cache>(Domain.Model.Project.Cache.MakeKey(projectId));
+            var cachedProject = await cacheService.GetObject<ProjectCache>(ProjectCache.MakeKey(projectId));
             if (cachedProject != null)
-                return new ProjectDto(new Project(cachedProject));
+                return new ProjectDto(Project.FromCache(cachedProject));
             var project = await projectRepository.FindById(projectId);
             if (project == null)
             {
                 throw new NotFoundException($"Project {projectId} does not exist");
             }
             
-            var cache = new Project.Cache(project);
-            await cacheService.SetObject(Domain.Model.Project.Cache.MakeKey(projectId), cache);
+            var cache = ProjectCache.FromProject(project);
+            await cacheService.SetObject(ProjectCache.MakeKey(projectId), cache);
 
 
             return new ProjectDto(project);
