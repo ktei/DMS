@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
@@ -23,6 +24,11 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         {
             var result = await _context.Responses.AddAsync(response);
             return result.Entity;
+        }
+
+        public void RemoveRange(IEnumerable<Response> responses)
+        {
+            _context.Responses.RemoveRange(responses);
         }
     }
 }

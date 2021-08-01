@@ -112,14 +112,14 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         }
 
         [Fact]
-        public async Task ImportFromAnotherProjectAndSaveIt()
+        public async Task Publish()
         {
             var context = Fixture.CreateContext();
             var sut = new ProjectRepository(context);
-            var firstProject = await context.Projects.FirstAsync(x => x.Name == SharedDatabaseFixture.DefaultProjectName);
+            var firstProject = await context.Projects
+                .FirstAsync(x => x.Name == SharedDatabaseFixture.DefaultProjectName);
             var project = await sut.FindByIdWithJoins(firstProject.Id);
-            var project2 = Project.CreateWithDefaults(project!.OrganisationId, Guid.NewGuid().ToString());
-            project2.Import(project);
+            var project2 = project!.Publish(project.ProjectVersion!);
             await sut.Add(project2);
 
             await context.SaveChangesAsync();

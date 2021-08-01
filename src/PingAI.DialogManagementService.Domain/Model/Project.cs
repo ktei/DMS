@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.RegularExpressions;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
-using PingAI.DialogManagementService.Domain.Events;
 
 namespace PingAI.DialogManagementService.Domain.Model
 {
@@ -45,6 +45,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public ProjectVersion? ProjectVersion { get; private set; }
 
         public const int MaxNameLength = 250;
+        private static readonly Regex EmailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,})+)$");
 
         public Project(Guid id, Guid organisationId, string name, string? widgetTitle, string widgetColor,
             string? widgetDescription, string? fallbackMessage, string[]? enquiries,
@@ -82,6 +83,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             BusinessTimeStartUtc = businessTimeStartUtc;
             BusinessTimeEndUtc = businessTimeEndUtc;
             BusinessEmail = businessEmail;
+            ProjectVersion = ProjectVersion.NewDesignTime(this);
             _entityTypes = new List<EntityType>();
             _entityNames = new List<EntityName>();
             _intents = new List<Intent>();
@@ -133,56 +135,71 @@ namespace PingAI.DialogManagementService.Domain.Model
             return project;
         }
 
-        public void MarkAsDesignTime()
-        {
-            ProjectVersion = ProjectVersion.NewDesignTime(this);
-        }
-        
-        public void UpdateWidgetTitle(string widgetTitle)
+        public void CustomiseWidget(string widgetTitle,
+            string widgetColor, string widgetDescription)
         {
             if (!string.IsNullOrEmpty(widgetTitle) && widgetTitle.Length > 255)
                 throw new BadRequestException($"{nameof(widgetTitle)}'s length cannot exceed 255");
-            if (WidgetTitle == widgetTitle) return;
-            WidgetTitle = widgetTitle;
-            AddProjectUpdatedEvent();
-        }
-
-        public void UpdateWidgetColor(string widgetColor)
-        {
             if (string.IsNullOrWhiteSpace(widgetColor))
                 throw new BadRequestException($"{nameof(widgetColor)} cannot be empty");
-            if (WidgetColor == widgetColor) return;
+            WidgetTitle = widgetTitle;
             WidgetColor = widgetColor;
-            AddProjectUpdatedEvent();
-        }
-
-        public void UpdateWidgetDescription(string widgetDescription)
-        {
-            if (WidgetDescription == widgetDescription)
-                return;
             WidgetDescription = widgetDescription;
-            AddProjectUpdatedEvent();
         }
-
-        public void UpdateFallbackMessage(string fallbackMessage)
+        
+        public void SetFallbackMessage(string fallbackMessage)
         {
-            if (FallbackMessage == fallbackMessage)
-                return;
+            if (string.IsNullOrWhiteSpace(fallbackMessage))
+                throw new BadRequestException($"{nameof(fallbackMessage)} cannot be empty");
             FallbackMessage = fallbackMessage;
-            AddProjectUpdatedEvent();
         }
 
-        public void UpdateGreetingResponses(IEnumerable<Response> responses)
+        public Response[] SetGreetingMessage(string? greetingMessage)
         {
-            _greetingResponses.Clear();
-            foreach (var r in responses)
+            var existingGreetings = _greetingResponses
+                .Where(gr => gr.Response!.Type == ResponseType.RTE)
+                .ToList();
+            foreach (var existingGreeting in existingGreetings)
             {
-                AddGreetingResponse(r);
+                _greetingResponses.Remove(existingGreeting);
             }
-            AddProjectUpdatedEvent();
+
+            if (greetingMessage != null)
+            {
+                var response = new Response(Id, Resolution.Factory.RteText(greetingMessage), ResponseType.RTE,
+                    0);
+                AddGreetingResponse(response);
+            }
+
+            return existingGreetings.Select(gr => gr.Response!).ToArray();
         }
 
-        public void UpdateDomains(string[]? domains)
+        public Response[] SetQuickReplies(IEnumerable<string> quickReplies)
+        {
+            if (quickReplies == null)
+                throw new ArgumentNullException(nameof(quickReplies));
+            if (_greetingResponses == null)
+                throw new InvalidOperationException($"Load {Responses} first.");
+            var existingQuickReplies = _greetingResponses
+                .Where(gr => gr.Response!.Type == ResponseType.QUICK_REPLY)
+                .ToList();
+            foreach (var existingQuickReply in existingQuickReplies)
+            {
+                _greetingResponses.Remove(existingQuickReply);
+            }
+            
+            var responseOrder = 1;
+            foreach (var quickReply in quickReplies)
+            {
+                var response = new Response(Id, Resolution.Factory.RteText(quickReply), ResponseType.QUICK_REPLY,
+                    responseOrder++);
+                AddGreetingResponse(response);
+            }
+
+            return existingQuickReplies.Select(gr => gr.Response!).ToArray();
+        }
+
+        public void SetDomains(string[]? domains)
         {
             if (Domains?.SequenceEqual(domains ?? new string[]{}) == true)
                 return;
@@ -191,21 +208,9 @@ namespace PingAI.DialogManagementService.Domain.Model
                 .Where(x => !string.IsNullOrEmpty(x))
                 .Distinct()
                 .ToArray();
-            AddProjectUpdatedEvent();
         }
 
-        public void UpdateEnquiries(string[]? enquiries)
-        {
-            if (Domains?.SequenceEqual(enquiries ?? new string[]{}) == true)
-                return;
-
-            Enquiries = (enquiries ?? new string[]{})
-                .OrderBy(e => e)
-                .Distinct().ToArray();
-            AddProjectUpdatedEvent();
-        }
-
-        public void UpdateBusinessHours(DateTime businessTimeStartUtc, DateTime businessTimeEndUtc,
+        public void SetBusinessHours(DateTime businessTimeStartUtc, DateTime businessTimeEndUtc,
             string businessTimezone = Defaults.BusinessTimezone)
         {
             if (string.IsNullOrWhiteSpace(businessTimezone))
@@ -213,27 +218,26 @@ namespace PingAI.DialogManagementService.Domain.Model
             if (businessTimeEndUtc <= businessTimeStartUtc)
                 throw new ArgumentException($"{nameof(businessTimeEndUtc)} " +
                                             $"must be greater than {nameof(businessTimeStartUtc)}");
-            if (BusinessTimeStartUtc == businessTimeStartUtc &&
-                BusinessTimeEndUtc == businessTimeEndUtc &&
-                BusinessTimezone == businessTimezone)
-                return;
-            
             BusinessTimeStartUtc = businessTimeStartUtc;
             BusinessTimeEndUtc = businessTimeEndUtc;
             BusinessTimezone = businessTimezone;
-            
-            AddProjectUpdatedEvent();
         }
 
-        public void UpdateBusinessEmail(string businessEmail)
+        public void SetBusinessEmail(string businessEmail)
         {
             if (string.IsNullOrWhiteSpace(businessEmail))
                 throw new ArgumentException($"{nameof(businessEmail)} cannot be empty");
-            if (BusinessEmail == businessEmail)
-                return;
-            
+            var match = EmailRegex.Match(businessEmail);
+            if (!match.Success)
+                throw new ArgumentException($"{businessEmail} is not valid email.");
             BusinessEmail = businessEmail;
-            AddProjectUpdatedEvent();
+        }
+        
+        public void SetEnquiries(string[]? enquiries)
+        {
+            Enquiries = (enquiries ?? new string[]{})
+                .OrderBy(e => e)
+                .Distinct().ToArray();
         }
 
         public void AddIntent(Intent intent)
@@ -268,7 +272,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             _entityNames.Add(entityName);
         }
 
-        public void AddResponse(Response response)
+        private void AddResponse(Response response)
         {
             _ = _responses ?? throw new ArgumentNullException(nameof(response));
             if (_responses == null)
@@ -276,7 +280,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             _responses.Add(response);
         }
 
-        public void AddGreetingResponse(Response response)
+        private void AddGreetingResponse(Response response)
         {
             _ = response ?? throw new ArgumentNullException(nameof(response));
             if (_greetingResponses == null)
@@ -289,64 +293,63 @@ namespace PingAI.DialogManagementService.Domain.Model
         }
 
         /// <summary>
-        /// Import the given project by copying all its child entities such as intents,
-        /// queries, responses etc.
+        /// Publish the project by copying all its child entities such as intents,
+        /// queries, responses etc. to the project of next version.
         /// </summary>
-        public void Import(Project target)
+        public Project Publish(ProjectVersion latestVersion)
         {
-            _ = target ?? throw new ArgumentNullException(nameof(target));
             if (Id == Guid.Empty)
-            {
-                throw new InvalidOperationException("Project must have a non-empty (GUID) Id " +
-                                                    "before importing another project.");
-            }
+                throw new InvalidOperationException($"Project to be published must have a non-empty (GUID) Id.");
+            var nextVersion = Project.CreateWithDefaults(OrganisationId, $"{Name}__{DateTime.UtcNow.Ticks}");
 
-            if (target.Id == Guid.Empty)
-                throw new InvalidOperationException($"Target project must have a non-empty (GUID) Id.");
-
-            if (target.EntityNames == null)
-                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(EntityNames)} before importing.");
-            if (target.EntityTypes == null)
-                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(EntityTypes)} before importing.");
-            if (target.Intents == null)
-                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(Intents)} before importing.");
-            if (target.Responses == null)
-                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(Responses)} before importing.");
-            if (target.Queries == null)
-                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(Queries)} before importing.");
-            if (target.GreetingResponses == null)
-                throw new InvalidOperationException($"Load {nameof(target)}.{nameof(GreetingResponses)} before importing.");
+            if (_entityNames == null)
+                throw new InvalidOperationException($"Load {nameof(EntityNames)} before publish.");
+            if (_entityTypes == null)
+                throw new InvalidOperationException($"Load {nameof(EntityTypes)} before publish.");
+            if (_intents == null)
+                throw new InvalidOperationException($"Load {nameof(Intents)} before publish.");
+            if (_responses == null)
+                throw new InvalidOperationException($"Load {nameof(Responses)} before publish.");
+            if (_queries == null)
+                throw new InvalidOperationException($"Load {nameof(Queries)} before publish.");
+            if (_greetingResponses == null)
+                throw new InvalidOperationException($"Load {nameof(GreetingResponses)} before publish.");
             
-            CopyProperties(target);
-            var entityNames = CopyEntityNames(target);
-            var entityTypes = CopyEntityTypes(target);
-            var intents = CopyIntents(target, entityNames, entityTypes);
-            var responses = CopyResponses(target);
-            CopyQueries(target, intents, responses);
-            CopyGreetingResponses(target, responses);
+            CopyProperties(nextVersion);
+            var entityNames = CopyEntityNames(nextVersion);
+            var entityTypes = CopyEntityTypes(nextVersion);
+            var intents = CopyIntents(nextVersion, entityNames, entityTypes);
+            var responses = CopyResponses(nextVersion);
+            CopyQueries(nextVersion, intents, responses);
+            CopyGreetingResponses(nextVersion, responses);
+
+            nextVersion.ProjectVersion = 
+                (latestVersion ?? throw new ArgumentNullException(nameof(latestVersion))).Next(nextVersion.Id);
+            
+            return nextVersion;
         }
 
         private void CopyProperties(Project target)
         {
-            WidgetTitle = target.WidgetTitle;
-            WidgetColor = target.WidgetColor;
-            WidgetDescription = target.WidgetDescription;
-            FallbackMessage = target.FallbackMessage;
-            Enquiries = target.Enquiries;
-            Domains = target.Domains;
-            BusinessTimezone = target.BusinessTimezone;
-            BusinessTimeStartUtc = target.BusinessTimeStartUtc;
-            BusinessTimeEndUtc = target.BusinessTimeEndUtc;
-            BusinessEmail = target.BusinessEmail;
+            target.WidgetTitle = WidgetTitle;
+            target.WidgetColor = WidgetColor;
+            target.WidgetDescription = WidgetDescription;
+            target.FallbackMessage = FallbackMessage;
+            target.Enquiries = Enquiries;
+            target.Domains = Domains;
+            target.BusinessTimezone = BusinessTimezone;
+            target.BusinessTimeStartUtc = BusinessTimeStartUtc;
+            target.BusinessTimeEndUtc = BusinessTimeEndUtc;
+            target.BusinessEmail = BusinessEmail;
         }
 
         private Dictionary<Guid, EntityName> CopyEntityNames(Project target)
         {
             var entityNameMap = new Dictionary<Guid, EntityName>();
-            foreach (var entityName in target.EntityNames)
+            foreach (var entityName in EntityNames)
             {
                 var copy = new EntityName(Id, entityName.Name, entityName.CanBeReferenced);
-                AddEntityName(copy);
+                target.AddEntityName(copy);
                 entityNameMap.Add(entityName.Id, copy);
             }
 
@@ -356,10 +359,10 @@ namespace PingAI.DialogManagementService.Domain.Model
         private Dictionary<Guid, EntityType> CopyEntityTypes(Project target)
         {
             var entityTypeMap = new Dictionary<Guid, EntityType>();
-            foreach (var entityType in target.EntityTypes)
+            foreach (var entityType in EntityTypes)
             {
                 var copy = new EntityType(Id, entityType.Name, entityType.Description);
-                AddEntityType(copy);
+                target.AddEntityType(copy);
                 entityTypeMap.Add(entityType.Id, copy);
             }
 
@@ -371,7 +374,7 @@ namespace PingAI.DialogManagementService.Domain.Model
             Dictionary<Guid, EntityType> entityTypes)
         {
             var intentMap = new Dictionary<Guid, Intent>();
-            foreach (var intent in target.Intents)
+            foreach (var intent in Intents)
             {
                 var copy = new Intent(Id, intent.Name, intent.Type);
                 foreach (var phrasePart in intent.PhraseParts)
@@ -385,7 +388,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                     copy.AddPhrasePart(partCopy);
                 }
                 intentMap.Add(intent.Id, copy);
-                AddIntent(copy);
+                target.AddIntent(copy);
             }
 
             return intentMap;
@@ -394,20 +397,20 @@ namespace PingAI.DialogManagementService.Domain.Model
         private Dictionary<Guid, Response> CopyResponses(Project target)
         {
             var responseMap = new Dictionary<Guid, Response>();
-            foreach (var response in target.Responses)
+            foreach (var response in Responses)
             {
                 var copy = new Response(Id, response.Resolution, response.Type, response.Order);
                 responseMap.Add(response.Id, copy);
-                AddResponse(copy);
+                target.AddResponse(copy);
             }
 
             return responseMap;
         }
 
-        private void CopyQueries(Project target, Dictionary<Guid, Intent> intents,
-            Dictionary<Guid, Response> responses)
+        private void CopyQueries(Project target, IReadOnlyDictionary<Guid, Intent> intents,
+            IReadOnlyDictionary<Guid, Response> responses)
         {
-            foreach (var query in target.Queries)
+            foreach (var query in Queries)
             {
                 var copy = new Query(Id, query.Name, query.Expressions,
                     query.Description, query.Tags, query.DisplayOrder);
@@ -421,35 +424,21 @@ namespace PingAI.DialogManagementService.Domain.Model
                     copy.AddResponse(responses[response.Id]);
                 }
 
-                AddQuery(copy);
+                target.AddQuery(copy);
             }
         }
 
-        private void CopyGreetingResponses(Project target, Dictionary<Guid, Response> responses)
+        private void CopyGreetingResponses(Project target, IReadOnlyDictionary<Guid, Response> responses)
         {
-            foreach (var greetingResponse in target.GreetingResponses)
+            if (target._greetingResponses == null)
+                throw new InvalidOperationException($"target.{nameof(GreetingResponses)} is null");
+            foreach (var greetingResponse in GreetingResponses)
             {
                 var copy = new GreetingResponse(this, responses[greetingResponse.ResponseId]);
-                _greetingResponses.Add(copy);
+                target._greetingResponses.Add(copy);
             }
         }
 
-        private void AddProjectPublishedEvent(Project publishedProjectId)
-        {
-            if (!DomainEvents.Any(e => e is ProjectPublishedEvent))
-            {
-                AddDomainEvent(new ProjectPublishedEvent(this, publishedProjectId));
-            }
-        }
-
-        private void AddProjectUpdatedEvent()
-        {
-            if (!DomainEvents.Any(e => e is ProjectUpdatedEvent))
-            {
-                AddDomainEvent(new ProjectUpdatedEvent(this));
-            }
-        }
-        
-        public override string ToString() => Name;
+        public override string ToString() => $"{Id}:{Name}";
     }
 }

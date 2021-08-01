@@ -93,7 +93,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
             var project = await context.Projects.FindAsync(Guid.Parse("3932f12d-ed9e-441a-8a13-8c4ca88b2e4c"));
             if (project.Domains?.Any() != true)
             {
-                project.UpdateDomains(new[] {"http://localhost:3000"});
+                project.SetDomains(new[] {"http://localhost:3000"});
             }
             var entityType = await context.EntityTypes.FirstOrDefaultAsync(e => e.Name == "TEST_city");
             var entityName = await context.EntityNames.FirstOrDefaultAsync(e => e.Name == "TEST_favouriteCity");

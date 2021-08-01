@@ -65,12 +65,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
         {
             if (project.Id == Guid.Empty)
                 throw new ArgumentException($"{nameof(project)}.Id should not be empty.");
-            var defaultGreeting = new Response(project.Id, Resolution.Factory.RteText(Defaults.GreetingMessage), 
-                ResponseType.RTE, 0);
-            project.UpdateGreetingResponses(new[]
-            {
-                defaultGreeting
-            });
+            project.SetGreetingMessage(Defaults.GreetingMessage);
             foreach (var enquiryEntityName in Defaults.EnquiryEntityNames)
             {
                 project.AddEntityName(new EntityName(project.Id, enquiryEntityName, true));

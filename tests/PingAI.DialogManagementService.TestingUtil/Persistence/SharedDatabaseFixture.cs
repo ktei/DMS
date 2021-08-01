@@ -61,10 +61,10 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                     context.Add(organisation);
                     // seed Projects
                     var project = Project.CreateWithDefaults(organisation.Id, "TEST_DEFAULT");
-                    project.AddGreetingResponse(new Response(Resolution.Factory.RteText("Hello, and welcome!"),
-                        ResponseType.RTE, 0));
+                    project.SetGreetingMessage("Hello, and welcome!");
+                    project.SetDomains(new[]{"https://test.com"});
+                    project.SetBusinessEmail("test-email@test.com");
                     context.Add(project);
-                    project.MarkAsDesignTime();
                     
                     // seed EntityTypes
                     var foodEntityType = new EntityType(project.Id, "Food", 

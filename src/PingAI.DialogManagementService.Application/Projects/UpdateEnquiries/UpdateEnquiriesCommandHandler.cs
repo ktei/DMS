@@ -35,7 +35,7 @@ namespace PingAI.DialogManagementService.Application.Projects.UpdateEnquiries
             if (!canWrite)
                 throw new ForbiddenException(ProjectWriteDenied);
 
-            project.UpdateEnquiries(request.Enquiries);
+            project.SetEnquiries(request.Enquiries);
             await _unitOfWork.SaveChanges();
             return project;
         }

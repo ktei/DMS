@@ -40,7 +40,6 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var organisation = await context.Organisations.FirstAsync();
             var project = Project.CreateWithDefaults(organisation.Id, Guid.NewGuid().ToString());
             await context.AddAsync(project);
-            project.MarkAsDesignTime();
             var rteQuery = new Query(project.Id, Guid.NewGuid().ToString(), new Expression[0],
                 "whatever", null, 0);
             rteQuery.AddResponse(new Response(project.Id, Resolution.Factory.RteText("Hello world"), ResponseType.RTE, 0));

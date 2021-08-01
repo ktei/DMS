@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using Amazon.Runtime.Internal.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +13,7 @@ using PingAI.DialogManagementService.Application.Projects.PrepareUpload;
 using PingAI.DialogManagementService.Application.Projects.PublishProject;
 using PingAI.DialogManagementService.Application.Projects.UpdateEnquiries;
 using PingAI.DialogManagementService.Application.Projects.UpdateProject;
-using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Domain.ErrorHandling;
 
 namespace PingAI.DialogManagementService.Api.Controllers
 {
@@ -59,6 +56,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
         public async Task<ActionResult<ProjectDto>> UpdateProject([FromRoute] Guid projectId,
             [FromBody] UpdateProjectRequest request)
         {
+            if (projectId == Guid.Empty)
+                throw new BadRequestException($"{nameof(projectId)} cannot be empty");
             var businessTimeStartUtc = string.IsNullOrEmpty(request.BusinessTimeStart)
                 ? null
                 : ProjectDto.TryConvertStringToUtc(request.BusinessTimeStart);
@@ -66,30 +65,11 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 ? null
                 : ProjectDto.TryConvertStringToUtc(request.BusinessTimeEnd);
 
-            var greetingResponses = new List<Response>();
-            if (request.GreetingMessage != null)
-            {
-                var r = new Response(projectId, Resolution.Factory.RteText(request.GreetingMessage), ResponseType.RTE,
-                    0);
-                greetingResponses.Add(r);
-            }
-
-            if (request.QuickReplies != null)
-            {
-                var responseOrder = 1;
-                foreach (var quickReply in request.QuickReplies)
-                {
-                    var r = new Response(projectId, Resolution.Factory.RteText(quickReply), ResponseType.QUICK_REPLY,
-                        responseOrder++);
-                    greetingResponses.Add(r);
-                }
-            }
-
             var project = await _mediator.Send(new UpdateProjectCommand(projectId,
                 request.WidgetTitle, request.WidgetColor,
                 request.WidgetDescription, request.FallbackMessage,
-                greetingResponses, request.Domains,
-                businessTimeStartUtc, businessTimeEndUtc, request.BusinessEmail));
+                request.GreetingMessage, request.QuickReplies ?? Array.Empty<string>(), 
+                request.Domains, businessTimeStartUtc, businessTimeEndUtc, request.BusinessEmail));
             return new ProjectDto(project);
         }
 

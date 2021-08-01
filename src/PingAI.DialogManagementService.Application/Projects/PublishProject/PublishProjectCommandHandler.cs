@@ -49,32 +49,27 @@ namespace PingAI.DialogManagementService.Application.Projects.PublishProject
             if (validationErrors.Any())
                 throw new BadRequestException($"Publish failed. {string.Join(" ", validationErrors)}");
             
-            var organisationId = sourceProject.OrganisationId;
             var latestVersion = await _projectVersionRepository.FindLatestByProjectId(request.ProjectId);
             if (latestVersion == null)
                 throw new InvalidOperationException($"No version found for project {request.ProjectId}");
-            var targetProject =
-                Project.CreateWithDefaults(organisationId, $"{sourceProject.Name}__{DateTime.UtcNow.Ticks}");
-            await _projectRepository.Add(targetProject);
-            targetProject.Import(sourceProject);
-            var versionToPublish = latestVersion.Next(targetProject.Id);
-            await _projectVersionRepository.Add(versionToPublish);
+            var projectOfNextVersion = sourceProject.Publish(latestVersion);
+            await _projectRepository.Add(projectOfNextVersion);
 
             await _uow.ExecuteTransaction(async () =>
             {
                 // Export source project's NLU data
                 await PerformanceLogger.Monitor(() => _nluService.Export(sourceProject.Id,
-                    targetProject.Id), "NluService.Export");
+                    projectOfNextVersion.Id), "NluService.Export");
 
                 // The exported NLU data in wrapped in target project, we want to apply that
                 // data to source project's runtime bot. Hence, the target is source project
                 // and the source is the target project. The logic is a bit twisted here.
                 await PerformanceLogger.Monitor(
-                    () => _nluService.Import(targetProject.Id, sourceProject.Id),
+                    () => _nluService.Import(projectOfNextVersion.Id, sourceProject.Id),
                     "NluService.Import");
             });
 
-            return targetProject;
+            return projectOfNextVersion;
         }
 
         /// <summary>
