@@ -21,7 +21,8 @@ namespace PingAI.DialogManagementService.Api.Services
         public Task SetObject<T>(string key, T value, TimeSpan? expiry = null) where T : class, new()
         {
             var json = JsonUtils.Serialize(value);
-            return _distributedCache.SetAsync(PrependGlobalKeyPrefix(key),
+            var cacheKey = PrependGlobalKeyPrefix(key);
+            return _distributedCache.SetAsync(cacheKey,
                 System.Text.Encoding.UTF8.GetBytes(json),
                 new DistributedCacheEntryOptions()
                     .SetSlidingExpiration(expiry ?? TimeSpan.FromMinutes(10))
@@ -30,7 +31,8 @@ namespace PingAI.DialogManagementService.Api.Services
 
         public async Task<T?> GetObject<T>(string key, T? fallbackValue = default) where T : class, new()
         {
-            var data = await _distributedCache.GetAsync(PrependGlobalKeyPrefix(key));
+            var cacheKey = PrependGlobalKeyPrefix(key);
+            var data = await _distributedCache.GetAsync(cacheKey);
             if (data == null)
                 return fallbackValue;
             var json = System.Text.Encoding.UTF8.GetString(data);

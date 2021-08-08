@@ -49,7 +49,6 @@ namespace PingAI.DialogManagementService.Api.Controllers.Admin
             var cache = ProjectCache.FromProject(project);
             await cacheService.SetObject(ProjectCache.MakeKey(projectId), cache);
 
-
             return new ProjectDto(project);
         }
 
