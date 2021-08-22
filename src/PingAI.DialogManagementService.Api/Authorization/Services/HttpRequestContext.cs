@@ -27,7 +27,7 @@ namespace PingAI.DialogManagementService.Api.Authorization.Services
         {
             if (!_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
                 throw new UnauthorizedException("Unauthenticated request");
-            var user = await _userRepository.GetUserByAuth0Id(_httpContextAccessor.HttpContext.User.Identity.Name!);
+            var user = await _userRepository.FindByAuth0Id(_httpContextAccessor.HttpContext.User.Identity.Name!);
             if (user == null)
                 throw new UnauthorizedException("Unauthenticated request");
             return user;

@@ -15,16 +15,22 @@ namespace PingAI.DialogManagementService.Domain.Model
         [JsonPropertyName("parts")] public ResolutionPart[]? Parts { get; }
 
         [JsonPropertyName("form")] public FormResolution? Form { get; }
+        
+        [JsonPropertyName("webhook")]
+        public WebhookResolution? Webhook { get; }
 
         [JsonConstructor]
-        public Resolution(ResolutionType type, ResolutionPart[]? parts, FormResolution? form)
+        public Resolution(ResolutionType type, ResolutionPart[]? parts, FormResolution? form,
+            WebhookResolution? webhook)
         {
             Type = type;
             Parts = parts?.ToArray();
             Form = form;
+            Webhook = webhook;
         }
 
-        public static Resolution Empty => new Resolution(ResolutionType.EMPTY, null, null);
+        public static Resolution Empty => new Resolution(ResolutionType.EMPTY, null, null,
+            null);
         
         public const int MaxRteTextLength = 4000;
 
@@ -86,13 +92,19 @@ namespace PingAI.DialogManagementService.Domain.Model
                     resolutionParts.Add(ResolutionPart.TextPart(rteText[pos..]));
                 }
 
-                return new Resolution(ResolutionType.PARTS, resolutionParts.ToArray(), null);
+                return new Resolution(ResolutionType.PARTS, resolutionParts.ToArray(), null, null);
             }
 
             public static Resolution Form(FormResolution form)
             {
                 return new Resolution(ResolutionType.PARTS, null,
-                    form ?? throw new ArgumentNullException(nameof(form)));
+                    form ?? throw new ArgumentNullException(nameof(form)), null);
+            }
+
+            public static Resolution Webhook(WebhookResolution webhook)
+            {
+                return new Resolution(ResolutionType.WEBHOOK, null,
+                    null, webhook ?? throw new ArgumentNullException(nameof(webhook)));
             }
         }
     }

@@ -24,12 +24,12 @@ namespace PingAI.DialogManagementService.Application.Admin.Users
             // var existingUser = await _userRepository.GetUserByName(request.Name);
             // if (existingUser != null)
             //     throw new BadRequestException($"User {request.Name} already exists");
-            var existingUser = await _userRepository.GetUserByAuth0Id(request.Auth0Id);
+            var existingUser = await _userRepository.FindByAuth0Id(request.Auth0Id);
             if (existingUser != null)
                 throw new BadRequestException($"User {request.Name} already exists", ErrorCodes.UserExists);
 
             var user = new User(request.Name, request.Auth0Id);
-            user = await _userRepository.AddUser(user);
+            user = await _userRepository.Add(user);
             await _uow.SaveChanges();
 
             return user;

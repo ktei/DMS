@@ -1,9 +1,10 @@
 using PingAI.DialogManagementService.TestingUtil.Persistence;
 using Xunit;
 
-namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Repositories
+namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Util
 {
-    public abstract class RepositoryTestBase : IClassFixture<SharedDatabaseFixture>
+    [Collection(RepositoryTestCollection.Name)]
+    public abstract class RepositoryTestBase
     {
         protected RepositoryTestBase(SharedDatabaseFixture fixture) => Fixture = fixture;
 

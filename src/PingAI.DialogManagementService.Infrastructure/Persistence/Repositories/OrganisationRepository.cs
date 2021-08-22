@@ -21,7 +21,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
         public async Task<Organisation?> FindByName(string name)
         {
             var organisation = await _context.Organisations
-                .FirstOrDefaultAsync(o => o.Name == name);
+                .SingleOrDefaultAsync(o => o.Name == name);
             return organisation;
         }
         

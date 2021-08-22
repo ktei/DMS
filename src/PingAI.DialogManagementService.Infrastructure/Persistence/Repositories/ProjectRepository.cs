@@ -42,7 +42,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
             var project = await _context.Projects
                 .Include(p => p.GreetingResponses).ThenInclude(x => x.Response)
                 .Include(p => p.ProjectVersion)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .SingleOrDefaultAsync(x => x.Id == id);
             return project;
         }
         
@@ -71,7 +71,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .Include(p => p.Queries).ThenInclude(q => q.Intents)
                 .Include(p => p.Queries).ThenInclude(q => q.Responses)
                 .Include(p => p.GreetingResponses).ThenInclude(x => x.Response)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .SingleOrDefaultAsync(x => x.Id == id);
             return project;
         }
 

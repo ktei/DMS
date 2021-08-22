@@ -3,8 +3,8 @@ using Xunit;
 
 namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils
 {
-    public abstract class ApiTestBase : IClassFixture<TestWebApplicationFactory>,
-        IClassFixture<SharedDatabaseFixture>
+    [Collection(ApiTestCollection.Name)]
+    public abstract class ApiTestBase
     {
         protected ApiTestBase(TestWebApplicationFactory factory, SharedDatabaseFixture fixture)
         {

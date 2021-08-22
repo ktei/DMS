@@ -56,5 +56,13 @@ namespace PingAI.DialogManagementService.Domain.Model
 
             return sb.ToString();
         }
+        
+        public void SetWebhook(WebhookResolution webhook)
+        {
+            if (webhook == null)
+                throw new ArgumentNullException(nameof(webhook));
+            Resolution = Resolution.Factory.Webhook(webhook);
+            Type = ResponseType.WEBHOOK;
+        }
     }
 }

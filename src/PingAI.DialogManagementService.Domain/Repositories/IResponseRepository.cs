@@ -7,8 +7,10 @@ namespace PingAI.DialogManagementService.Domain.Repositories
 {
     public interface IResponseRepository
     {
-        Task<Response?> GetResponseById(Guid responseId);
-        Task<Response> AddResponse(Response response);
+        Task<Response?> FindById(Guid responseId);
+        Task<IReadOnlyList<Response>> ListByProjectId(Guid projectId, ResponseType responseType);
+        Task<Response> Add(Response response);
+        void Remove(Response response);
         void RemoveRange(IEnumerable<Response> responses);
     }
 }

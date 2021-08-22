@@ -92,14 +92,15 @@ namespace PingAI.DialogManagementService.Domain.Model
             _greetingResponses = new List<GreetingResponse>();
         }
 
-        public static Project CreateWithDefaults(Guid organisationId, string name)
+        public static Project CreateWithDefaults(Guid organisationId, string name, bool withGreetingMessage = true)
         {
             var project = new Project(organisationId, name,
                 Defaults.WidgetTitle, Defaults.WidgetColor,
                 Defaults.WidgetDescription, Defaults.FallbackMessage,
                 null, null, Defaults.BusinessTimezone, Defaults.BusinessTimeStartUtc,
                 Defaults.BusinessTimeEndUtc, null);
-            project.SetGreetingMessage(Defaults.GreetingMessage);
+            if (withGreetingMessage)
+                project.SetGreetingMessage(Defaults.GreetingMessage);
             return project;
         }
 
@@ -304,7 +305,8 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             if (Id == Guid.Empty)
                 throw new InvalidOperationException($"Project to be published must have a non-empty (GUID) Id.");
-            var nextVersion = Project.CreateWithDefaults(OrganisationId, $"{Name}__{DateTime.UtcNow.Ticks}");
+            var nextVersion = CreateWithDefaults(OrganisationId, $"{Name}__{DateTime.UtcNow.Ticks}",
+                withGreetingMessage: false);
 
             if (_entityNames == null)
                 throw new InvalidOperationException($"Load {nameof(EntityNames)} before publish.");

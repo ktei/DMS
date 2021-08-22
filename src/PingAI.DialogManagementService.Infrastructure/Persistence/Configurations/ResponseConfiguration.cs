@@ -41,7 +41,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Configuratio
             var resolutionParts = JsonUtils.TryDeserialize<ResolutionPart[]>(json!);
             if (resolutionParts != null)
             {
-                return new Resolution(ResolutionType.PARTS, resolutionParts, null);
+                return new Resolution(ResolutionType.PARTS, resolutionParts, null, null);
             }
 
             return JsonUtils.Deserialize<Resolution>(json!);

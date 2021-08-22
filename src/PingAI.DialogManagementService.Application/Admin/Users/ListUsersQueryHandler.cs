@@ -19,7 +19,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Users
         
         public async Task<List<User>> Handle(ListUsersQuery request, CancellationToken cancellationToken)
         {
-            var users = await _userRepository.GetAllUsers();
+            var users = await _userRepository.ListAll();
             return users;
         }
     }

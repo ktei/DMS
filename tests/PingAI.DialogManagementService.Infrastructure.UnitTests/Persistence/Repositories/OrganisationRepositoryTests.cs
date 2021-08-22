@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
+using PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Util;
 using PingAI.DialogManagementService.TestingUtil.Persistence;
 using Xunit;
 

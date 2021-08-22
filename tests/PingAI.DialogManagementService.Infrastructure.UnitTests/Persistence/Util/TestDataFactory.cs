@@ -1,11 +1,8 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 
-namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Helpers
+namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Util
 {
     public class TestDataFactory
     {

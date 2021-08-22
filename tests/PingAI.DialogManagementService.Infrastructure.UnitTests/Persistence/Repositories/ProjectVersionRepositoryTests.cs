@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
+using PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Util;
 using PingAI.DialogManagementService.TestingUtil.Persistence;
 using Xunit;
 
@@ -19,7 +20,11 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
         public async Task FindLatestByProjectId()
         {
             var context = Fixture.CreateContext();
-            var project = await context.Projects.Include(p => p.ProjectVersion).FirstAsync();
+            var organisation = await context.Organisations.FirstAsync();
+            var project = Project.CreateWithDefaults(organisation.Id, "TEST_PROJECT_VERSION");
+            await context.AddAsync(project);
+            await context.SaveChangesAsync();
+            context.ChangeTracker.Clear();
             var projectV2 = Project.CreateWithDefaults(project.OrganisationId, Guid.NewGuid().ToString());
             var projectVersion = new ProjectVersion(projectV2.Id,
                 projectV2.OrganisationId, project.Id, project.ProjectVersion!.Version.Next());

@@ -37,7 +37,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
 
                 .Include(x => x.PhraseParts)
                 .ThenInclude(p => p.EntityName)
-                .FirstOrDefaultAsync(x => x.Id == intentId);
+                .SingleOrDefaultAsync(x => x.Id == intentId);
             return intent;
         }
 

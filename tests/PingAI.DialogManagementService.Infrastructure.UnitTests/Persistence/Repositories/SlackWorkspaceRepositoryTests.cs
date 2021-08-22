@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 using PingAI.DialogManagementService.Infrastructure.Persistence.Repositories;
-using PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Helpers;
+using PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Util;
 using Xunit;
 using static Xunit.Assert;
 
@@ -37,7 +37,7 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
 
             // Assert
             var actual = await context.SlackWorkspaces.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == slackWorkspace.Id);
+                .SingleOrDefaultAsync(x => x.Id == slackWorkspace.Id);
             Equal(slackWorkspace.OAuthAccessToken, actual.OAuthAccessToken);
             Equal("team_123", actual.TeamId);
         }

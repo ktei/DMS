@@ -26,7 +26,7 @@ namespace PingAI.DialogManagementService.Application.Admin.Organisations
         {
             if (!string.IsNullOrEmpty(request.Auth0UserId))
             {
-                var user = await _userRepository.GetUserByAuth0Id(request.Auth0UserId!);
+                var user = await _userRepository.FindByAuth0Id(request.Auth0UserId!);
                 if (user == null)
                     throw new BadRequestException("User does not exist");
                 return (await _organisationRepository.ListByUserId(user.Id)).ToList();

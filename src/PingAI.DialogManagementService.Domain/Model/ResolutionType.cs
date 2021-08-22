@@ -4,6 +4,7 @@ namespace PingAI.DialogManagementService.Domain.Model
     {
         PARTS,
         FORM,
+        WEBHOOK,
         EMPTY
     }
 }

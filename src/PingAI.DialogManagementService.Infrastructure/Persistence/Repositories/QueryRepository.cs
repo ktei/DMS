@@ -32,7 +32,7 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .ThenInclude(x => x.EntityType)
 
                 .Include(x => x.Responses)
-                .FirstOrDefaultAsync(x => x.Id == queryId);
+                .SingleOrDefaultAsync(x => x.Id == queryId);
             return query;
         }
         

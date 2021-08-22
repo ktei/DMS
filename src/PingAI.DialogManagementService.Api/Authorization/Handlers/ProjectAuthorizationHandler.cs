@@ -44,7 +44,7 @@ namespace PingAI.DialogManagementService.Api.Authorization.Handlers
                 return;
             }
 
-            var user = await _userRepository.GetUserByAuth0Id(context.User.Identity.Name!);
+            var user = await _userRepository.FindByAuth0Id(context.User.Identity.Name!);
             if (user == null)
             {
                 context.Fail();
