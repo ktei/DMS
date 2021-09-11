@@ -15,6 +15,11 @@ namespace PingAI.DialogManagementService.Api.Models.Webhooks
         public string Url { get; set; }
         public IReadOnlyList<KeyValuePair<string, string>> Headers { get; set; }
 
+        public WebhookDetails()
+        {
+            
+        }
+
         public WebhookDetails(Response response)
         {
             ResponseId = response.Id;

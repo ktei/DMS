@@ -1,14 +1,11 @@
 using System.Linq;
-using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
-using PingAI.DialogManagementService.Domain.Model;
 using PingAI.DialogManagementService.Infrastructure.Persistence;
 
 namespace PingAI.DialogManagementService.Api.IntegrationTests.Utils

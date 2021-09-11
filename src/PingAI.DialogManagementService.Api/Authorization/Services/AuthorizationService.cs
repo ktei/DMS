@@ -7,7 +7,7 @@ using IAuthorizationService = PingAI.DialogManagementService.Application.Interfa
 
 namespace PingAI.DialogManagementService.Api.Authorization.Services
 {
-    public class AuthorizationService : Application.Interfaces.Services.Security.IAuthorizationService
+    public class AuthorizationService : IAuthorizationService
     {
         private readonly Microsoft.AspNetCore.Authorization.IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
