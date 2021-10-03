@@ -22,16 +22,22 @@ namespace PingAI.DialogManagementService.Api.Models.Responses
             {
                 var parts = response.Resolution.Parts?
                     .Select(p => new ResolutionPartDto(p)).ToArray();
-                Resolution = new ResolutionDto(parts, null, ResolutionType.PARTS.ToString());
+                Resolution = new ResolutionDto(parts, null, null, ResolutionType.PARTS.ToString());
             }
             else if (response.Resolution?.Type == ResolutionType.FORM)
             {
                 var form = response.Resolution.Form == null ? default : new FormResolutionDto(response.Resolution.Form);
-                Resolution = new ResolutionDto(null, form, ResolutionType.FORM.ToString());
+                Resolution = new ResolutionDto(null, form, null, ResolutionType.FORM.ToString());
+            }
+            else if (response.Resolution?.Type == ResolutionType.WEBHOOK)
+            {
+                var webhook = new WebhookResolutionDto(response.Resolution.Webhook!.EntityName,
+                    response.Id.ToString());
+                Resolution = new ResolutionDto(null, null, webhook, ResolutionType.WEBHOOK.ToString());
             }
             else
             {
-                Resolution = new ResolutionDto(null, null, ResolutionType.EMPTY.ToString());
+                Resolution = new ResolutionDto(null, null, null, ResolutionType.EMPTY.ToString());
             }
 
             SpeechContexts = response.SpeechContexts;

@@ -17,19 +17,21 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
     {
         private readonly IQueryRepository _queryRepository;
         private readonly IEntityNameRepository _entityNameRepository;
+        private readonly IResponseRepository _responseRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthorizationService _authorizationService;
         private readonly INluService _nluService;
 
-        public UpdateQueryCommandHandler(IQueryRepository queryRepository, 
+        public UpdateQueryCommandHandler(IQueryRepository queryRepository,
             IEntityNameRepository entityNameRepository, IUnitOfWork unitOfWork,
-            IAuthorizationService authorizationService, INluService nluService)
+            IAuthorizationService authorizationService, INluService nluService, IResponseRepository responseRepository)
         {
             _queryRepository = queryRepository;
             _entityNameRepository = entityNameRepository;
             _unitOfWork = unitOfWork;
             _authorizationService = authorizationService;
             _nluService = nluService;
+            _responseRepository = responseRepository;
         }
 
         public async Task<Query> Handle(UpdateQueryCommand request, CancellationToken cancellationToken)
@@ -48,17 +50,20 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
                 query.ClearIntents();
                 query.AddIntent(intent);
             }
+
             var entityNames = await _entityNameRepository.ListByProjectId(query.ProjectId);
             intent.ClearPhrases();
             IntentHelper.AddPhrases(intent, request.PhraseParts, entityNames);
             intent.Rename(request.Name);
             
+            var responsesToAdd = await ResponseHelper.CreateResponses(query.ProjectId,
+                request.Responses, entityNames, _responseRepository);
             query.ClearResponses();
-            foreach (var response in ResponseHelper.CreateResponses(query.ProjectId, request.Responses, entityNames))
+            foreach (var response in responsesToAdd)
             {
                 query.AddResponse(response);
             }
-           
+
             await _unitOfWork.ExecuteTransaction(() => _nluService.SaveIntent(intent));
             return query;
         }

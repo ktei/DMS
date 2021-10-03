@@ -2,7 +2,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using PingAI.DialogManagementService.Application.Interfaces.Persistence;
-using PingAI.DialogManagementService.Application.Interfaces.Services;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Nlu;
 using PingAI.DialogManagementService.Application.Interfaces.Services.Security;
 using PingAI.DialogManagementService.Application.Queries.Shared;
@@ -16,19 +15,21 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
     {
         private readonly IQueryRepository _queryRepository;
         private readonly IEntityNameRepository _entityNameRepository;
+        private readonly IResponseRepository _responseRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuthorizationService _authorizationService;
         private readonly INluService _nluService;
 
         public CreateQueryCommandHandler(IQueryRepository queryRepository, IUnitOfWork unitOfWork,
             IAuthorizationService authorizationService,
-            IEntityNameRepository entityNameRepository, INluService nluService)
+            IEntityNameRepository entityNameRepository, INluService nluService, IResponseRepository responseRepository)
         {
             _queryRepository = queryRepository;
             _unitOfWork = unitOfWork;
             _authorizationService = authorizationService;
             _entityNameRepository = entityNameRepository;
             _nluService = nluService;
+            _responseRepository = responseRepository;
         }
 
         public async Task<Query> Handle(CreateQueryCommand request, CancellationToken cancellationToken)
@@ -46,7 +47,9 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
             IntentHelper.AddPhrases(intent, request.PhraseParts, entityNames);
             query.AddIntent(intent);
 
-            foreach (var response in ResponseHelper.CreateResponses(request.ProjectId, request.Responses, entityNames))
+            var responsesToAdd = await ResponseHelper.CreateResponses(request.ProjectId,
+                request.Responses, entityNames, _responseRepository);
+            foreach (var response in responsesToAdd)
             {
                 query.AddResponse(response);
             }

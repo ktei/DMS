@@ -16,6 +16,7 @@ using PingAI.DialogManagementService.Application.Queries.UpdateDisplayOrders;
 using PingAI.DialogManagementService.Application.Queries.UpdateQuery;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
 using PingAI.DialogManagementService.Domain.Model;
+using PingAI.DialogManagementService.Domain.Repositories;
 using PhrasePart = PingAI.DialogManagementService.Application.Queries.Shared.PhrasePart;
 using Response = PingAI.DialogManagementService.Application.Queries.Shared.Response;
 
@@ -27,10 +28,12 @@ namespace PingAI.DialogManagementService.Api.Controllers
     public class QueriesController : ApiControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IResponseRepository _responseRepository;
 
-        public QueriesController(IMediator mediator)
+        public QueriesController(IMediator mediator, IResponseRepository responseRepository)
         {
             _mediator = mediator;
+            _responseRepository = responseRepository;
         }
 
         [HttpGet]
@@ -76,14 +79,23 @@ namespace PingAI.DialogManagementService.Api.Controllers
         {
             var projectId = Guid.Parse(request.ProjectId);
             var phraseParts = FlattenPhraseParts(request.Intent.PhraseParts).ToArray();
-            var responses = request.Responses.Select(r =>
-            {
-                var formResolution = r.Form == null
-                    ? null
-                    : new FormResolution(
-                        r.Form.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
-                return new Response(r.RteText, formResolution, r.Order);
-            }).ToArray();
+            var responses = request.Responses
+                .Select(r =>
+                {
+                    if (r.Type == ResponseType.FORM.ToString())
+                    {
+                        var formResolution = new FormResolution(
+                            r.Form.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
+                        return new Response(r.RteText, formResolution, null, r.Order);
+                    }
+
+                    if (r.Type == ResponseType.WEBHOOK.ToString())
+                    {
+                        return new Response(null, null, r.Webhook!.ResponseId, r.Order);
+                    }
+
+                    return new Response(r.RteText, null, null, r.Order);
+                }).ToArray();
             var createQueryCommand = new CreateQueryCommand(
                 request.Name, projectId, phraseParts,
                 new Expression[0], responses, request.Description ?? request.Name, request.Tags);
@@ -106,14 +118,23 @@ namespace PingAI.DialogManagementService.Api.Controllers
             [FromBody] UpdateQueryDto request)
         {
             var phraseParts = FlattenPhraseParts(request.Intent.PhraseParts).ToArray();
-            var responses = request.Responses.Select(r =>
-            {
-                var formResolution = r.Form == null
-                    ? null
-                    : new FormResolution(
-                        r.Form.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
-                return new Response(r.RteText, formResolution, r.Order);
-            }).ToArray();
+            var responses = request.Responses
+                .Select(r =>
+                {
+                    if (r.Type == ResponseType.FORM.ToString())
+                    {
+                        var formResolution = new FormResolution(
+                            r.Form.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
+                        return new Response(r.RteText, formResolution, null, r.Order);
+                    }
+
+                    if (r.Type == ResponseType.WEBHOOK.ToString())
+                    {
+                        return new Response(null, null, r.Webhook!.ResponseId, r.Order);
+                    }
+
+                    return new Response(r.RteText, null, null, r.Order);
+                }).ToArray();
             var query = await _mediator.Send(new UpdateQueryCommand(
                 queryId,
                 request.Name,

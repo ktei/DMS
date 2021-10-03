@@ -25,5 +25,5 @@ module "dms" {
   appname      = "dms"
   environment  = "dev"
   repo         = "DialogManagementService"
-  branch       = "develop"
+  branch       = "develop-new"
 }
