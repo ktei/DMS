@@ -29,7 +29,7 @@ namespace PingAI.DialogManagementService.Application.UnitTests.Queries
                     new PhrasePart(Guid.NewGuid(), PhrasePartType.TEXT, 0, "Hello", null, null)
                 }, new Expression[0], new Response[]
                 {
-                    new Response("rte response", null, null, 0)
+                    Response.FromText("rte response", 0)
                 }, "test", null);
             Mock<INluService>? nluService = null;
             var sut = FixtureFactory.CreateSut<CreateQueryCommandHandler>(fixture =>

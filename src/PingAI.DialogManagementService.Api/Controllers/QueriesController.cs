@@ -85,16 +85,16 @@ namespace PingAI.DialogManagementService.Api.Controllers
                     if (r.Type == ResponseType.FORM.ToString())
                     {
                         var formResolution = new FormResolution(
-                            r.Form.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
-                        return new Response(r.RteText, formResolution, null, r.Order);
+                            r.Form!.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
+                        return Application.Queries.Shared.Response.FromForm(formResolution, r.Order);
                     }
 
                     if (r.Type == ResponseType.WEBHOOK.ToString())
                     {
-                        return new Response(null, null, r.Webhook!.ResponseId, r.Order);
+                        return Application.Queries.Shared.Response.FromWebhook(r.Webhook!.ResponseId, r.Order);
                     }
 
-                    return new Response(r.RteText, null, null, r.Order);
+                    return Application.Queries.Shared.Response.FromText(r.RteText!, r.Order);
                 }).ToArray();
             var createQueryCommand = new CreateQueryCommand(
                 request.Name, projectId, phraseParts,
@@ -124,16 +124,18 @@ namespace PingAI.DialogManagementService.Api.Controllers
                     if (r.Type == ResponseType.FORM.ToString())
                     {
                         var formResolution = new FormResolution(
-                            r.Form.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
-                        return new Response(r.RteText, formResolution, null, r.Order);
+                            r.Form!.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
+                        return Application.Queries.Shared.Response.FromForm(formResolution, r.Order);
                     }
 
                     if (r.Type == ResponseType.WEBHOOK.ToString())
                     {
-                        return new Response(null, null, r.Webhook!.ResponseId, r.Order);
+                        return Application.Queries.Shared.Response
+                            .FromWebhook(r.Webhook!.ResponseId, r.Order);
                     }
 
-                    return new Response(r.RteText, null, null, r.Order);
+                    return Application.Queries.Shared.Response
+                        .FromText(r.RteText!, r.Order);
                 }).ToArray();
             var query = await _mediator.Send(new UpdateQueryCommand(
                 queryId,
