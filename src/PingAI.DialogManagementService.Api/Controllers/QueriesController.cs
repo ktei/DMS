@@ -150,7 +150,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
             return from parts in partsGroups
                 let phraseId = Guid.NewGuid()
                 from part in parts
-                select new PhrasePart(phraseId, Enum.Parse<PhrasePartType>(part.Type),
+                select new PhrasePart(phraseId, part.Type,
                     part.Position, part.Text, part.Value, part.EntityName);
         }
 

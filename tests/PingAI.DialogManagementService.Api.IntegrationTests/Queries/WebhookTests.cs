@@ -69,7 +69,7 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                         {
                             new CreatePhrasePartDto
                             {
-                                Type = PhrasePartType.TEXT.ToString(),
+                                Type = PhrasePartType.TEXT,
                                 Text = "Hello, "
                             }
                         }

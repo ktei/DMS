@@ -58,12 +58,12 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                         {
                             new CreatePhrasePartDto
                             {
-                                Type = PhrasePartType.TEXT.ToString(),
+                                Type = PhrasePartType.TEXT,
                                 Text = "Hello, "
                             },
                             new CreatePhrasePartDto
                             {
-                                Type = PhrasePartType.TEXT.ToString(),
+                                Type = PhrasePartType.TEXT,
                                 Text = "World!"
                             }
                         },
@@ -71,12 +71,12 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                         {
                             new CreatePhrasePartDto
                             {
-                                Type = PhrasePartType.TEXT.ToString(),
+                                Type = PhrasePartType.TEXT,
                                 Text = "Goodbye, "
                             },
                             new CreatePhrasePartDto
                             {
-                                Type = PhrasePartType.TEXT.ToString(),
+                                Type = PhrasePartType.TEXT,
                                 Text = "World!"
                             }
                         }
