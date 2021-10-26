@@ -16,16 +16,16 @@ namespace PingAI.DialogManagementService.Application.Queries.Shared
                 var phrase = new Phrase(phraseDisplayOrder++);
                 foreach (var phrasePart in groupedPhraseParts)
                 {
-                    if (phrasePart.EntityName != null)
+                    if (phrasePart.Type == PhrasePartType.TEXT)
+                    {
+                        phrase.AppendText(phrasePart.Text);
+                    }
+                    else if (!string.IsNullOrEmpty(phrasePart.EntityName))
                     {
                         var existingEntityName = entityNames
                             .FirstOrDefault(e => e.Name == phrasePart.EntityName);
                         phrase.AppendEntity(phrasePart.Text,
                             existingEntityName ?? new EntityName(intent.ProjectId, phrasePart.EntityName, true));
-                    }
-                    else
-                    {
-                        phrase.AppendText(phrasePart.Text);
                     }
                 }
 
