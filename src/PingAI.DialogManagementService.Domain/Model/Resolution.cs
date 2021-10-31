@@ -97,7 +97,7 @@ namespace PingAI.DialogManagementService.Domain.Model
 
             public static Resolution Form(FormResolution form)
             {
-                return new Resolution(ResolutionType.PARTS, null,
+                return new Resolution(ResolutionType.FORM, null,
                     form ?? throw new ArgumentNullException(nameof(form)), null);
             }
 
