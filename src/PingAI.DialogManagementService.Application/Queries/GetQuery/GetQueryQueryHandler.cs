@@ -27,9 +27,9 @@ namespace PingAI.DialogManagementService.Application.Queries.GetQuery
             var query = await _queryRepository.FindById(request.QueryId);
             if (query == null)
                 throw new BadRequestException(QueryNotFound);
-            var canWrite = await _authorizationService.UserCanWriteProject(query.ProjectId);
-            if (!canWrite)
-                throw new ForbiddenException(ProjectWriteDenied);
+            var canRead = await _authorizationService.UserCanReadProject(query.ProjectId);
+            if (!canRead)
+                throw new ForbiddenException(ProjectReadDenied);
 
             return query;
         }
