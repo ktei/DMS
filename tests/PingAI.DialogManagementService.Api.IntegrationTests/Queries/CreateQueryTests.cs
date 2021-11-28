@@ -22,7 +22,34 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
         }
 
         [Fact]
-        public async Task CreateQuery()
+        public async Task CreateQueryWithPhrases()
+        {
+            var context = Fixture.CreateContext();
+            var project = await context.Projects.FirstAsync();
+            var projectId = project.Id;
+            var request = BuildRequest(projectId);
+            request.Intent.PhraseParts = null;
+            request.Intent.Phrases = new[]
+            {
+                "I want to order [pizza]{deliveryOrder}",
+                "I want to fly to [Sydney]{destination}"
+            };
+            var client = Factory.CreateUserAuthenticatedClient();
+
+            var httpResponse = await client.PostAsJsonAsync(
+                "/dms/api/v1.1/queries", request
+            );
+            
+            httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            var createdQuery = await httpResponse.Content.ReadFromJsonAsync<QueryDto>();
+            createdQuery.Should().NotBeNull();
+            createdQuery!.Intents.Should().HaveCount(1);
+            createdQuery.Intents.First().PhraseParts.Should().HaveCount(4);
+            createdQuery.Responses.Should().HaveCount(2);
+        }
+
+        [Fact]
+        public async Task CreateQueryWithPhraseParts()
         {
             var context = Fixture.CreateContext();
             var project = await context.Projects.FirstAsync();

@@ -13,6 +13,19 @@ namespace PingAI.DialogManagementService.Application.Queries.Shared
         public string? EntityName { get; }
         public Guid? EntityTypeId { get; }
 
+        public static PhrasePart CreateText(Guid phraseId, int position, string text)
+        {
+            return new PhrasePart(phraseId, PhrasePartType.TEXT,
+                position, text, null, null);
+        }
+
+        public static PhrasePart CreateEntity(Guid phraseId, int position,
+            string text, string entityName)
+        {
+            return new PhrasePart(phraseId, PhrasePartType.ENTITY,
+                position, text, null, entityName);
+        }
+
         public PhrasePart(Guid phraseId, PhrasePartType type, int? position, string? text, string? value,
             string? entityName)
         {

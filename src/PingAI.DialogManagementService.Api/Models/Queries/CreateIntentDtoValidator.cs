@@ -13,7 +13,11 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
                 .MaximumLength(Intent.MaxNameLength);
 
             RuleForEach(x => x.PhraseParts)
-                .ForEach(x => x.SetValidator(new CreatePhrasePartDtoValidator()));
+                .ForEach(x =>
+                    x.SetValidator(new CreatePhrasePartDtoValidator()));
+
+            RuleFor(x => x.Phrases)
+                .ForEach(x => x.NotEmpty());
         }
     }
 }
