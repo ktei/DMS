@@ -20,9 +20,36 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
             fixture)
         {
         }
+        
+        [Fact]
+        public async Task UpdateQueryWithPhrases()
+        {
+            var context = Fixture.CreateContext();
+            var project = await context.Projects.FirstAsync();
+            var query = await context.Queries.FirstAsync(x => x.ProjectId == project.Id);
+            var client = Factory.CreateUserAuthenticatedClient();
+            var request = BuildRequest();
+            request.Intent.PhraseParts = null;
+            request.Intent.Phrases = new[]
+            {
+                "I want to order [pizza]{deliveryOrder}",
+                "I want to fly to [Sydney]{destination}"
+            };
+
+            var httpResponse = await client.PutAsJsonAsync(
+                $"/dms/api/v1.1/queries/{query.Id}", request
+            );
+
+            httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            var updatedQuery = await httpResponse.Content.ReadFromJsonAsync<QueryDto>();
+            updatedQuery.Should().NotBeNull();
+            updatedQuery!.Intents.Should().HaveCount(1);
+            updatedQuery.Intents.First().PhraseParts.Should().HaveCount(4);
+            updatedQuery.Responses.Should().HaveCount(2);
+        }
 
         [Fact]
-        public async Task UpdateQuery()
+        public async Task UpdateQueryWithPhraseParts()
         {
             var context = Fixture.CreateContext();
             var project = await context.Projects.FirstAsync();
@@ -58,12 +85,12 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                         {
                             new CreatePhrasePartDto
                             {
-                                Type = PhrasePartType.TEXT.ToString(),
+                                Type = PhrasePartType.TEXT,
                                 Text = "Hello, "
                             },
                             new CreatePhrasePartDto
                             {
-                                Type = PhrasePartType.TEXT.ToString(),
+                                Type = PhrasePartType.TEXT,
                                 Text = "World!"
                             }
                         },
@@ -71,12 +98,12 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                         {
                             new CreatePhrasePartDto
                             {
-                                Type = PhrasePartType.TEXT.ToString(),
+                                Type = PhrasePartType.TEXT,
                                 Text = "Goodbye, "
                             },
                             new CreatePhrasePartDto
                             {
-                                Type = PhrasePartType.TEXT.ToString(),
+                                Type = PhrasePartType.TEXT,
                                 Text = "World!"
                             }
                         }

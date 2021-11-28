@@ -1,13 +1,24 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PingAI.DialogManagementService.Domain.Model;
-using PhrasePart = PingAI.DialogManagementService.Application.Queries.Shared.PhrasePart;
 
 namespace PingAI.DialogManagementService.Application.Queries.Shared
 {
-    internal static class IntentHelper
+    internal static class IntentExtensions
     {
-        public static void AddPhrases(Intent intent, IEnumerable<PhrasePart> phraseParts,
+        public static void AddPhrases(this Intent intent, IEnumerable<string> phrases,
+            IReadOnlyList<EntityName> entityNames)
+        {
+            var phraseParts = phrases.Select(x =>
+            {
+                var phraseId = Guid.NewGuid();
+                return PhraseParser.ConvertToParts(phraseId, x);
+            }).SelectMany(x => x);
+            intent.AddPhrases(phraseParts, entityNames);
+        }
+        
+        public static void AddPhrases(this Intent intent, IEnumerable<PhrasePart> phraseParts,
             IReadOnlyList<EntityName> entityNames)
         {
             var phraseDisplayOrder = 0;

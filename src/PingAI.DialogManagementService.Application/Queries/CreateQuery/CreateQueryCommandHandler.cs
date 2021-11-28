@@ -44,7 +44,7 @@ namespace PingAI.DialogManagementService.Application.Queries.CreateQuery
 
             var entityNames = await _entityNameRepository.ListByProjectId(request.ProjectId);
             var intent = new Intent(request.ProjectId, request.Name, IntentType.STANDARD);
-            IntentHelper.AddPhrases(intent, request.PhraseParts, entityNames);
+            intent.AddPhrases(request.PhraseParts, entityNames);
             query.AddIntent(intent);
 
             var responsesToAdd = await ResponseHelper.CreateResponses(request.ProjectId,

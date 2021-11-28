@@ -53,7 +53,7 @@ namespace PingAI.DialogManagementService.Application.Queries.UpdateQuery
 
             var entityNames = await _entityNameRepository.ListByProjectId(query.ProjectId);
             intent.ClearPhrases();
-            IntentHelper.AddPhrases(intent, request.PhraseParts, entityNames);
+            IntentExtensions.AddPhrases(intent, request.PhraseParts, entityNames);
             intent.Rename(request.Name);
             
             var responsesToAdd = await ResponseHelper.CreateResponses(query.ProjectId,

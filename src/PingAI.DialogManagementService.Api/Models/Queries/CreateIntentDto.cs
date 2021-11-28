@@ -5,6 +5,7 @@ namespace PingAI.DialogManagementService.Api.Models.Queries
     public class CreateIntentDto
     {
         public string Name { get; set; }
-        public CreatePhrasePartDto[][] PhraseParts { get; set; }
+        public string[]? Phrases { get; set; }
+        public CreatePhrasePartDto[][]? PhraseParts { get; set; }
     }
 }

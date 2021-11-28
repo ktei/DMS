@@ -9,10 +9,6 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
     {
         public CreatePhrasePartDtoValidator()
         {
-            RuleFor(x => x.Type)
-                .NotEmpty()
-                .MustBeEnum(typeof(PhrasePartType));
-            
             RuleFor(x => x.Text)
                 .MaximumLength(PhrasePart.MaxTextLength);
             RuleFor(x => x.Value)
@@ -22,43 +18,33 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
             RuleFor(x => x.Text)
                 .NotNull()
                 .When(x =>
-                    string.Compare(x.Type, PhrasePartType.TEXT.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
+                    x.Type == PhrasePartType.TEXT)
                 .WithMessage("{PropertyName} must not be null given TEXT type");
            
             // For ENTITY
             RuleFor(x => x.Text)
                 .NotEmpty()
                 .When(x =>
-                    string.Compare(x.Type, PhrasePartType.ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
+                    x.Type == PhrasePartType.ENTITY)
                 .WithMessage("{PropertyName} must not be null given ENTITY type");
             RuleFor(x => x.EntityName)
                 .NotNull()
                 .MaximumLength(EntityName.MaxNameLength)
                 .When(x => 
-                    string.Compare(x.Type, PhrasePartType.ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
-                .WithMessage("{PropertyName} must not be null given ENTITY type");
-            RuleFor(x => x.EntityTypeId)
-                .NotNull()
-                .When(x => 
-                    string.Compare(x.Type, PhrasePartType.ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
+                    x.Type == PhrasePartType.ENTITY)
                 .WithMessage("{PropertyName} must not be null given ENTITY type");
             
             // For CONSTANT_ENTITY
             RuleFor(x => x.Value)
                 .NotEmpty()
                 .When(x =>
-                    string.Compare(x.Type, PhrasePartType.CONSTANT_ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
+                    x.Type == PhrasePartType.CONSTANT_ENTITY)
                 .WithMessage("{PropertyName} must not be empty given CONSTANT_ENTITY type");
             RuleFor(x => x.EntityName)
                 .NotNull()
                 .MaximumLength(EntityName.MaxNameLength)
                 .When(x => 
-                    string.Compare(x.Type, PhrasePartType.CONSTANT_ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
-                .WithMessage("{PropertyName} must not be null given CONSTANT_ENTITY type");
-            RuleFor(x => x.EntityTypeId)
-                .NotNull()
-                .When(x => 
-                    string.Compare(x.Type, PhrasePartType.CONSTANT_ENTITY.ToString(), StringComparison.OrdinalIgnoreCase) == 0)
+                    x.Type == PhrasePartType.CONSTANT_ENTITY)
                 .WithMessage("{PropertyName} must not be null given CONSTANT_ENTITY type");
         }
     }

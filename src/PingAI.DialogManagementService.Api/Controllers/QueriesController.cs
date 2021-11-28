@@ -12,6 +12,7 @@ using PingAI.DialogManagementService.Application.Queries.CreateQuery;
 using PingAI.DialogManagementService.Application.Queries.DeleteQuery;
 using PingAI.DialogManagementService.Application.Queries.GetQuery;
 using PingAI.DialogManagementService.Application.Queries.ListQueries;
+using PingAI.DialogManagementService.Application.Queries.Shared;
 using PingAI.DialogManagementService.Application.Queries.UpdateDisplayOrders;
 using PingAI.DialogManagementService.Application.Queries.UpdateQuery;
 using PingAI.DialogManagementService.Domain.ErrorHandling;
@@ -72,13 +73,25 @@ namespace PingAI.DialogManagementService.Api.Controllers
             var result = await _mediator.Send(query);
             return new QueryDto(result);
         }
-
+        
         [MapToApiVersion("1.1")]
         [HttpPost]
         public async Task<ActionResult<QueryDto>> CreateQuery([FromBody] CreateQueryDto request)
         {
             var projectId = Guid.Parse(request.ProjectId);
-            var phraseParts = FlattenPhraseParts(request.Intent.PhraseParts).ToArray();
+            var phraseParts = Array.Empty<PhrasePart>();
+            if (request.Intent.PhraseParts != null)
+            {
+                phraseParts = FlattenPhraseParts(request.Intent.PhraseParts).ToArray();
+            }
+            else if (request.Intent.Phrases != null)
+            {
+                phraseParts = request.Intent.Phrases.Select(phrase =>
+                {
+                    var phraseId = Guid.NewGuid();
+                    return PhraseParser.ConvertToParts(phraseId, phrase);
+                }).SelectMany(x => x).ToArray();
+            }
             var responses = request.Responses
                 .Select(r =>
                 {
@@ -117,7 +130,19 @@ namespace PingAI.DialogManagementService.Api.Controllers
             [FromRoute] Guid queryId,
             [FromBody] UpdateQueryDto request)
         {
-            var phraseParts = FlattenPhraseParts(request.Intent.PhraseParts).ToArray();
+            var phraseParts = Array.Empty<PhrasePart>();
+            if (request.Intent.PhraseParts != null)
+            {
+                phraseParts = FlattenPhraseParts(request.Intent.PhraseParts).ToArray();
+            }
+            else if (request.Intent.Phrases != null)
+            {
+                phraseParts = request.Intent.Phrases.Select(phrase =>
+                {
+                    var phraseId = Guid.NewGuid();
+                    return PhraseParser.ConvertToParts(phraseId, phrase);
+                }).SelectMany(x => x).ToArray();
+            }
             var responses = request.Responses
                 .Select(r =>
                 {
@@ -141,7 +166,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 queryId,
                 request.Name,
                 phraseParts,
-                new Expression[0],
+                Array.Empty<Expression>(),
                 responses, request.Description ?? request.Name,
                 request.Tags, request.DisplayOrder));
             return new QueryDto(query);
@@ -152,7 +177,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
             return from parts in partsGroups
                 let phraseId = Guid.NewGuid()
                 from part in parts
-                select new PhrasePart(phraseId, Enum.Parse<PhrasePartType>(part.Type),
+                select new PhrasePart(phraseId, part.Type,
                     part.Position, part.Text, part.Value, part.EntityName);
         }
 

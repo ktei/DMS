@@ -1,3 +1,5 @@
+using PingAI.DialogManagementService.Domain.Model;
+
 namespace PingAI.DialogManagementService.Api.Models.Intents
 {
     public class CreatePhrasePartDto
@@ -5,8 +7,8 @@ namespace PingAI.DialogManagementService.Api.Models.Intents
         public int? Position { get; set; }
         public string Text { get; set; }
         public string? Value { get; set; }
-        public string Type { get; set; }
+        public PhrasePartType Type { get; set; }
         public string? EntityName { get; set; }
-        public string? EntityTypeId { get; set; }
+        public string? EntityType { get; set; }
     }
 }
