@@ -76,9 +76,11 @@ namespace PingAI.DialogManagementService.Api.Controllers
         
         [MapToApiVersion("1.1")]
         [HttpPost]
-        public async Task<ActionResult<QueryDto>> CreateQuery([FromBody] CreateQueryDto request)
+        public async Task<ActionResult<QueryDto>> CreateQuery([FromBody] CreateQueryDto request,
+            [FromServices] IEntityNameRepository entityNameRepository)
         {
             var projectId = Guid.Parse(request.ProjectId);
+            var entityNames = await entityNameRepository.ListByProjectId(projectId);
             var phraseParts = Array.Empty<PhrasePart>();
             if (request.Intent.PhraseParts != null)
             {
@@ -98,7 +100,13 @@ namespace PingAI.DialogManagementService.Api.Controllers
                     if (r.Type == ResponseType.FORM.ToString())
                     {
                         var formResolution = new FormResolution(
-                            r.Form!.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
+                            r.Form!.Fields.Select(f =>
+                            {
+                                var entityNameId =
+                                    entityNames.Single(n => string.Equals(n.Name,
+                                        f.Name, StringComparison.InvariantCulture)).Id;
+                                return new FormField(f.DisplayName, f.Name, entityNameId);
+                            }).ToArray());
                         return Application.Queries.Shared.Response.FromForm(formResolution, r.Order);
                     }
 
@@ -111,7 +119,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                 }).ToArray();
             var createQueryCommand = new CreateQueryCommand(
                 request.Name, projectId, phraseParts,
-                new Expression[0], responses, request.Description ?? request.Name, request.Tags);
+                Array.Empty<Expression>(), responses, request.Description ?? request.Name, request.Tags);
             var query = await _mediator.Send(createQueryCommand);
             return new QueryDto(query);
         }
@@ -128,8 +136,14 @@ namespace PingAI.DialogManagementService.Api.Controllers
         [HttpPut("{queryId}")]
         public async Task<ActionResult<QueryDto>> UpdateQuery(
             [FromRoute] Guid queryId,
-            [FromBody] UpdateQueryDto request)
+            [FromBody] UpdateQueryDto request,
+            [FromServices] IEntityNameRepository entityNameRepository,
+            [FromServices] IQueryRepository queryRepository)
         {
+            var projectId = await queryRepository.FindProjectId(queryId);
+            if (!projectId.HasValue)
+                throw new BadRequestException("Query does not belong to any project.");
+            var entityNames = await entityNameRepository.ListByProjectId(projectId.Value);
             var phraseParts = Array.Empty<PhrasePart>();
             if (request.Intent.PhraseParts != null)
             {
@@ -149,7 +163,13 @@ namespace PingAI.DialogManagementService.Api.Controllers
                     if (r.Type == ResponseType.FORM.ToString())
                     {
                         var formResolution = new FormResolution(
-                            r.Form!.Fields.Select(f => new FormField(f.DisplayName, f.Name)).ToArray());
+                            r.Form!.Fields.Select(f =>
+                            {
+                                var entityNameId =
+                                    entityNames.Single(n => string.Equals(n.Name,
+                                        f.Name, StringComparison.InvariantCulture)).Id;
+                                return new FormField(f.DisplayName, f.Name, entityNameId);
+                            }).ToArray());
                         return Application.Queries.Shared.Response.FromForm(formResolution, r.Order);
                     }
 

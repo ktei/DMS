@@ -35,7 +35,16 @@ namespace PingAI.DialogManagementService.Infrastructure.Persistence.Repositories
                 .SingleOrDefaultAsync(x => x.Id == queryId);
             return query;
         }
-        
+
+        public async Task<Guid?> FindProjectId(Guid queryId)
+        {
+            var projectId = await _context
+                .Queries.Where(q => q.Id == queryId)
+                .Select(q => q.ProjectId)
+                .SingleOrDefaultAsync();
+            return projectId;
+        }
+
         public async Task<IReadOnlyList<Query>> ListByProjectId(Guid projectId, ResponseType? responseType)
         {
             var query = _context.Queries

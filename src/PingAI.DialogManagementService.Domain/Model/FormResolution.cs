@@ -24,15 +24,19 @@ namespace PingAI.DialogManagementService.Domain.Model
             
         [JsonPropertyName("name")]
         public string Name { get; set; }
+       
+        [JsonPropertyName("entityNameId")]
+        public Guid EntityNameId { get; set; }
             
         [JsonPropertyName("defaultValue")]
         public string? DefaultValue { get; set; }
 
         [JsonConstructor]
-        public FormField(string displayName, string name)
+        public FormField(string displayName, string name, Guid entityNameId)
         {
             DisplayName = displayName;
             Name = name;
+            EntityNameId = entityNameId;
         }
     }
 }

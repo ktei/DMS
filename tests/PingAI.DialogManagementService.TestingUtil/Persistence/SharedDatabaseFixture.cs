@@ -82,6 +82,10 @@ namespace PingAI.DialogManagementService.TestingUtil.Persistence
                     var deliveryOrderEntityName = new EntityName(project.Id, "deliveryOrder", true);
                     var destinationEntityName = new EntityName(project.Id, "destination", true);
                     context.AddRange(deliveryOrderEntityName, destinationEntityName);
+                    foreach (var name in Defaults.EnquiryEntityNames)
+                    {
+                        context.Add(new EntityName(project.Id, name, true));
+                    }
                     
                     // seed Intents
                     var orderDeliveryIntent = new Intent(project.Id, "ORDER_FOOD",  IntentType.STANDARD);

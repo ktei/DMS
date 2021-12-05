@@ -13,8 +13,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         public static readonly DateTime BusinessTimeStartUtc = DateTime.UtcNow.Date.AddHours(9); // 9 AM
         public static readonly DateTime BusinessTimeEndUtc = DateTime.UtcNow.Date.AddHours(17); // 5 PM
 
-        public static readonly string[] EnquiryEntityNames = new []
-        {
+        public static readonly string[] EnquiryEntityNames = {
             "NAME", "PHONE", "EMAIL", "JOB_TITLE", "ORGANISATION_NAME", "DETAILS"
         };
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -40,20 +41,21 @@ namespace PingAI.DialogManagementService.Infrastructure.UnitTests.Persistence.Re
             var sut = new QueryRepository(context);
             var organisation = await context.Organisations.FirstAsync();
             var project = Project.CreateWithDefaults(organisation.Id, Guid.NewGuid().ToString());
+            project.AddEntityName(new EntityName("name", true));
             await context.AddAsync(project);
-            var rteQuery = new Query(project.Id, Guid.NewGuid().ToString(), new Expression[0],
+            var rteQuery = new Query(project.Id, Guid.NewGuid().ToString(), Array.Empty<Expression>(),
                 "whatever", null, 0);
             rteQuery.AddResponse(new Response(project.Id, Resolution.Factory.RteText("Hello world"), ResponseType.RTE, 0));
-            var quickReplyQuery = new Query(project.Id, Guid.NewGuid().ToString(), new Expression[0],
+            var quickReplyQuery = new Query(project.Id, Guid.NewGuid().ToString(), Array.Empty<Expression>(),
                 "whatever", null, 0);
             quickReplyQuery.AddResponse(new Response(project.Id, Resolution.Factory.RteText("quick reply"), ResponseType.QUICK_REPLY, 1));
-            var formQuery = new Query(project.Id, Guid.NewGuid().ToString(), new Expression[0],
+            var formQuery = new Query(project.Id, Guid.NewGuid().ToString(), Array.Empty<Expression>(),
                 "whatever", null, 0);
             formQuery.AddResponse(new Response(project.Id, Resolution.Factory.Form(new FormResolution(new FormField[]
             {
-                new FormField("Name", "name")
+                new FormField("Name", "name", project.EntityNames.First().Id)
             })), ResponseType.FORM, 2));
-            var handoverQuery = new Query(project.Id, Guid.NewGuid().ToString(), new Expression[0],
+            var handoverQuery = new Query(project.Id, Guid.NewGuid().ToString(), Array.Empty<Expression>(),
                 "whatever", null, 0);
             handoverQuery.AddResponse(new Response(project.Id, Resolution.Factory.RteText("handover"), ResponseType.HANDOVER, 3));
             await context.AddRangeAsync(rteQuery, quickReplyQuery, formQuery, handoverQuery);

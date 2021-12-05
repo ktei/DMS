@@ -125,13 +125,13 @@ namespace PingAI.DialogManagementService.Api.IntegrationTests.Queries
                             {
                                 new CreateResponseFormDto.Field
                                 {
-                                    DisplayName = "F1",
-                                    Name = "f1"
+                                    DisplayName = "Name",
+                                    Name = "NAME"
                                 },
                                 new CreateResponseFormDto.Field
                                 {
-                                    DisplayName = "F2",
-                                    Name = "f2"
+                                    DisplayName = "Phone",
+                                    Name = "PHONE"
                                 }
                             }
                         }

@@ -80,7 +80,7 @@ namespace PingAI.DialogManagementService.Api
                 })
                 .AddFluentValidation(fv =>
                 {
-                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                    fv.DisableDataAnnotationsValidation = true;
                     fv.RegisterValidatorsFromAssemblyContaining<Startup>();
                 })
                 .AddJsonOptions(options =>

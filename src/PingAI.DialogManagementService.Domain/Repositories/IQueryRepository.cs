@@ -8,6 +8,7 @@ namespace PingAI.DialogManagementService.Domain.Repositories
     public interface IQueryRepository
     {
         Task<Query?> FindById(Guid queryId);
+        Task<Guid?> FindProjectId(Guid queryId);
         Task<IReadOnlyList<Query>> ListByProjectId(Guid projectId, ResponseType? responseType);
         Task<Query> Add(Query query);
         Task<IReadOnlyList<Query>> ListByProjectIdWithoutJoins(Guid projectId);
