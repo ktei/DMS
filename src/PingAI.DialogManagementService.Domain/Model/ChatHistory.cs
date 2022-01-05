@@ -57,7 +57,7 @@ namespace PingAI.DialogManagementService.Domain.Model
         {
             get
             {
-                if (Intent == null || Intent.Name == "Default Fallback Intent")
+                if (Intent == null || Intent.Name == "Default Fallback Intent" || Name == "NluLowConfidence" || Name == "NoIntent")
                 {
                     return MatchingResult.MissingIntent;
                 }
