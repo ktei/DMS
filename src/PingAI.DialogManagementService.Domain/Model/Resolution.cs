@@ -57,7 +57,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                     throw new ArgumentException($"Max length of {nameof(rteText)} is {MaxRteTextLength}");
 
                 var resolutionParts = new List<ResolutionPart>();
-                var re = new Regex(@"\$\{([A-Za-z-_0-9]+)\}");
+                var re = new Regex(@"\$\{([A-Za-z-_0-9]+)(?:\.([A-Za-z-_0-9\.]+))?\}");
                 var pos = 0;
                 Match m;
                 do
@@ -74,7 +74,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                     // add current param
                     if (entityNames.TryGetValue(m.Groups[1].Value, out var entityName))
                     {
-                        resolutionParts.Add(ResolutionPart.EntityNamePart(entityName.Id));
+                        resolutionParts.Add(ResolutionPart.EntityNamePart(entityName.Id, m.Groups[2]?.Value));
                     }
                     else
                     {
