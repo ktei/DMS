@@ -22,7 +22,7 @@ namespace PingAI.DialogManagementService.Application.Queries.Shared
                 {
                     var resolution = Resolution.Factory.RteText(resp.RteText,
                         entityNames.ToDictionary(x => x.Name));
-                    results.Add(new Domain.Model.Response(projectId, resolution, ResponseType.RTE,
+                    results.Add(new Domain.Model.Response(projectId, resolution, resp.type,
                         resp.Order));
                 }
                 else if (resp.Form != null)

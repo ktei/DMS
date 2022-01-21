@@ -9,6 +9,7 @@ namespace PingAI.DialogManagementService.Application.Queries.Shared
         public FormResolution? Form { get; }
         public Guid? WebhookResponseId { get; }
         public int Order { get; }
+        public ResponseType type { get; }
 
         public static Response FromText(string rteText, int order)
         {
