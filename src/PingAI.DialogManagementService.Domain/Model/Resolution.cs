@@ -74,7 +74,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                     // add current param
                     if (entityNames.TryGetValue(m.Groups[1].Value, out var entityName))
                     {
-                        resolutionParts.Add(ResolutionPart.EntityNamePart(entityName.Id, m.Groups[2]?.Value));
+                        resolutionParts.Add(ResolutionPart.EntityNamePart(rteText.Substring(pos, m.Index - pos), entityName.Id, m.Groups[2]?.Value));
                     }
                     else
                     {

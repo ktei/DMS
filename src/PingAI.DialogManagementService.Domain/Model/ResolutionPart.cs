@@ -30,8 +30,8 @@ namespace PingAI.DialogManagementService.Domain.Model
 
         public static ResolutionPart TextPart(string text) => 
             new ResolutionPart(text ?? throw new ArgumentNullException(nameof(text)), null, ResolutionPartType.RTE, null);
-        public static ResolutionPart EntityNamePart(Guid entityNameId, string? path) =>
-            new ResolutionPart("${" + path + "}", entityNameId, ResolutionPartType.OTHER_ENTITY_NAME, path);
+        public static ResolutionPart EntityNamePart(string text, Guid entityNameId, string? path) =>
+            new ResolutionPart(text ?? throw new ArgumentNullException(nameof(text)), entityNameId, ResolutionPartType.OTHER_ENTITY_NAME, path);
 
         protected override IEnumerable<object> GetAtomicValues()
         {
