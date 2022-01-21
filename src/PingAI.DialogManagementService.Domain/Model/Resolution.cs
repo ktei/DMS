@@ -65,10 +65,10 @@ namespace PingAI.DialogManagementService.Domain.Model
                     m = re.Match(rteText, pos);
                     if (!m.Success) break;
 
-                    var text = rteText.Substring(pos, m.Index - pos);
-
                     if (m.Index > pos)
                     {
+                        var text = rteText.Substring(pos, m.Index - pos);
+
                         // add plain text before current param
                         resolutionParts.Add(ResolutionPart.TextPart(text));
                     }
@@ -76,7 +76,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                     // add current param
                     if (entityNames.TryGetValue(m.Groups[1].Value, out var entityName))
                     {
-                        resolutionParts.Add(ResolutionPart.EntityNamePart(text, entityName.Id, m.Groups[2]?.Value));
+                        resolutionParts.Add(ResolutionPart.EntityNamePart(m.Value, entityName.Id, m.Groups[2]?.Value));
                     }
                     else
                     {
