@@ -124,6 +124,8 @@ namespace PingAI.DialogManagementService.Api.Controllers
                     {
                         return Application.Queries.Shared.Response.FromText(r.RteText!, r.Order, ResponseType.QUICK_REPLY);
                     }
+
+                    throw new InvalidOperationException($"Unknown response type {r.Type}.");
                 }).ToArray();
             var createQueryCommand = new CreateQueryCommand(
                 request.Name, projectId, phraseParts,
@@ -188,7 +190,7 @@ namespace PingAI.DialogManagementService.Api.Controllers
                     }
 
                     return Application.Queries.Shared.Response
-                        .FromText(r.RteText!, r.Order);
+                        .FromText(r.RteText!, r.Order, Enum.Parse<ResponseType>(r.Type));
                 }).ToArray();
             var query = await _mediator.Send(new UpdateQueryCommand(
                 queryId,
