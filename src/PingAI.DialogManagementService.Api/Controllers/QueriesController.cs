@@ -115,7 +115,15 @@ namespace PingAI.DialogManagementService.Api.Controllers
                         return Application.Queries.Shared.Response.FromWebhook(r.Webhook!.ResponseId, r.Order);
                     }
 
-                    return Application.Queries.Shared.Response.FromText(r.RteText!, r.Order);
+                    if (r.Type == ResponseType.RTE.ToString())
+                    {
+                        return Application.Queries.Shared.Response.FromText(r.RteText!, r.Order, ResponseType.RTE);
+                    }
+
+                    if (r.Type == ResponseType.QUICK_REPLY.ToString())
+                    {
+                        return Application.Queries.Shared.Response.FromText(r.RteText!, r.Order, ResponseType.QUICK_REPLY);
+                    }
                 }).ToArray();
             var createQueryCommand = new CreateQueryCommand(
                 request.Name, projectId, phraseParts,
