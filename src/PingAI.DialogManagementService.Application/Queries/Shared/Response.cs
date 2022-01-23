@@ -26,6 +26,11 @@ namespace PingAI.DialogManagementService.Application.Queries.Shared
             return new Response(null, null, webhookResponseId, order, ResponseType.WEBHOOK);
         }
 
+        public static Response FromHandover(int order)
+        {
+            return new Response(null, null, null, order, ResponseType.HANDOVER);
+        }
+
         private Response(string? rteText, FormResolution? form, Guid? webhookResponseId, int order, ResponseType type)
         {
             RteText = rteText;

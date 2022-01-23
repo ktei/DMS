@@ -115,17 +115,13 @@ namespace PingAI.DialogManagementService.Api.Controllers
                         return Application.Queries.Shared.Response.FromWebhook(r.Webhook!.ResponseId, r.Order);
                     }
 
-                    if (r.Type == ResponseType.RTE.ToString())
+                    if (r.Type == ResponseType.HANDOVER.ToString())
                     {
-                        return Application.Queries.Shared.Response.FromText(r.RteText!, r.Order, ResponseType.RTE);
+                        return Application.Queries.Shared.Response.FromHandover(r.Order);
                     }
 
-                    if (r.Type == ResponseType.QUICK_REPLY.ToString())
-                    {
-                        return Application.Queries.Shared.Response.FromText(r.RteText!, r.Order, ResponseType.QUICK_REPLY);
-                    }
-
-                    throw new InvalidOperationException($"Unknown response type {r.Type}.");
+                    return Application.Queries.Shared.Response.FromText(r.RteText!, r.Order, 
+                        Enum.Parse<ResponseType>(r.Type));
                 }).ToArray();
             var createQueryCommand = new CreateQueryCommand(
                 request.Name, projectId, phraseParts,

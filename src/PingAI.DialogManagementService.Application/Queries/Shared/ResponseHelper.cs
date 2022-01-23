@@ -38,6 +38,11 @@ namespace PingAI.DialogManagementService.Application.Queries.Shared
                         throw new BadRequestException($"Could not find webhook response {resp.WebhookResponseId}");
                     results.Add(webhookResponse);
                 }
+                else
+                {
+                    results.Add(new Domain.Model.Response(projectId,
+                        Resolution.Empty, resp.Type, resp.Order));
+                }
             }
 
             return results.ToArray();
