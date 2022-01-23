@@ -29,7 +29,7 @@ namespace PingAI.DialogManagementService.Application.UnitTests.Queries
                 }, new Expression[0],
                 new[]
                 {
-                    Response.FromText("rte response", 0)
+                    Response.FromText("rte response", 0, ResponseType.RTE)
                 }, "test", null, 0
             );
             Mock<INluService>? nluService = null;
