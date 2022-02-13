@@ -39,24 +39,7 @@ namespace PingAI.DialogManagementService.Domain.Model
 
     public class ChatHistoryInput
     {
-        public TextInput Input { get; set; }
-        public TextInput Text {
-            get
-            {
-                if (this.Text == null)
-                {
-                    return this.Input;
-                }
-
-                return this.Text;
-
-            }
-
-            set
-            {
-                this.Text = value;
-            }
-        }
+        public TextInput Text { get; set; }
         
         public class TextInput
         {
