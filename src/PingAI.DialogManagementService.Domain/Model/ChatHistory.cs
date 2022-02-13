@@ -49,6 +49,7 @@ namespace PingAI.DialogManagementService.Domain.Model
                 }
 
                 return this.Text;
+
             }
 
             set
