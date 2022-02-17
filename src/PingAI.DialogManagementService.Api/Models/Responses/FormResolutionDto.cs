@@ -7,10 +7,11 @@ namespace PingAI.DialogManagementService.Api.Models.Responses
     {
         public FieldDto[] Fields { get; set; }
 
-
         public FormResolutionDto(FormResolution form)
         {
-            Fields = form.Fields.Select(f => new FieldDto(f.Name, f.DisplayName, f.DefaultValue)).ToArray();
+            Fields = form.Fields.Select(f => new FieldDto(
+                f.EntityNameId,
+                f.Name, f.DisplayName, f.DefaultValue)).ToArray();
         }
 
         public FormResolutionDto(FieldDto[] fields)
@@ -19,25 +20,6 @@ namespace PingAI.DialogManagementService.Api.Models.Responses
         }
 
         public FormResolutionDto()
-        {
-            
-        }
-    }
-
-    public class FieldDto
-    {
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
-        public string? DefaultValue { get; set; }
-
-        public FieldDto(string name, string displayName, string? defaultValue)
-        {
-            Name = name;
-            DisplayName = displayName;
-            DefaultValue = defaultValue;
-        }
-
-        public FieldDto()
         {
             
         }
